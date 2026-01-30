@@ -19,7 +19,15 @@ speciesCol <- c(
       )
 
 ###here all
-plotter_data_all <- function(data_long) {
+plotter_data_all <- function(data_long, remove_aphid=FALSE) {
+  aphid = ""
+
+  if(remove_aphid ==TRUE){
+    aphid = "noAphids"
+    data_long <- data_long |> 
+      dplyr::filter(species != "mp")
+  }
+
   TIME_SERIES_ALL <- data_long |>
     ggplot(aes(x = week, y = individuals)) +
     geom_line(
@@ -27,7 +35,7 @@ plotter_data_all <- function(data_long) {
       size = 0.5
     ) +
     geom_point(aes(color = species), size = 1) +
-    facet_wrap(~enem) +
+    facet_wrap(~enem, scales = "free_y") +
     scale_color_manual(
       values = speciesCol
     ) +
@@ -35,14 +43,22 @@ plotter_data_all <- function(data_long) {
 
   ggsave(
     TIME_SERIES_ALL,
-    filename = "./figures/time-series-all.png",
+    filename = paste0("./figures/time-series-all-", aphid, ".png"),
     height = 9,
     width = 10,
     create.dir = T
   )
 }
 
-plotter_data_mean <- function(data_mean) {
+plotter_data_mean <- function(data_mean, remove_aphid=FALSE) {
+    aphid = ""
+
+  if(remove_aphid ==TRUE){
+        aphid = "noAphids"
+
+    data_mean <- data_mean |> 
+      dplyr::filter(species != "mp")
+  }
   TIME_SERIES_MEAN <- data_mean |>
     ggplot(aes(x = week, y = meanIndividuals)) +
      geom_line(
@@ -55,14 +71,14 @@ plotter_data_mean <- function(data_mean) {
       ymax = meanIndividuals + sdIndividuals,
       color = species
     )) +
-    facet_wrap(~enem) +
+    facet_wrap(~enem, scales = "free_y") +
       scale_color_manual(
       values = speciesCol
     ) +
     theme_minimal()
   ggsave(
     TIME_SERIES_MEAN,
-    filename = "./figures/time-series-mean.png",
+    filename = paste0("./figures/time-series-mean-", aphid, ".png"),
     height = 9,
     width = 10,
     create.dir = T

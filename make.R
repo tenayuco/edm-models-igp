@@ -18,6 +18,8 @@ DATA_MEAN <-  mean_formatter(DATA_LONG)
 
 
 ### plot and save data
-plotter_data_all(DATA_LONG)
+plotter_data_all(DATA_LONG, remove_aphid = FALSE)
+plotter_data_all(DATA_LONG, remove_aphid = TRUE)
 
-plotter_data_mean(DATA_MEAN)
+plotter_data_mean(DATA_MEAN, remove_aphid = FALSE)
+plotter_data_mean(DATA_MEAN, remove_aphid = TRUE)
