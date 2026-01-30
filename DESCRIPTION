@@ -1,0 +1,24 @@
+Package: edm-models-igp
+Type: Project
+Title: EnnemyCocktail part2
+Version: 0.0.0.9000
+Authors@R: c(
+    person(given   = "Emilio",
+           family  = "Mora",
+           role    = c("aut", "cre", "cph"),
+           email   = "emiliomora92@gmail.com",
+           comment = c(ORCID = "0000-0002-9127-5581")))
+Description: A paragraph providing a full description of the project (on 
+    several lines...)
+URL: https://github.com/tenayuco/edm-models-igp
+BugReports: https://github.com/tenayuco/edm-models-igp/issues
+License: GPL-2
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+Imports: 
+    devtools,
+    dplyr,
+    rdeps,
+    readr,
+    tidyr
