@@ -1,3 +1,5 @@
+library(ggplot2)
+
 # Look for every package used in the project
 # Add them to DESCRIPTION under Imports
 rdeps::add_deps()
@@ -27,3 +29,11 @@ plotter_data_all(DATA_LONG, remove_aphid = TRUE)
 
 plotter_data_mean(DATA_MEAN, remove_aphid = FALSE)
 plotter_data_mean(DATA_MEAN, remove_aphid = TRUE)
+
+
+for (enemies in unique(DATA_PRED$enem)){
+
+phaseplotter_all(data_pred = DATA_PRED, trophic_1 = "pred1", trophic_2 = "pred2", enem_treatment = enemies)
+phaseplotter_all_block(data_pred = DATA_PRED, trophic_1 = "pred1", trophic_2 = "pred2", enem_treatment = enemies)
+
+}

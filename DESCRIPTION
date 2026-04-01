@@ -22,3 +22,5 @@ Imports:
     rdeps,
     readr,
     tidyr
+Depends: 
+    ggplot2

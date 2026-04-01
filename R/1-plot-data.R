@@ -87,33 +87,51 @@ plotter_data_mean <- function(data_mean, remove_aphid=FALSE) {
 
 
 
-phaseplotter_all <- function(data_long, remove_aphid=FALSE) {
-  aphid = ""
+phaseplotter_all_block <- function(data_pred, trophic_1 = "pred1", trophic_2 = "pred2", enem_treatment = "cc+ma") {
 
-  if(remove_aphid ==TRUE){
-    aphid = "noAphids"
-    data_long <- data_long |> 
-      dplyr::filter(species != "mp")
-  }
-
-  PHASE_ALL <- data_long |>
-    ggplot(aes(x = week, y = individuals)) +
+ 
+  PHASE_ALL <- data_pred |>
+    dplyr::filter(enem == enem_treatment)|>
+    ggplot(aes(x = !!sym(trophic_1), y = !!sym(trophic_2))) +
     geom_line(
-      aes(color = species, group = as.factor(interaction(block, species))),
+      aes(color = as.factor(block)),
       size = 0.5
     ) +
-    geom_point(aes(color = species), size = 1) +
-    facet_wrap(~enem, scales = "free_y") +
-    scale_color_manual(
-      values = speciesCol
-    ) +
-    theme_minimal()
+    geom_point(aes(color = as.factor(block)), size = 1) +
+    facet_wrap(~block, scales = "free", ncol = 3) +
+    theme_minimal() +
+    scale_color_viridis_d()
 
   ggsave(
-    TIME_SERIES_ALL,
-    filename = paste0("./figures/time-series-all-", aphid, ".png"),
+    PHASE_ALL,
+    filename = paste0("./figures/phase-plot-all_block_", enem_treatment, "_", trophic_1, "_", trophic_2,    ".png"),
     height = 9,
     width = 10,
     create.dir = T
   )
 }
+
+
+phaseplotter_all <- function(data_pred, trophic_1 = "pred1", trophic_2 = "pred2", enem_treatment = "cc+ma") {
+
+ 
+  PHASE_ALL <- data_pred |>
+    dplyr::filter(enem == enem_treatment)|>
+    ggplot(aes(x = !!sym(trophic_1), y = !!sym(trophic_2))) +
+    geom_line(
+      aes(color = as.factor(block)),
+      size = 0.5
+    ) +
+    geom_point(aes(color = as.factor(block)), size = 1) +
+    theme_minimal() +
+    scale_color_viridis_d()
+
+  ggsave(
+    PHASE_ALL,
+    filename = paste0("./figures/phase-plot-all_", enem_treatment, "_", trophic_1, "_", trophic_2,    ".png"),
+    height = 9,
+    width = 10,
+    create.dir = T
+  )
+}
+

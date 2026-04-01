@@ -45,6 +45,7 @@ return(DATA_MEAN)
 
 pred_formatter <- function(data_long) {
 DATA_IGP_WIDER <- data_long |> 
+  dplyr::select(!species)|> 
   tidyr::pivot_wider(names_from = "trophic", values_from = "individuals")
 return(DATA_IGP_WIDER)
 }
