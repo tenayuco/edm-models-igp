@@ -1,4 +1,5 @@
 library(ggplot2)
+library(patchwork)
 
 # Look for every package used in the project
 # Add them to DESCRIPTION under Imports

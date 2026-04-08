@@ -28,11 +28,14 @@ igpParms <- c(
 
 igpInit <- c(R = 1e-01, Nl = 1e-01, Na = 1e-01, P = 1e-01)
 
-igpTimes <- seq(from = 1, to = 2000, by = .05) #this is the step for the integration
+igpTimes_cont <- seq(from = 1, to = 2000, by = .05) #this is the step for the integration
+igpTimes_disc <- seq(from = 1, to = 2000, by = 0.1) #this is the step for the integration
 
 
 LBLB_list = list(
     igp_parms = igpParms,
-    igp_model = igp_model_LBLB,  ##from the rnp function
+    igp_model_cont = igp_model_LBLB, 
+    igp_model_disc = igp_model_LBLB_discrete,  ##from the rnp function
     igp_init = igpInit,
-  igp_times = igpTimes)
+  igp_times_cont = igpTimes_cont,
+igp_times_disc = igpTimes_disc)
