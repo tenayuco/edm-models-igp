@@ -32,11 +32,29 @@ out <- deSolve::ode(
   func = model_list[["igp_model_disc"]],
   parms =model_list[["igp_parms"]],
   method = "iteration",
-  dt = 0.1) |> 
+  dt = 0.01) |> 
   as.data.frame() # This should equal times[2] - times[1]
   
   out$parameterValue <- variable_par
 
   return(out)
 }
+
+
+ode_solve_discrete_stochastic <- function(model_list, variable_par = NULL){
+
+out <- deSolve::ode(
+  y = model_list[["igp_init"]],
+  times =model_list[["igp_times_disc"]],
+  func = model_list[["igp_model_disc_stoc"]],
+  parms =model_list[["igp_parms"]],
+  method = "iteration",
+  dt = 0.001) |> 
+  as.data.frame() # This should equal times[2] - times[1]
+  
+  out$parameterValue <- variable_par
+
+  return(out)
+}
+
 

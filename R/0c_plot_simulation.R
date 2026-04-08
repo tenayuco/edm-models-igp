@@ -56,7 +56,7 @@ full_plot <- function(outDF, plotted_var = c("R", "N", "P"), tmax=2000, disc_con
 
   ggsave(
     FULL_PLOT,
-    filename = paste0("./figures/simulation/fullPlot_", "tmax_", tmax, "mode_", disc_cont, ".png"),
+    filename = paste0("./figures/simulation/fullPlot_", "tmax_", tmax, "_mode_", disc_cont, ".png"),
     height = 10,
     width = 8,
     create.dir = T
