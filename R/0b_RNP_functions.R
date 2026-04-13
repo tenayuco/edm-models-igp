@@ -59,6 +59,8 @@ igp_model_LBLB_disc_stoc <- function(t, state, parms, dt = 0.001) {
     Fnp <- Cp * (1 - S) * Nl / (Hp + (S * R + (1 - S) * Nl))
     Frn <- Cn * R / (Hn + R)
     
+   ##
+
     # Birth and death rates (per capita)
     birth_P <- Ep * (Frp + Fnp)
     death_P <- mup
