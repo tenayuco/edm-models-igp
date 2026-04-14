@@ -1,12 +1,14 @@
 full_plot <- function(outDF, plotted_var = c("R", "N", "P"), tmax=2000, disc_cont){
   
-  outDF$N <-  outDF$Nl + outDF$Na
+
+  if ("Nl" %in% names(outDF)){
+  outDF$N <-  outDF$Nl + outDF$Na}
 
   outDF <- outDF |> 
     dplyr::filter(time <= tmax)
 
   outLong <-  outDF  |> 
-    tidyr::pivot_longer(cols= (R:N), names_to = "varName", values_to = "value") |> 
+    tidyr::pivot_longer(cols= c(R,N,P), names_to = "varName", values_to = "value") |> 
     dplyr::filter(varName %in% plotted_var)
     
   

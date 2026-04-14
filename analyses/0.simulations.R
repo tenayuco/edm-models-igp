@@ -17,6 +17,15 @@ full_plot(outDF = DF_SIM_DISC_STOC, tmax = 500, disc_cont = "stochastic")
 ##plot data
 
 #plot(TIME_SERIES_DF)
+############dsimpldie lv
+
+DF_SIM_CONT_LV <- ode_solve(model_list = LBLB_LV_list, variable_par = "NULL")
+full_plot(outDF = DF_SIM_CONT_LV, tmax = 100, disc_cont = "continuous_LV")
+
+
+###
+DF_SIM_DISC_LV <- ode_solve_discrete(model_list = LBLB_LV_list, variable_par = "NULL")
+full_plot(outDF = DF_SIM_DISC_LV, tmax = 100, disc_cont = "discrete_LV")
 
 
 

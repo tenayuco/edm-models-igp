@@ -21,6 +21,7 @@ Imports:
     devtools,
     dplyr,
     forcats,
+    multispatialCCM,
     rdeps,
     readr,
     tidyr
