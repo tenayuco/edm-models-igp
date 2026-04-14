@@ -1,3 +1,56 @@
+
+
+##-------------LV model (simpler)--------------------------------
+
+
+
+LBLB_LV_cont_model <- function (t, state, parms) {##includes PB, LB as predators and as preys
+  
+  with(as.list(c(state, parms)), {
+    ##the i is the same for both predators 
+  
+    ###predator IGP P functional responses
+    ### prey IGP N functional response
+    
+    #these are the equations 
+    dPdt <- Ep*((frp*S*R + fnp*N*(1-S))*P)- mup*P
+    dNdt <- En*(frn*R*N)- fnp*P*N-mun*N 
+    dRdt <- rho*(K-R)- (frn*N- frp*P) * R
+    
+    # z[R, Nl, Na, P] is the order of the vector
+    return(list(c(dRdt, dNdt,  dPdt)))        
+  })
+}
+
+
+
+LBLB_LV_disc_model <- function(t, state, parms, dt = 0.1) {
+  with(as.list(c(state, parms)), {
+    
+
+    #these are the equations 
+    dPdt <- Ep*((frp*S*R + fnp*N*(1-S))*P)- mup*P
+    dNdt <- En*(frn*R*N)- fnp*P*N-mun*N 
+    dRdt <- rho*(K-R)- (frn*N- frp*P) * R
+    
+    
+    # Euler update for discrete time step
+    R_new  <- R  + dRdt * dt
+    N_new <- N + dNdt * dt
+    P_new  <- P  + dPdt * dt
+    
+    # Return new state (order: R, Nl, Na, P)
+    return(list(c(R_new, N_new, P_new)))
+  })
+}
+
+
+
+
+
+
+###OLD ----------------------- (complete age structure)
+
 igp_model_LBLB <- function (t, state, parms) {##includes PB, LB as predators and as preys
   
   with(as.list(c(state, parms)), {
@@ -19,70 +72,6 @@ igp_model_LBLB <- function (t, state, parms) {##includes PB, LB as predators and
     return(list(c(dRdt, dNldt, dNadt,  dPdt)))        
   })
 }
-
-
-igp_model_LBLB_LV <- function (t, state, parms) {##includes PB, LB as predators and as preys
-  
-  with(as.list(c(state, parms)), {
-    ##the i is the same for both predators 
-  
-    ###predator IGP P functional responses
-    ### prey IGP N functional response
-    
-    #these are the equations 
-    dPdt <- Ep*((frp*S*R + fnp*N*(1-S))*P)- mup*P
-    dNdt <- En*(frn*R*N)- fnp*P*N-mun*N 
-    dRdt <- rho*(K-R)- (frn*N- frp*P) * R
-    
-    # z[R, Nl, Na, P] is the order of the vector
-    return(list(c(dRdt, dNdt,  dPdt)))        
-  })
-}
-
-
-
-
-igp_model_LBLB_LV_stoc <- function (t, state, parms) {##includes PB, LB as predators and as preys
-  
-  with(as.list(c(state, parms)), {
-    ##the i is the same for both predators 
-  
-    ###predator IGP P functional responses
-    ### prey IGP N functional response
-    
-    #these are the equations 
-    dPdt <- Ep*((frp*S*R + fnp*N*(1-S))*P)- mup*P
-    dNdt <- En*(frn*R*N)- fnp*P*N-mun*N 
-    dRdt <- rho*(K-R)- (frn*N- frp*P) * R
-    
-    # z[R, Nl, Na, P] is the order of the vector
-    return(list(c(dRdt, dNdt,  dPdt)))        
-  })
-}
-
-
-
-igp_model_LBLB_LV_disc <- function(t, state, parms, dt = 0.1) {
-  with(as.list(c(state, parms)), {
-    
-
-    #these are the equations 
-    dPdt <- Ep*((frp*S*R + fnp*N*(1-S))*P)- mup*P
-    dNdt <- En*(frn*R*N)- fnp*P*N-mun*N 
-    dRdt <- rho*(K-R)- (frn*N- frp*P) * R
-    
-    
-    # Euler update for discrete time step
-    R_new  <- R  + dRdt * dt
-    N_new <- N + dNdt * dt
-    P_new  <- P  + dPdt * dt
-    
-    # Return new state (order: R, Nl, Na, P)
-    return(list(c(R_new, N_new, P_new)))
-  })
-}
-
-
 
 
 igp_model_LBLB_disc <- function(t, state, parms, dt = 0.1) {
@@ -114,3 +103,23 @@ igp_model_LBLB_disc <- function(t, state, parms, dt = 0.1) {
   })
 }
 
+
+
+
+igp_model_LBLB_LV_stoc <- function (t, state, parms) {##includes PB, LB as predators and as preys
+  
+  with(as.list(c(state, parms)), {
+    ##the i is the same for both predators 
+  
+    ###predator IGP P functional responses
+    ### prey IGP N functional response
+    
+    #these are the equations 
+    dPdt <- Ep*((frp*S*R + fnp*N*(1-S))*P)- mup*P
+    dNdt <- En*(frn*R*N)- fnp*P*N-mun*N 
+    dRdt <- rho*(K-R)- (frn*N- frp*P) * R
+    
+    # z[R, Nl, Na, P] is the order of the vector
+    return(list(c(dRdt, dNdt,  dPdt)))        
+  })
+}

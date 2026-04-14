@@ -8,45 +8,11 @@
 #############################################################################################################
 
 
-##2. then you define the parameters common to all the models
-igpParms <- c(
-  rho = 1,
-  K = 1.5,
-  En = 0.5,
-  Ep = 0.5,
-  Cn = 10,
-  Cp = 2.5,
-  mun = 1.1,
-  mup = 0.33, ## to compare with hin, they have mun = 1 (Tp) + 0.3,  and mup = 0.3 (maintenance) + 0.03 death rate
-  Hn = 1,
-  Hp = 1,
-  mn = 0.2,
-  mp = 0.2, #here is dfi
-  S = 0.5
-) #here the Sr different
-
-
-igpInit <- c(R = 1e-01, Nl = 1e-01, Na = 1e-01, P = 1e-01)
-
-igpTimes_cont <- seq(from = 1, to = 2000, by = .05) #this is the step for the integration
-igpTimes_disc <- seq(from = 1, to = 2000, by = 0.01) #this is the step for the integration
-
-
-LBLB_list = list(
-    igp_parms = igpParms,
-    igp_model_cont = igp_model_LBLB, 
-    igp_model_disc = igp_model_LBLB_disc, 
-    igp_model_disc_stoc = igp_model_LBLB_disc_stoc, ##from the rnp function
-    igp_init = igpInit,
-  igp_times_cont = igpTimes_cont,
-igp_times_disc = igpTimes_disc)
-
-
 #####################set LBLB_LV charactersitics  --------------------------
 
 
 ##2. then you define the parameters common to all the models
-igpParms_LV <- c(
+LBLB_LV_parms <- c(
   rho = 1,
   K = 5,
   En = 0.5,
@@ -61,17 +27,9 @@ igpParms_LV <- c(
 ) #here the Sr different
 
 
-igpInit_LV <- c(R = 1e-01, N = 1e-01, P = 1e-01)
-
-igpTimes_cont <- seq(from = 1, to = 2000, by = .05) #this is the step for the integration
-igpTimes_disc <- seq(from = 1, to = 2000, by = 0.01) #this is the step for the integration
-
-
 LBLB_LV_list = list(
-    igp_parms = igpParms_LV,
-    igp_model_cont = igp_model_LBLB_LV, 
-    igp_model_disc = igp_model_LBLB_LV_disc, 
+    parms = LBLB_LV_parms,
+    model_cont = LBLB_LV_cont_model, 
+    model_disc = LBLB_LV_disc_model, 
+    init = c(R = 1e-01, N = 1e-01, P = 1e-01))
 
-    igp_init = igpInit_LV,
-  igp_times_cont = igpTimes_cont,
-igp_times_disc = igpTimes_disc)
