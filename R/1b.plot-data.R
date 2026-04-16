@@ -93,15 +93,15 @@ phaseplotter_all_block <- function(data_pred, trophic_1 = "pred1", trophic_2 = "
   PHASE_ALL <- data_pred |>
     dplyr::filter(enem == enem_treatment)|>
     ggplot(aes(x = !!sym(trophic_1), y = !!sym(trophic_2))) +
-    geom_path(aes(colour= week),
-     # color= "black",
-      size = 1
-    ) +
-   # geom_point(aes(fill = as.factor(week)), size = 1.5, shape= 21) +
+   # geom_path(aes(colour= week),
+     ## color= "black",
+    #  size = 1
+    #) +
+    geom_point(aes(fill = as.factor(block)), size = 2, shape= 21) +
     facet_wrap(~block, scales = "free", ncol = 3) +
     theme_minimal() +
-   # scale_fill_viridis_d() +
-    scale_color_viridis_c()
+    scale_fill_viridis_d()
+    #scale_color_viridis_c()
 
   ggsave(
     PHASE_ALL,
@@ -119,17 +119,83 @@ phaseplotter_all <- function(data_pred, trophic_1 = "pred1", trophic_2 = "pred2"
   PHASE_ALL <- data_pred |>
     dplyr::filter(enem == enem_treatment)|>
     ggplot(aes(x = !!sym(trophic_1), y = !!sym(trophic_2))) +
-    geom_path(
-      aes(color= as.factor(block), group= as.factor(week)),
-      size = 0.5
-    ) +
-    geom_point(aes(group = as.factor(week)), size = 1) +
-    theme_minimal() +
-    scale_color_viridis_d()
+    #geom_path(
+     # aes(color= as.factor(block), group= as.factor(week)),
+      #size = 0.5
+    #) +
+   geom_point(aes(fill = as.factor(block)), size = 5, shape= 21) +    theme_minimal() +
+    scale_fill_viridis_d()
 
   ggsave(
     PHASE_ALL,
     filename = paste0("./figures/treatment/phase-plot-all_", enem_treatment, "_", trophic_1, "_", trophic_2,    ".png"),
+    height = 9,
+    width = 10,
+    create.dir = T
+  )
+}
+
+
+
+
+phaseplotter_ts_all <- function(data_pred, data_long, enem_treatment = "cc+ma") {
+
+
+
+  data_long <-  data_long |>
+    dplyr::filter(enem == enem_treatment)
+
+  predator1 <- paste0("pred_1 = ", unique(data_long$species[data_long$trophic == "pred_1"]))
+  predator2 <- paste0("pred_2 = ", unique(data_long$species[data_long$trophic == "pred_2"]))
+  herbivore <- paste0("herbivore = ", unique(data_long$species[data_long$trophic == "herbivore"]))
+
+
+  
+  TIME_SERIES_ALL <- data_long |> 
+    ggplot(aes(x = week, y = normInd)) +
+    geom_line(
+      aes(color = species, group = as.factor(interaction(block, species))),
+      size = 0.5
+    ) +
+    geom_point(aes(color = species), size = 1) +
+    scale_color_manual(
+      values = speciesCol
+    ) +
+    theme_minimal() +
+    labs(subtitle = paste(predator1, predator2, herbivore, sep = " "))
+
+  PHASE_pred1_pred2 <- data_pred |>
+    dplyr::filter(enem == enem_treatment)|>
+    ggplot(aes(x = pred_1, y = pred_2)) +
+   geom_point(aes(fill = as.factor(block)), size = 3, shape= 21) +    theme_minimal() +
+    scale_fill_viridis_d() +
+    theme(legend.position = "none")
+
+   PHASE_herb_pred1 <- data_pred |>
+    dplyr::filter(enem == enem_treatment)|>
+    ggplot(aes(x = herbivore, y = pred_1)) +
+   geom_point(aes(fill = as.factor(block)), size = 3, shape= 21) +    theme_minimal() +
+    scale_fill_viridis_d()+
+    theme(legend.position = "none")
+
+
+   PHASE_herb_pred2 <- data_pred |>
+    dplyr::filter(enem == enem_treatment)|>
+    ggplot(aes(x = herbivore, y = pred_2)) +
+   geom_point(aes(fill = as.factor(block)), size = 3, shape= 21) +    theme_minimal() +
+    scale_fill_viridis_d()+
+    theme(legend.position = "none")
+
+
+    
+  FULL_PLOT <-  (TIME_SERIES_ALL + PHASE_pred1_pred2) /( PHASE_herb_pred1 + PHASE_herb_pred2) 
+  
+
+
+
+  ggsave(
+    FULL_PLOT ,
+    filename = paste0("./figures/treatment/fullplot_", enem_treatment,    ".png"),
     height = 9,
     width = 10,
     create.dir = T

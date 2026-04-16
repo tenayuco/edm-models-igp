@@ -31,5 +31,6 @@ LBLB_LV_list = list(
     parms = LBLB_LV_parms,
     model_cont = LBLB_LV_cont_model, 
     model_disc = LBLB_LV_disc_model, 
+    model_disc_stoc = LBLB_LV_disc_stoc_model, 
     init = c(R = 1e-01, N = 1e-01, P = 1e-01))
 

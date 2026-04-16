@@ -11,14 +11,26 @@
 long_formatter <- function(da_ta) {
 
 pred_1 <- c("cc", "ol", "sr", "am", "aa")
-pred_2 <- c("ma", "my", "ac", "ec", "ac")
+pred_2 <- c("ma", "my", "ac", "ec")
+  
+#pred_NP <- c("ac", "am", "ol", "cc", "my", "ma")
+#pred_N <- c("aa", "sr")
+#pred_P <- c("ec")
+  
 herbivore <-c("mp")
 
   DATA_IGP_LONG <- da_ta |> 
   tidyr::pivot_longer(c(mp, ac, am, ma , cc, my, ol, aa, sr, ec), names_to = "species", values_to = "individuals")|> 
   dplyr::filter(!(is.na(individuals)))|> 
-  dplyr::mutate(trophic = ifelse(species %in% pred_1, "pred1", ifelse(species %in% pred_2, "pred2", "herbivore")))
-return(DATA_IGP_LONG)
+  #dplyr::mutate(trophic_def = ifelse(species %in% pred_NP, "pred_NP", ifelse(species %in% pred_N, "pred_N", ifelse(species %in% pred_P, "pred_P", "herbivore")))) |> 
+  dplyr::mutate(trophic = ifelse(species %in% pred_1, "pred_1", ifelse(species %in% pred_2, "pred_2", "herbivore")))  |> 
+  tidyr::unite("troph_sp", c(species,trophic), remove = FALSE) 
+  
+  DATA_IGP_LONG <- DATA_IGP_LONG |> 
+    dplyr::group_by(enem, trophic)|> 
+    dplyr::mutate(normInd = individuals/max(individuals)*100)
+  
+  return(DATA_IGP_LONG)
 }
 
 
@@ -46,6 +58,10 @@ return(DATA_MEAN)
 pred_formatter <- function(data_long) {
 DATA_IGP_WIDER <- data_long |> 
   dplyr::select(!species)|> 
+    dplyr::select(!troph_sp)|> 
   tidyr::pivot_wider(names_from = "trophic", values_from = "individuals")
 return(DATA_IGP_WIDER)
 }
+
+
+

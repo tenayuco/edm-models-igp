@@ -20,9 +20,10 @@ plotter_data_mean(DATA_MEAN, remove_aphid = FALSE)
 plotter_data_mean(DATA_MEAN, remove_aphid = TRUE)
 
 
+
+####now we try the full plot
 for (enemies in unique(DATA_PRED$enem)){
-
-phaseplotter_all(data_pred = DATA_PRED, trophic_1 = "pred1", trophic_2 = "pred2", enem_treatment = enemies)
-phaseplotter_all_block(data_pred = DATA_PRED, trophic_1 = "pred1", trophic_2 = "pred2", enem_treatment = enemies)
-
+phaseplotter_ts_all(data_pred = DATA_PRED, data_long = DATA_LONG, enem_treatment = enemies)
 }
+
+

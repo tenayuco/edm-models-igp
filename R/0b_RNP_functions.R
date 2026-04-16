@@ -46,6 +46,44 @@ LBLB_LV_disc_model <- function(t, state, parms, dt = 0.1) {
 
 
 
+## stochastic LV 
+
+
+LBLB_LV_disc_stoc_model <- function(t, state, parms, dt = 0.1) {
+  with(as.list(c(state, parms)), {
+    
+    rho_s <- rho*exp(rnorm(n=1, sd=0.001))
+    mun_s <- mun*exp(rnorm(n=1, sd=0.001))
+    mup_s <- mup*exp(rnorm(n=1, sd=0.001))
+
+
+    #these are the equations 
+    dPdt <- Ep*((frp*S*R + fnp*N*(1-S))*P)- mup_s*P
+    dNdt <- En*(frn*R*N)- fnp*P*N-mun_s*N 
+    dRdt <- rho_s*(K-R)- (frn*N- frp*P) * R
+    
+    
+    # Euler update for discrete time step
+    R_new  <- R  + dRdt * dt
+    N_new <- N + dNdt * dt
+    P_new  <- P  + dPdt * dt
+    
+    # Return new state (order: R, Nl, Na, P)
+    return(list(c(R_new, N_new, P_new)))
+  })
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

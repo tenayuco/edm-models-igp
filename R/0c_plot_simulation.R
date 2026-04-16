@@ -1,11 +1,18 @@
-full_plot <- function(outDF, plotted_var = c("R", "N", "P"), tmax=2000, disc_cont){
+full_plot <- function(outDF, plotted_var = c("R", "N", "P"), tmin=0, tmax=2000, disc_cont, reso=2){
   
 
   if ("Nl" %in% names(outDF)){
   outDF$N <-  outDF$Nl + outDF$Na}
 
   outDF <- outDF |> 
-    dplyr::filter(time <= tmax)
+    dplyr::filter(time <= tmax)|> 
+    dplyr::filter(time >= tmin)
+
+  ###now, here we remove by the resolution
+
+
+outDF <- outDF |> 
+  dplyr::filter(time %in% unique(round(outDF$time, reso)))
 
   outLong <-  outDF  |> 
     tidyr::pivot_longer(cols= c(R,N,P), names_to = "varName", values_to = "value") |> 
@@ -20,7 +27,7 @@ full_plot <- function(outDF, plotted_var = c("R", "N", "P"), tmax=2000, disc_con
     geom_line(aes(color= varName), linewidth=1) + 
     geom_point(color="black")+
     xlab("Time") +
-    xlim(0, tmax)+
+  #  xlim(tmin, tmax)+
     facet_wrap(~forcats::fct_reorder(varName, orden, .desc = TRUE), scales = "free", ncol = 1)+
     theme_bw()+ 
     theme(plot.subtitle = element_text(hjust = 0.5, size = 12), 
@@ -31,7 +38,7 @@ full_plot <- function(outDF, plotted_var = c("R", "N", "P"), tmax=2000, disc_con
   
   RNP_PN <- outDF |> 
     ggplot(aes(x= N, y=P))+
-    geom_path(aes(colour= time), linewidth=1)+
+   # geom_path(aes(colour= time), linewidth=1)+
      geom_point(color="black")+
     scale_colour_viridis_c()+
     theme_bw()+
@@ -39,7 +46,7 @@ full_plot <- function(outDF, plotted_var = c("R", "N", "P"), tmax=2000, disc_con
 
   RNP_PR <- outDF |> 
     ggplot(aes(x= R, y=P))+
-    geom_path(aes(colour= time), linewidth=1)+
+   # geom_path(aes(colour= time), linewidth=1)+
      geom_point(color="black")+
     scale_colour_viridis_c()+
     theme_bw()+
@@ -47,7 +54,7 @@ full_plot <- function(outDF, plotted_var = c("R", "N", "P"), tmax=2000, disc_con
 
   RNP_NR <- outDF |> 
     ggplot(aes(x= R, y=N))+
-    geom_path(aes(colour= time), linewidth=1)+
+    #geom_path(aes(colour= time), linewidth=1)+
      geom_point(color="black")+
     scale_colour_viridis_c()+
     theme_bw()+
