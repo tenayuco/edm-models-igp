@@ -1,18 +1,16 @@
-full_plot <- function(outDF, plotted_var = c("R", "N", "P"), tmin=0, tmax=2000, disc_cont, reso=2){
+full_plot <- function(outDF, plotted_var = c("R", "N", "P"), disc_cont= "notSpec"){
   
 
   if ("Nl" %in% names(outDF)){
   outDF$N <-  outDF$Nl + outDF$Na}
 
-  outDF <- outDF |> 
-    dplyr::filter(time <= tmax)|> 
-    dplyr::filter(time >= tmin)
+  #outDF <- outDF |> 
+   # dplyr::filter(time <= tmax)|> 
+    #dplyr::filter(time >= tmin)
 
   ###now, here we remove by the resolution
 
 
-outDF <- outDF |> 
-  dplyr::filter(time %in% unique(round(outDF$time, reso)))
 
   outLong <-  outDF  |> 
     tidyr::pivot_longer(cols= c(R,N,P), names_to = "varName", values_to = "value") |> 
@@ -62,10 +60,11 @@ outDF <- outDF |>
   
 
   FULL_PLOT <- RNP_ts + (RNP_PN / RNP_PR /RNP_NR)
+  reso <- round(max(outLong$time)/(dim(outLong)[1]-1),3)
 
   ggsave(
     FULL_PLOT,
-    filename = paste0("./figures/simulation/fullPlot_", "tmax_", tmax, "_mode_", disc_cont, ".png"),
+    filename = paste0("./figures/simulation/fullPlot_", "tmin_", min(outLong$time),"_tmax_", max(outLong$time),  "_mode_", disc_cont, "_reso_",reso,  ".png"),
     height = 10,
     width = 8,
     create.dir = T

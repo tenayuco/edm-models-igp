@@ -42,18 +42,20 @@ full_plot(outDF = DF_DISC_LV, tmax = 100, disc_cont = paste0(disc_or_cont, "_LV"
 
 
 ###########pho stochastic
-0.01
+model_used <- LBLB_LV_list ##it includes initial conditions, parameters and equations
+disc_or_cont <- "disc_stoc"  #(disc, cont, disc_stoc)
+d_t <- 0.01
+par_ms =model_used[["parms"]]
+par_ms[["s_d"]] = 0.01
 
 DF_DISC_LV<- deSolve::ode(
   y = model_used[["init"]],
   times = seq(from = 1, to = 1000, by = d_t), ##check the step is 0.01 for euler method
   func = model_used[[paste0("model_", disc_or_cont)]],
-  parms =model_used[["parms"]],
+  parms =par_ms,
   method = "iteration",
   dt = d_t) |> 
   as.data.frame() 
-model_used <- LBLB_LV_list ##it includes initial conditions, parameters and equations
-disc_or_cont <- "disc_stoc"  #(disc, cont, disc_stoc)
-d_t <- 
+
   
-full_plot(outDF = DF_DISC_LV, tmin=150, tmax = 200, disc_cont = paste0(disc_or_cont, "_LV"), reso=0)
+full_plot(outDF = DF_DISC_LV, tmin=100, tmax = 200, disc_cont = paste0(disc_or_cont, "_LV"))

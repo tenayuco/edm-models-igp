@@ -49,19 +49,20 @@ LBLB_LV_disc_model <- function(t, state, parms, dt = 0.1) {
 ## stochastic LV 
 
 
-LBLB_LV_disc_stoc_model <- function(t, state, parms, dt = 0.1) {
+LBLB_LV_disc_stoc_model <- function(t, state, parms, dt = 0.1){
   with(as.list(c(state, parms)), {
     
-    rho_s <- rho*exp(rnorm(n=1, sd=0.001))
-    mun_s <- mun*exp(rnorm(n=1, sd=0.001))
-    mup_s <- mup*exp(rnorm(n=1, sd=0.001))
+
+    rho_s <- rho*exp(rnorm(n=1, sd=s_d))   #s_d is in parms too
+    mun_s <- mun*exp(rnorm(n=1, sd=s_d))
+    mup_s <- mup*exp(rnorm(n=1, sd=s_d))
 
 
     #these are the equations 
     dPdt <- Ep*((frp*S*R + fnp*N*(1-S))*P)- mup_s*P
     dNdt <- En*(frn*R*N)- fnp*P*N-mun_s*N 
-    #dRdt <- rho_s*(K-R)- (frn*N- frp*P) * R  ## chemos
-    dRdt <- rho_s*R*(1-R/K)- (frn*N- frp*P) * R  #logisstic
+    dRdt <- rho_s*(K-R)- (frn*N- frp*P) * R  ## chemos
+    #dRdt <- rho_s*R*(1-R/K)- (frn*N- frp*P) * R  #logisstic
 
     
     # Euler update for discrete time step
