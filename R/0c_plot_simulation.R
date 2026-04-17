@@ -25,7 +25,7 @@ outDF <- outDF |>
                            varName == "R" ~0)) |> 
     ggplot(aes(x=time, y=value)) +
     geom_line(aes(color= varName), linewidth=1) + 
-    geom_point(color="black")+
+  #  geom_point(color="black")+
     xlab("Time") +
   #  xlim(tmin, tmax)+
     facet_wrap(~forcats::fct_reorder(varName, orden, .desc = TRUE), scales = "free", ncol = 1)+

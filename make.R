@@ -15,4 +15,4 @@ devtools::load_all()
 
 ########run the procedures you need######3333
 
-source("./analyses/1.analyze_data.R")
+#source("./analyses/1.analyze_data.R")

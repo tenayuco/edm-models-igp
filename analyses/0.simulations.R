@@ -42,10 +42,7 @@ full_plot(outDF = DF_DISC_LV, tmax = 100, disc_cont = paste0(disc_or_cont, "_LV"
 
 
 ###########pho stochastic
-
-model_used <- LBLB_LV_list ##it includes initial conditions, parameters and equations
-disc_or_cont <- "disc_stoc"  #(disc, cont, disc_stoc)
-d_t <- 0.1
+0.01
 
 DF_DISC_LV<- deSolve::ode(
   y = model_used[["init"]],
@@ -55,5 +52,8 @@ DF_DISC_LV<- deSolve::ode(
   method = "iteration",
   dt = d_t) |> 
   as.data.frame() 
+model_used <- LBLB_LV_list ##it includes initial conditions, parameters and equations
+disc_or_cont <- "disc_stoc"  #(disc, cont, disc_stoc)
+d_t <- 
   
 full_plot(outDF = DF_DISC_LV, tmin=150, tmax = 200, disc_cont = paste0(disc_or_cont, "_LV"), reso=0)

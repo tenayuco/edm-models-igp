@@ -27,4 +27,9 @@ Imports:
     tidyr
 Depends: 
     ggplot2,
-    patchwork
+    latex2exp,
+    mvtnorm,
+    patchwork,
+    pracma,
+    scatterplot3d,
+    tictoc
