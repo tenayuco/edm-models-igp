@@ -18,7 +18,7 @@ DF_CONT_LV<- deSolve::ode(
   parms =model_used[["parms"]]) |> 
   as.data.frame() 
   
-full_plot(outDF = DF_CONT_LV, tmax = 100, disc_cont = paste0(disc_or_cont, "_LV"))
+#full_plot(outDF = DF_CONT_LV, tmax = 100, disc_cont = paste0(disc_or_cont, "_LV"))
 
 
 ###########simpler way...
@@ -36,7 +36,7 @@ DF_DISC_LV<- deSolve::ode(
   dt = d_t) |> 
   as.data.frame() 
   
-full_plot(outDF = DF_DISC_LV, tmax = 100, disc_cont = paste0(disc_or_cont, "_LV"))
+#full_plot(outDF = DF_DISC_LV, tmax = 100, disc_cont = paste0(disc_or_cont, "_LV"))
 
 
 
@@ -58,4 +58,4 @@ DF_DISC_LV<- deSolve::ode(
   as.data.frame() 
 
   
-full_plot(outDF = DF_DISC_LV, tmin=100, tmax = 200, disc_cont = paste0(disc_or_cont, "_LV"))
+#full_plot(outDF = DF_DISC_LV, tmin=100, tmax = 200, disc_cont = paste0(disc_or_cont, "_LV"))

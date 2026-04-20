@@ -1,15 +1,4 @@
 
-###import data frame and convert it to a matrix
-
-tmin = 100
-tmax =200
-res= 1
-
-DF_DISC_LV_USED<- DF_DISC_LV |>  
-       dplyr::filter(time %in%  seq(tmin, tmax, res))
-
-full_plot(outDF =DF_DISC_LV_USED, disc_cont = paste0(disc_or_cont, "_LV"))
-
 ##------------------------------------------
 
 DF_DISC_LV_USED$time <- NULL
@@ -34,6 +23,76 @@ tic()
 out_coexistence <- coexistence_metrics_f3(out)
 out_coexistence_t <- coexistence_metrics_f3(out_t)
 toc()
+
+
+
+
+
+############ how is th deal with real data
+# ================
+# Cross validation
+# ================
+cv_list <- vector(mode = "list", length = 9)
+tic()
+for (i in 1:9) {
+  out_cv <- LV_map_state_space_cross_validation(N_list[[i]], theta_v = seq(0, 3, 0.01))
+  cv_list[[i]] <- out_cv
+}
+toc()
+
+
+# ========================
+# Estimation of parameters
+# ========================
+r_hat_list <- vector(mode = "list", length = 9)
+alpha_hat_list <- vector(mode = "list", length = 9)
+r_se_list <- vector(mode = "list", length = 9)
+alpha_se_list <- vector(mode = "list", length = 9)
+out_list <- vector(mode = "list", length = 9)
+tic()
+for (i in 1:9) {
+  out_list[[i]] <- LV_map(N_list[[i]], cv_list[[i]]$theta_o)
+  r_hat_list[[i]] <- out_list[[i]]$r_hat
+  r_se_list[[i]] <- out_list[[i]]$r_se
+  alpha_hat_list[[i]] <- out_list[[i]]$alpha_hat
+  alpha_se_list[[i]] <- out_list[[i]]$alpha_se
+}
+toc()
+
+
+
+# =========================
+# Calculating omega and eta
+# =========================
+log_Omega_mean_list <- array(NA, dim = 9)
+eta1_mean_list <- array(NA, dim = 9)
+eta2_mean_list <- array(NA, dim = 9)
+log_Omega_cimean_list <- array(NA, dim = c(9, 2))
+eta1_cimean_list <- array(NA, dim = c(9, 2))
+eta2_cimean_list <- array(NA, dim = c(9, 2))
+
+
+tic()
+for (i in 1:9) {
+  o_coexistence <- coexistence_metrics_f2(out_list[[i]])
+  log_Omega_mean_list[i] <- mean(o_coexistence$log_Omega_hat)
+  eta1_mean_list[i] <- mean(o_coexistence$eta_hat[, 1])
+  eta2_mean_list[i] <- mean(o_coexistence$eta_hat[, 2])
+  log_Omega_cimean_list[i, ] <- colMeans(o_coexistence$log_Omega_ci)
+  eta1_cimean_list[i, ] <- colMeans(o_coexistence$eta_ci[, 1, ])
+  eta2_cimean_list[i, ] <- colMeans(o_coexistence$eta_ci[, 2, ])
+}
+toc()
+
+
+
+
+
+#####
+
+
+
+
 
 ##--------------------hasta aqui y vemos..
 # ------------------
