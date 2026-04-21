@@ -1,4 +1,4 @@
-ts_plotter <- function(outDF, plotted_var = c("R", "N", "P"), replicate= "replicate",  disc_cont= "notSpec", reso=0.1){
+ts_plotter <- function(outDF, plotted_var = c("R", "N", "P"), replicate= "replicate"){
 
   outLong <-  outDF  |> 
     tidyr::pivot_longer(cols= plotted_var, names_to = "varName", values_to = "value") |> 
@@ -10,9 +10,11 @@ ts_plotter <- function(outDF, plotted_var = c("R", "N", "P"), replicate= "replic
                          varName=="N" ~1,
                         varName == "R" ~0)) |> 
     ggplot(aes(x=time, y=value)) +
-    geom_line(aes(color= varName, group=replicate), linewidth=1) + 
+    geom_line(aes(color= as.factor(replicate)), linewidth=1) + 
     xlab("Time") +
-    facet_wrap(~forcats::fct_reorder(varName, orden, .desc = TRUE), scales = "free", ncol = 1)+
+    #facet_wrap(~forcats::fct_reorder(varName, orden, .desc = TRUE), scales = "free", ncol = 1)+
+    facet_grid(forcats::fct_reorder(varName, orden, .desc = TRUE)~replicate, scales = "free")+
+
     theme_bw()+ 
     theme(plot.subtitle = element_text(hjust = 0.5, size = 12), 
       text = element_text(size = 12),
@@ -24,7 +26,7 @@ ts_plotter <- function(outDF, plotted_var = c("R", "N", "P"), replicate= "replic
 
 
   
-phase_plotter <- function(outDF, var1= "N", var2= "P", replicate= "replicate",  disc_cont= "notSpec", reso=0.1){
+phase_plotter <- function(outDF, var1= "N", var2= "P", replicate= "replicate"){
 
   PP <- outDF |> 
     ggplot(aes(x= !!sym(var1), y=!!sym(var2)))+
@@ -39,3 +41,5 @@ phase_plotter <- function(outDF, var1= "N", var2= "P", replicate= "replicate",  
 
  
 }
+
+

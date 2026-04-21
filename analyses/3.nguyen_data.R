@@ -35,9 +35,11 @@ for (i in 1:9){
   DF_NGUYEN_LIST <-  rbind(DF_NGUYEN_LIST, df_temp)
 }
 
+names(DF_NGUYEN_LIST) <- c("N", "P", "replicate", "time")
 
-plot(DF_NGUYEN_LIST)
+TS_PLOT_NGUYEN <- ts_plotter(outDF = DF_NGUYEN_LIST, plotted_var = c("N", "P"), replicate = "replicate")
 
+#---------------------------------------
 
 
 # ================
@@ -69,6 +71,46 @@ for (i in 1:9) {
   alpha_se_list[[i]] <- out_list[[i]]$alpha_se
 }
 toc()
+
+
+##------------now plotting the parameters---------------
+DF_RT <- data.frame()
+for (i in 1:9){
+  df_rt_temp <- as.data.frame(r_hat_list[[i]])
+  df_rt_temp$replicate <- i
+  df_rt_temp$time <- seq(1, dim(df_rt_temp)[1])
+  DF_RT <-  rbind(DF_RT, df_rt_temp)
+}
+
+DF_RT_SD <- data.frame()
+for (i in 1:9){
+  df_rt_temp <- as.data.frame(r_se_list[[i]])
+  df_rt_temp$replicate <- i
+  df_rt_temp$time <- seq(1, dim(df_rt_temp)[1])
+  DF_RT_SD <-  rbind(DF_RT_SD, df_rt_temp)
+}
+
+
+DF_ALPHA <- data.frame()
+for (i in 1:9){
+  df_al_temp <- as.data.frame(alpha_hat_list[[i]])
+  df_al_temp$replicate <- i
+  df_al_temp$time <- seq(1, dim(df_al_temp)[1])
+  DF_ALPHA <-  rbind(DF_ALPHA, df_al_temp)
+}
+
+DF_ALPHA_SD <- data.frame()
+for (i in 1:9){
+  df_al_temp <- as.data.frame(alpha_se_list[[i]])
+  df_al_temp$replicate <- i
+  df_al_temp$time <- seq(1, dim(df_al_temp)[1])
+  DF_ALPHA_SD <-  rbind(DF_ALPHA_SD, df_al_temp)
+}
+
+RT_PLOT <- rt_plotter(df_rt = DF_RT)
+ALPHA_PLOT <- alpha_plotter(df_alpha= DF_ALPHA)
+
+
 
 
 
