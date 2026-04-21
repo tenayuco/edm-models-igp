@@ -74,42 +74,34 @@ toc()
 
 
 ##------------now plotting the parameters---------------
-DF_RT <- data.frame()
+
+###intento loco
+process_list <- function(data_list){
+df_total <- data.frame()
 for (i in 1:9){
-  df_rt_temp <- as.data.frame(r_hat_list[[i]])
+  df_rt_temp <- as.data.frame(data_list[[i]])
   df_rt_temp$replicate <- i
   df_rt_temp$time <- seq(1, dim(df_rt_temp)[1])
-  DF_RT <-  rbind(DF_RT, df_rt_temp)
+  df_total <-  rbind(df_total, df_rt_temp)
+}
+return(df_total)
 }
 
-DF_RT_SD <- data.frame()
-for (i in 1:9){
-  df_rt_temp <- as.data.frame(r_se_list[[i]])
-  df_rt_temp$replicate <- i
-  df_rt_temp$time <- seq(1, dim(df_rt_temp)[1])
-  DF_RT_SD <-  rbind(DF_RT_SD, df_rt_temp)
-}
+#---here I all as data frames
+DF_RT <- process_list(data_list = r_hat_list)
+DF_RT_SE <- process_list(data_list = r_se_list)
+DF_ALPHA <- process_list(data_list = alpha_hat_list)
+DF_ALPHA_SE <- process_list(data_list = alpha_se_list)
 
+##how the parameters change in time
+RT_TIME_PLOT <- par_time_plotter(DF_RT)
+ALPHA_TIME_PLOT <- par_time_plotter(DF_ALPHA)
 
-DF_ALPHA <- data.frame()
-for (i in 1:9){
-  df_al_temp <- as.data.frame(alpha_hat_list[[i]])
-  df_al_temp$replicate <- i
-  df_al_temp$time <- seq(1, dim(df_al_temp)[1])
-  DF_ALPHA <-  rbind(DF_ALPHA, df_al_temp)
-}
+#now the mean and sd 
 
-DF_ALPHA_SD <- data.frame()
-for (i in 1:9){
-  df_al_temp <- as.data.frame(alpha_se_list[[i]])
-  df_al_temp$replicate <- i
-  df_al_temp$time <- seq(1, dim(df_al_temp)[1])
-  DF_ALPHA_SD <-  rbind(DF_ALPHA_SD, df_al_temp)
-}
-
-RT_PLOT <- rt_plotter(df_rt = DF_RT)
-ALPHA_PLOT <- alpha_plotter(df_alpha= DF_ALPHA)
-
+RT_MEAN_SD_PLOT <- par_mean_sd_plotter(df_par = DF_RT, df_par_se = DF_RT_SE)
+ALPHA_MEAN_SD_PLOT <- par_mean_sd_plotter(df_par = DF_ALPHA, df_par_se = DF_ALPHA_SE)
+#-------------------------------
 
 
 
@@ -670,3 +662,4 @@ lines(seq(1, Tmax), N_list[[9]][, 1], col = "green")
 lines(seq(1, Tmax), N_list[[9]][, 2], col = "red")
 
 dev.off()
+  
