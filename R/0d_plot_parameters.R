@@ -27,7 +27,7 @@ par_time_plotter <- function(df_par, replicate= "replicate", plotted_var = c("N"
 
 
 
-par_mean_sd_plotter <- function(df_par, df_par_se, replicate= "replicate"){
+par_mean_sd_plotter <- function(df_par, df_par_se, replicate= "replicate", num_col=2){
 
 
   outLong <-  df_par |> 
@@ -49,7 +49,9 @@ par_mean_sd_plotter <- function(df_par, df_par_se, replicate= "replicate"){
     geom_errorbar(aes(ymin=mvalue.mean- 1.96*mvalue.sd,  ymax=mvalue.mean+ 1.96*mvalue.sd), width=.2,
                  position=position_dodge(0.05))+
     xlab("Replicate") +
-    facet_grid(~varName, scales = "free")+
+    geom_segment(aes(x = min(replicate)-0.5, y = 0, xend = max(replicate)+0.5, yend = 0), color= "darkred", linetype= "dashed")+
+
+    facet_wrap(~varName, scales = "free", ncol= num_col)+
     #facet_grid(varName~replicate, scales = "free")+
 
     theme_bw()
