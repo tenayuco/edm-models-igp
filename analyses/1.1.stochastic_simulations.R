@@ -45,13 +45,62 @@ PHASE_PLOT_NR <- phase_plotter(outDF = DF_DISC_LV, var1 = "R", var2 = "N", repli
 
 FULL_PLOT <-  TS_PLOT + (PHASE_PLOT_PN/PHASE_PLOT_PR/PHASE_PLOT_NR)
 
-# ggsave(
- #   FULL_PLOT,
-  #  filename = paste0("./figures/simulation/fullPlot_", "tmin_", tmin,"_tmax_", tmax,  "_mode_", disc_count, "_reso_",reso,  ".png"),
-   # height = 10,
-    #width = 8,
-    #create.dir = T
-  #)
+ggsave(FULL_PLOT, filename = paste0("./figures/simulation/fullPlot_", "tmin_", tmin,"_tmax_", tmax,  "_mode_", disc_count, "_reso_",reso,  ".png"),
+   height = 10,
+    width = 12,
+    create.dir = T
+  )
+
+
+#--------------------------------
+
+#-------------------------------
+###########aqui vou....cambiar eso..
+
+S <-  length(LBLB_LV_list$init)
+Tmax <- dim(DF_temp)[1]
+
+
+###now I put here the real values of the data, according to the transformation 
+dt <- 0.01
+
+r_eq <- c(log(1-LBLB_LV_parms[["mup"]]*dt), log(1-LBLB_LV_parms[["mun"]]*dt), log(1+LBLB_LV_parms[["rho"]]*dt)) # set the intrinsic growth rates
+names(r_eq) <- paste("sp", 1:S, sep = "") # species names
+alpha_eq <- matrix(NA, nrow = S, ncol = S) # set the per capita interaction strengths matrix
+colnames(alpha_eq) <- c("R","N", "P" )
+rownames(alpha_eq) <-c("R","N", "P" )
+
+alpha_eq[1,1] <- 0
+alpha_eq[1, 2] <- LBLB_LV_parms[["Ep"]]* LBLB_LV_parms[["fnp"]] * (1- LBLB_LV_parms[["S"]]) #0.15
+alpha_eq[1, 3] <- LBLB_LV_parms[["Ep"]]* LBLB_LV_parms[["frp"]] *  LBLB_LV_parms[["S"]] #0.15
+alpha_eq[2, 1] <- - LBLB_LV_parms[["fnp"]] * (1- LBLB_LV_parms[["S"]])
+alpha_eq[2, 2] <- 0
+alpha_eq[2, 3] <- LBLB_LV_parms[["En"]]* LBLB_LV_parms[["frn"]]
+alpha_eq[3, 1] <- - LBLB_LV_parms[["frp"]] *  LBLB_LV_parms[["S"]]
+alpha_eq[3, 2] <-  -LBLB_LV_parms[["frn"]]
+#alpha[3, 3] <- -LBLB_LV_parms[["rho"]]/LBLB_LV_parms[["K"]]
+alpha_eq[3, 3] <- 0
+alpha_eq <- alpha_eq * dt
+
+
+#for r
+DF_R_EQ <- as.double(r_eq)
+DF_R_EQ <- as.data.frame(DF_R_EQ)
+names(DF_R_EQ) <- "par_eq"
+DF_R_EQ$varName <- c("R","N","P")
+
+
+
+
+#for alpha
+DF_ALPHA_EQ <- as.double(alpha_eq)
+DF_ALPHA_EQ <- as.data.frame(DF_ALPHA_EQ)
+names(DF_ALPHA_EQ) <- "par_eq"
+DF_ALPHA_EQ$varName <- c("R.R","R.N","R.P","N.R","N.N","N.P","P.R","P.N","P.P")
+
+
+
+#--------------------------------now 
 
 
 #---transforms to a matrix
@@ -67,10 +116,6 @@ for (i in unique(DF_DISC_LV$replicate)){
   N_list_sim[[i]] <- as.matrix(df_temp)
 }
 
-###########aqui vou....
-
-S <- dim(df_temp)[2]
-Tmax <- dim(df_temp)[1]
 
 
 # ================
@@ -125,12 +170,16 @@ DF_ALPHA <- process_list(data_list = alpha_hat_list)
 DF_ALPHA_SE <- process_list(data_list = alpha_se_list)
 
 ##how the parameters change in time
-RT_TIME_PLOT <- par_time_plotter(DF_RT)
-ALPHA_TIME_PLOT <- par_time_plotter(DF_ALPHA)
+RT_TIME_PLOT <- par_time_plotter(DF_RT, num_col =S)
+ALPHA_TIME_PLOT <- par_time_plotter(DF_ALPHA, num_col =S)
 
 #now the mean and sd 
 
-RT_MEAN_SD_PLOT <- par_mean_sd_plotter(df_par = DF_RT, df_par_se = DF_RT_SE, num_col =S)
-ALPHA_MEAN_SD_PLOT <- par_mean_sd_plotter(df_par = DF_ALPHA, df_par_se = DF_ALPHA_SE, num_col=S)
-#-------------------------------
+RT_MEAN_SD_PLOT <- par_mean_sd_plotter(df_par_se_long =  long_formatter(df_par = DF_RT, df_par_se = DF_RT_SE), df_par_eq= DF_R_EQ, num_col=S)
+ALPHA_MEAN_SD_PLOT <- par_mean_sd_plotter(df_par_se_long =  long_formatter(df_par=DF_ALPHA, df_par_se = DF_ALPHA_SE), df_par_eq= DF_ALPHA_EQ, num_col=S)
 
+
+##now check if it makes sense.. 
+#averages #does ot work YET
+RT_EST <- av_comp_plotter(df_par_se_long = long_formatter(df_par = DF_RT, df_par_se = DF_RT_SE), df_par_eq = DF_R_EQ)
+ALPHA_EST <- av_comp_plotter(df_par_se_long = long_formatter(df_par = DF_ALPHA, df_par_se = DF_ALPHA_SE), df_par_eq = DF_ALPHA_EQ)

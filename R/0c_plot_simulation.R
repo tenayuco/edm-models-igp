@@ -12,8 +12,9 @@ ts_plotter <- function(outDF, plotted_var = c("R", "N", "P"), replicate= "replic
     ggplot(aes(x=time, y=value)) +
     geom_line(aes(color= as.factor(replicate)), linewidth=1) + 
     xlab("Time") +
-    #facet_wrap(~forcats::fct_reorder(varName, orden, .desc = TRUE), scales = "free", ncol = 1)+
-    facet_grid(forcats::fct_reorder(varName, orden, .desc = TRUE)~replicate, scales = "free")+
+    facet_wrap(~forcats::fct_reorder(varName, orden, .desc = TRUE), scales = "free", ncol = 1)+
+    #facet_grid(forcats::fct_reorder(varName, orden, .desc = TRUE)~replicate, scales = "free")+
+    scale_colour_viridis_d()+
 
     theme_bw()+ 
     theme(plot.subtitle = element_text(hjust = 0.5, size = 12), 
@@ -31,8 +32,8 @@ phase_plotter <- function(outDF, var1= "N", var2= "P", replicate= "replicate"){
   PP <- outDF |> 
     ggplot(aes(x= !!sym(var1), y=!!sym(var2)))+
    # geom_path(aes(colour= time), linewidth=1)+
-     geom_point(color="black")+
-    scale_colour_viridis_c()+
+     geom_point(aes(color= as.factor(replicate)))+
+    scale_colour_viridis_d()+
     theme_bw()+
     theme(legend.position = "none")
 

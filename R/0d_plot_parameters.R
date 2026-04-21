@@ -5,7 +5,7 @@
 
 
 
-par_time_plotter <- function(df_par, replicate= "replicate", plotted_var = c("N", "P")){
+par_time_plotter <- function(df_par, replicate= "replicate", plotted_var = c("N", "P"), num_col=2){
 
 
   outLong <-  df_par |> 
@@ -16,7 +16,7 @@ par_time_plotter <- function(df_par, replicate= "replicate", plotted_var = c("N"
     ggplot(aes(x=time, y=value)) +
     geom_line(aes(color= as.factor(replicate), group=replicate), linewidth=1) + 
     xlab("Time") +
-    facet_grid(~varName, scales = "free")+
+    facet_wrap(~varName, scales = "free", ncol = num_col)+
     #facet_grid(varName~replicate, scales = "free")+
 
     theme_bw()
@@ -26,11 +26,8 @@ par_time_plotter <- function(df_par, replicate= "replicate", plotted_var = c("N"
 
 
 
-
-par_mean_sd_plotter <- function(df_par, df_par_se, replicate= "replicate", num_col=2){
-
-
-  outLong <-  df_par |> 
+long_formatter <- function(df_par, df_par_se, replicate= "replicate"){
+outLong <-  df_par |> 
     tidyr::pivot_longer(cols= !c(replicate, time), names_to = "varName", values_to = "value") |> 
     dplyr::group_by(replicate, varName)|> 
     dplyr::summarise(mvalue = mean(value)) 
@@ -42,14 +39,28 @@ par_mean_sd_plotter <- function(df_par, df_par_se, replicate= "replicate", num_c
 
   outLong_total <- dplyr::full_join(outLong, outLong_sd, by=c("varName", "replicate"), suffix= c(".mean", ".sd"))
 
+  return(outLong_total)
 
-  par_mean_sd <- outLong_total |> 
+}
+
+
+
+par_mean_sd_plotter <- function(df_par_se_long, df_par_eq, replicate= "replicate", num_col=2){
+
+
+   min_x <- min(df_par_se_long$replicate)
+   max_x <- max(df_par_se_long$replicate)
+
+  par_mean_sd <- df_par_se_long |> 
     ggplot(aes(x= replicate, y= mvalue.mean)) +
     geom_point()+
     geom_errorbar(aes(ymin=mvalue.mean- 1.96*mvalue.sd,  ymax=mvalue.mean+ 1.96*mvalue.sd), width=.2,
                  position=position_dodge(0.05))+
     xlab("Replicate") +
-    geom_segment(aes(x = min(replicate)-0.5, y = 0, xend = max(replicate)+0.5, yend = 0), color= "darkred", linetype= "dashed")+
+
+    geom_segment(data= df_par_eq,  aes(x = min_x-0.5, y = par_eq , xend = max_x +0.5, yend = par_eq), color= "blue", linetype= "dashed")+
+    geom_segment(data= df_par_se_long,  aes(x = min_x-0.5, y = 0, xend = max_x+0.5, yend = 0), color= "darkred", linetype= "dashed")+
+
 
     facet_wrap(~varName, scales = "free", ncol= num_col)+
     #facet_grid(varName~replicate, scales = "free")+
@@ -61,3 +72,28 @@ par_mean_sd_plotter <- function(df_par, df_par_se, replicate= "replicate", num_c
 
 
 
+av_comp_plotter <- function(df_par_se_long, df_par_eq){
+
+  DF_average <- df_par_se_long |> 
+    dplyr::ungroup() |> 
+    dplyr::group_by(varName) |> 
+    dplyr::summarise_all(mean)
+
+  DF_average$replicate <- NULL
+ 
+ 
+  DF_average <- dplyr::full_join(DF_average, df_par_eq, by =c("varName")) 
+
+
+  par_rep_av <- DF_average |> 
+    ggplot(aes(x= varName, y= mvalue.mean)) +
+    geom_point()+
+    geom_errorbar(aes(ymin=mvalue.mean- 1.96*mvalue.sd,  ymax=mvalue.mean+ 1.96*mvalue.sd), width=.2,
+                 position=position_dodge(0.05)) +
+    geom_point(aes(x = varName, y= par_eq), color= "blue", size=3, shape=17)+
+    theme_bw()
+
+   return(par_rep_av)
+  
+
+}
