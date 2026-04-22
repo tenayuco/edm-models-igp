@@ -60,11 +60,14 @@ LBLB_LV_disc_stoc_model <- function(t, state, parms, dt = 0.1){
 
     #these are the equations 
     dPdt <- Ep*((frp*S*R + fnp*N*(1-S))*P)- mup_s*P
-    dNdt <- En*(frn*R*N)- fnp*P*N-mun_s*N 
-    dRdt <- rho_s*(K-R)- (frn*N- frp*P) * R  ## chemos
-    #dRdt <- rho_s*R*(1-R/K)- (frn*N- frp*P) * R  #logisstic
-
+    dNdt <- En*(frn*R*N)- fnp*(1-S)*P*N-mun_s*N   #now i have to put them there... the S
     
+    if(grow_function == "semichemostat"){grow_R = rho_s*(K-R)}
+    if(grow_function == "exponential"){grow_R = rho_s*R}
+    if(grow_function == "logistic"){grow_R = rho_s*R*(1-R/K)}
+
+    dRdt <-  grow_R- (frn*N- frp*S*P) * R  ## chemos
+  
     # Euler update for discrete time step
     R_new  <- R  + dRdt * dt
     N_new <- N + dNdt * dt

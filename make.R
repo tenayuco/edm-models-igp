@@ -1,3 +1,9 @@
+
+rm(list = ls()) # clear memory
+graphics.off() # clear graphics
+
+
+
 library(ggplot2)
 library(patchwork)
 
@@ -15,4 +21,37 @@ devtools::load_all()
 
 ########run the procedures you need######3333
 
-#source("./analyses/1.analyze_data.R")
+
+source("./analyses/0.set_LBLB_model.R")
+
+
+##here it runs the whole analysis and comparison with iy functions.. but you have to specify the noise you want to use.. 
+
+
+##########
+set.seed(12)
+noise_chosen <- 0.1
+num_rep <- 10
+tmax_len_chosen <- 50
+diff_len <- FALSE
+source("./analyses/1.1.stochastic_simulations.R")
+
+
+
+##########
+set.seed(12)
+noise_chosen <- 0.1
+num_rep <- 10
+tmax_len_chosen <- 20
+diff_len <- FALSE
+source("./analyses/1.1.stochastic_simulations.R")
+
+
+
+##########
+set.seed(12)
+noise_chosen <- 0.1
+num_rep <- 10
+tmax_len_chosen <- 20
+diff_len <- FALSE
+source("./analyses/1.1.stochastic_simulations.R")
