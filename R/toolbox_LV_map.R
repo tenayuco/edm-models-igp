@@ -197,6 +197,7 @@ LV_map_state_space_cross_validation <- function(N, theta_v = seq(0, 5, 0.05), p 
       alpha_hat <- t(beta_hat[-1, ])
 
       ESS <- ESS + sum((N[t + 1, ] - N[t, ] * exp(r_hat + alpha_hat %*% N[t, ]))^2)
+     # print(sum(exp(r_hat + alpha_hat %*% N[t, ])))
     }
 
     RMSE[i] <- sqrt(ESS / (Tmax - 1))

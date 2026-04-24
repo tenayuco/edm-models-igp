@@ -34,12 +34,12 @@ set.seed(3)
 
 random_seed <- rnorm(1)
 
-num_rep <- 5
+num_rep <- 10
 diff_len <- FALSE
 #reso = 0.1  # Resolution
 
-for (res in c(1, 0.1, 0.01)){
 for (l in c(100, 50)){
+for (res in c(1, 0.1, 0.01)){
   for (noi in c(0.1)){
 
 reso <-  res
@@ -51,4 +51,21 @@ source("./analyses/1.1.stochastic_simulations.R")
 }
 }
 
-  ##########
+
+
+  ##########now with the data
+
+DATA_IGP <- readr::read_csv("data/dataIGP_2025.csv")
+
+chosen_enemies <- "my+aa"
+rpresent <- FALSE
+num_rep <- 1
+
+
+for (enem in unique(DATA_IGP$enem)){
+chosen_enemies <- enem
+  source("./analyses/2.LV_map_data.R")
+
+}
+
+

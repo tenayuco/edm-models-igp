@@ -31,6 +31,7 @@ outLong <-  df_par |>
     dplyr::group_by(replicate, varName)|> 
     dplyr::summarise(mvalue = mean(value))
   
+  
   outLong_sd <-  df_par_se |> 
     tidyr::pivot_longer(cols= !c(replicate, time), names_to = "varName", values_to = "value") |> 
     dplyr::group_by(replicate, varName)|> 
@@ -44,7 +45,7 @@ outLong <-  df_par |>
 
 
 
-par_mean_sd_plotter <- function(df_par_se_long, df_par_eq, replicate= "replicate", num_col=2){
+par_mean_sd_plotter <- function(df_par_se_long, trueParameters = FALSE, df_par_eq, replicate= "replicate", num_col=2){
 
 
    min_x <- min(df_par_se_long$replicate)
@@ -57,7 +58,6 @@ par_mean_sd_plotter <- function(df_par_se_long, df_par_eq, replicate= "replicate
                  position=position_dodge(0.05))+
     xlab("Replicate") +
 
-    geom_segment(data= df_par_eq,  aes(x = min_x-0.5, y = par_eq , xend = max_x +0.5, yend = par_eq), color= "darkred", linetype= "dashed")+
     geom_segment(data= df_par_se_long,  aes(x = min_x-0.5, y = 0, xend = max_x+0.5, yend = 0), color= "black", linetype= "dashed")+
 
 
@@ -65,6 +65,11 @@ par_mean_sd_plotter <- function(df_par_se_long, df_par_eq, replicate= "replicate
     #facet_grid(varName~replicate, scales = "free")+
 
     theme_bw()
+  
+  if (trueParameters == TRUE){
+      par_mean_sd <- par_mean_sd +  geom_segment(data= df_par_eq,  aes(x = min_x-0.5, y = par_eq , xend = max_x +0.5, yend = par_eq), color= "darkred", linetype= "dashed")
+
+  }
   
   return(par_mean_sd)
 }

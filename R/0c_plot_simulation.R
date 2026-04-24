@@ -1,4 +1,4 @@
-ts_plotter <- function(outDF, plotted_var = c("R", "N", "P"), replicate= "replicate"){
+ts_plotter <- function(outDF, plotted_var = c("R", "N", "P"), replicate= "replicate", legenda= "none"){
 
   outLong <-  outDF  |> 
     tidyr::pivot_longer(cols= plotted_var, names_to = "varName", values_to = "value") |> 
@@ -20,7 +20,7 @@ ts_plotter <- function(outDF, plotted_var = c("R", "N", "P"), replicate= "replic
     theme(plot.subtitle = element_text(hjust = 0.5, size = 12), 
       text = element_text(size = 12),
       axis.text.x=element_text(angle=60, hjust=1, size = 12),
-    legend.position = "none")
+    legend.position = legenda)
  
   return(RNP_ts)
 }
