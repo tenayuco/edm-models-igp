@@ -115,11 +115,16 @@ shapes_used <- c(21, 22, 23, 24, 21, 22, 23, 24, 21, 22, 23, 24)
 
   par_rep_av <- DF_average |> 
     ggplot(aes(x= par_eq, y=mvalue.mean)) +
-    geom_errorbar(aes(ymin=mvalue.mean- 1.96*mvalue.sd,  ymax=mvalue.mean+ 1.96*mvalue.sd), color= "black", width=0.1,
+    geom_errorbar(aes(ymin=mvalue.mean- 1.96*mvalue.sd,  ymax=mvalue.mean+ 1.96*mvalue.sd), color= "black", width=0.01,
                  position=position_dodge(0.05)) +
     geom_point(aes(fill= varName, shape=varName), size=4)+
-   geom_segment(aes(x = min(par_eq), y = min(par_eq) , xend = max(par_eq), yend = max(par_eq)), color= "black", linetype= "dashed")+
-
+   #geom_segment(aes(x = min(par_eq), y = min(par_eq) , xend = max(par_eq), yend = max(par_eq)), color= "black", linetype= "dashed")+
+   #geom_segment(aes(x = 0, y = min(mvalue.mean) , xend = 0, yend = max(mvalue.mean)), color= "black", linetype= "dashed")+
+   #geom_segment(aes(x = min(par_eq), y = 0 , xend = max(par_eq), yend = 0), color= "black", linetype= "dashed")+
+    geom_vline(xintercept = 0, color= "black", linetype= "dashed")+
+     geom_hline(yintercept = 0, color= "black", linetype= "dashed")+
+    geom_abline(intercept = 0, slope =1,color= "black", linetype= "dashed" )+
+    
     theme_bw()+
     scale_fill_viridis_d()+
     scale_color_viridis_d() +

@@ -26,32 +26,26 @@ source("./analyses/0.set_LBLB_model.R")
 
 
 ##here it runs the whole analysis and comparison with iy functions.. but you have to specify the noise you want to use.. 
+#works
 
+#------------------STOCHASTIC SIMULATIONS
+
+set.seed(3)
+
+random_seed <- rnorm(1)
+
+num_rep <- 2
+diff_len <- FALSE
+reso = 0.1  # Resolution
+
+
+for (l in c(100)){
+  for (noi in c(0.1)){
+noise_chosen <- noi
+len_chosen <- l
+
+source("./analyses/1.1.stochastic_simulations.R")
+}
+}
 
 ##########
-set.seed(12)
-noise_chosen <- 0.1
-num_rep <- 10
-tmax_len_chosen <- 50
-diff_len <- FALSE
-source("./analyses/1.1.stochastic_simulations.R")
-
-
-
-##########
-set.seed(12)
-noise_chosen <- 0.1
-num_rep <- 10
-tmax_len_chosen <- 20
-diff_len <- FALSE
-source("./analyses/1.1.stochastic_simulations.R")
-
-
-
-##########
-set.seed(12)
-noise_chosen <- 0.1
-num_rep <- 10
-tmax_len_chosen <- 20
-diff_len <- FALSE
-source("./analyses/1.1.stochastic_simulations.R")

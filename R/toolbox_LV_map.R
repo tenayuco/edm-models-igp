@@ -185,6 +185,9 @@ LV_map_state_space_cross_validation <- function(N, theta_v = seq(0, 5, 0.05), p 
       Y <- logN.cut[-1, ] - logN.cut[-t, ]
       X <- cbind(rep(1, t - 1), N.cut[-t, ])
       # d <- sqrt(colSums(((t(logN.cut)[, t - 1]) - t(logN.cut)[, -t])^2))
+    #  print(t(N.cut)[, t - 1]) ###here the mods
+    #  print("dei")
+    #  print(t(N.cut)[, -t]) ##here the mods
       d <- sqrt(colSums(((t(N.cut)[, t - 1]) - t(N.cut)[, -t])^2))
       omega <- exp(-theta * d / mean(d))
       Y.tilde <- omega * Y
