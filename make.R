@@ -59,13 +59,15 @@ DATA_IGP <- readr::read_csv("data/dataIGP_2025.csv")
 
 chosen_enemies <- "my+aa"
 rpresent <- FALSE
-num_rep <- 1
 
 
+  for (num_rep in c(1, 2,5)) {
 for (enem in unique(DATA_IGP$enem)){
+
 chosen_enemies <- enem
+  num_rep <- num_rep
   source("./analyses/2.LV_map_data.R")
 
+  }
 }
-
 

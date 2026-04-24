@@ -131,14 +131,14 @@ ALPHA_TIME_PLOT <- par_time_plotter(DF_ALPHA, num_col =S)
 
 
 
-ggsave(RT_TIME_PLOT, filename = paste0(fig_folder, fig_subfolder, "rt_time_",  ".png"),
+ggsave(RT_TIME_PLOT, filename = paste0(fig_folder, fig_subfolder, "rt_time_", "num_rep_", num_rep, ".png"),
    height = 4,
     width = 12,
     create.dir = T
   )
 
 
-ggsave(ALPHA_TIME_PLOT, filename = paste0(fig_folder, fig_subfolder, "alpha_time_", ".png"),
+ggsave(ALPHA_TIME_PLOT, filename = paste0(fig_folder, fig_subfolder, "alpha_time_", "num_rep_", num_rep, ".png"),
    height = 10,
     width = 12,
     create.dir = T
@@ -154,13 +154,13 @@ RT_MEAN_SD_PLOT <- par_mean_sd_plotter(df_par_se_long =  long_par_formatter(df_p
 ALPHA_MEAN_SD_PLOT <- par_mean_sd_plotter(df_par_se_long =  long_par_formatter(df_par=DF_ALPHA, df_par_se = DF_ALPHA_SE), df_par_eq= NA, trueParameters= FALSE, num_col=S)
 
 
-ggsave(RT_MEAN_SD_PLOT, filename = paste0(fig_folder, fig_subfolder, "rt_mean_",  ".png"),
+ggsave(RT_MEAN_SD_PLOT, filename = paste0(fig_folder, fig_subfolder, "rt_mean_", "num_rep_", num_rep, ".png"),
    height = 4,
     width = 12,
     create.dir = T
   )
 
-ggsave(ALPHA_MEAN_SD_PLOT, filename = paste0(fig_folder, fig_subfolder, "alpha_mean_",  ".png"),
+ggsave(ALPHA_MEAN_SD_PLOT, filename = paste0(fig_folder, fig_subfolder, "alpha_mean_", "num_rep_", num_rep,   ".png"),
    height = 10,
     width = 12,
     create.dir = T
