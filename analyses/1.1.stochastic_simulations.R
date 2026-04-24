@@ -4,9 +4,6 @@
 fig_folder <- "./figures/simulation/stochastic_sim_lvmap/demographic_sto/" ### Directory path for the main figure folder
 fig_subfolder <- paste0("len", len_chosen,"/", "noise_", noise_chosen, "/", "reso_", reso, "/") ## Creates a subfolder name based on time length and noise level chosen
 
-### Parameters specified for the simulation run
-num_rep <- 10  # Number of replicate simulations to run
-diff_len <- FALSE  # Whether to use different lengths for each replicate (FALSE = same length for all)
 
 DF_DISC_LV <-  data.frame()  # Initialize empty data frame to store all simulation results
 

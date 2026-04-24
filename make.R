@@ -34,18 +34,21 @@ set.seed(3)
 
 random_seed <- rnorm(1)
 
-num_rep <- 2
+num_rep <- 5
 diff_len <- FALSE
-reso = 0.1  # Resolution
+#reso = 0.1  # Resolution
 
-
-for (l in c(100)){
+for (res in c(1, 0.1, 0.01)){
+for (l in c(100, 50)){
   for (noi in c(0.1)){
+
+reso <-  res
 noise_chosen <- noi
 len_chosen <- l
 
 source("./analyses/1.1.stochastic_simulations.R")
 }
 }
+}
 
-##########
+  ##########
