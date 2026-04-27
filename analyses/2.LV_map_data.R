@@ -150,14 +150,14 @@ ALPHA_TIME_PLOT <- par_time_plotter(DF_ALPHA, num_col =S)
 
 
 
-ggsave(RT_TIME_PLOT, filename = paste0(fig_folder, fig_subfolder, "rt_time_", "num_rep_", num_rep, ".png"),
+ggsave(RT_TIME_PLOT, filename = paste0(fig_folder, fig_subfolder, "rt_time_", "num_rep_", num_rep, "_seed_", num_seed, ".png"),
    height = 4,
     width = 12,
     create.dir = T
   )
 
 
-ggsave(ALPHA_TIME_PLOT, filename = paste0(fig_folder, fig_subfolder, "alpha_time_", "num_rep_", num_rep, ".png"),
+ggsave(ALPHA_TIME_PLOT, filename = paste0(fig_folder, fig_subfolder, "alpha_time_", "num_rep_", num_rep, "_seed_", num_seed, ".png"),
    height = 10,
     width = 12,
     create.dir = T
@@ -179,13 +179,13 @@ ALPHA_MEAN_SD_PLOT <- par_mean_sd_plotter(df_par_se_long = LONG_FULL_ALPHA , df_
 
 
 
-ggsave(RT_MEAN_SD_PLOT, filename = paste0(fig_folder, fig_subfolder, "rt_mean_", "num_rep_", num_rep, ".png"),
+ggsave(RT_MEAN_SD_PLOT, filename = paste0(fig_folder, fig_subfolder, "rt_mean_", "num_rep_", num_rep, "_seed_", num_seed, ".png"),
    height = 4,
     width = 12,
     create.dir = T
   )
 
-ggsave(ALPHA_MEAN_SD_PLOT, filename = paste0(fig_folder, fig_subfolder, "alpha_mean_", "num_rep_", num_rep,   ".png"),
+ggsave(ALPHA_MEAN_SD_PLOT, filename = paste0(fig_folder, fig_subfolder, "alpha_mean_", "num_rep_", num_rep, "_seed_", num_seed,  ".png"),
    height = 10,
     width = 12,
     create.dir = T
@@ -195,8 +195,8 @@ ggsave(ALPHA_MEAN_SD_PLOT, filename = paste0(fig_folder, fig_subfolder, "alpha_m
 LONG_FULL <- rbind(LONG_FULL_RT, LONG_FULL_ALPHA)
 
 LONG_FULL$enem <-  chosen_enemies
-
 LONG_FULL$numRep <-  num_rep
+LONG_FULL$numSeed <-  num_seed
 
 
 # Set up folders for saving figures - specifies where output plots will be saved
@@ -205,4 +205,4 @@ out_subfolder <- paste0("R_", rpresent,  "/") ## Creates a subfolder name based 
 
 dir.create(paste0(out_folder, out_subfolder), recursive = TRUE)
 
-write.csv(LONG_FULL, file= paste0(out_folder, out_subfolder, "DF_parameters_", chosen_enemies, "_rep", num_rep, ".csv"))
+write.csv(LONG_FULL, file= paste0(out_folder, out_subfolder, "DF_parameters_", chosen_enemies, "_rep", num_rep, "_seed_", num_seed, ".csv"))

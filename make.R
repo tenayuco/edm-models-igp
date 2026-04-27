@@ -3,7 +3,6 @@ rm(list = ls()) # clear memory
 graphics.off() # clear graphics
 
 
-
 library(ggplot2)
 library(patchwork)
 
@@ -62,13 +61,17 @@ rpresent <- FALSE
 num_rep <- 1
 num_seed <- 1
 
-  for (num_rep in c(1)) {
+#this is nice cause you loop outside
+
+for (num_rep in c(1)) {
+  for (num_seed in seq(1:2)){
 for (enem in unique(DATA_IGP$enem)){
 
 chosen_enemies <- enem
   num_rep <- num_rep
+  num_seed <- num_seed
   source("./analyses/2.LV_map_data.R")
-
+}
   }
 }
 
