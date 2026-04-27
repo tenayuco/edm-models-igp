@@ -22,13 +22,13 @@ fig_folder <- "./figures/microcosmos/" ### Directory path for the main figure fo
 
 ggsave(PLOT_PAR_RT, filename = paste0(fig_folder, "rt_all_enem_all_seed_", "num_rep_", num_rep, ".png"),
    height = 10,
-    width = 12,
+    width = 13,
     create.dir = T
   )
 
 
 ggsave(PLOT_PAR_ALPHA, filename = paste0(fig_folder, "alpha_all_enem_all_seed_", "num_rep_", num_rep, ".png"),
    height = 10,
-    width = 12,
+    width = 13,
     create.dir = T
   )

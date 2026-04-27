@@ -52,7 +52,7 @@ if(DATA_USED[i,]$P ==0){DATA_USED[i,]$P  <- max(DATA_USED$R)/100 * abs(rnorm(1,0
 
 
 
-TS_PLOT_DATA <- ts_plotter(outDF = DATA_USED, plotted_var = c("R", "N", "P"), replicate = "replicate", legenda = "right")
+#TS_PLOT_DATA <- ts_plotter(outDF = DATA_USED, plotted_var = c("R", "N", "P"), replicate = "replicate", legenda = "right")
 
 
 ###here i removed the R

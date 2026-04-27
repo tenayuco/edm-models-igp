@@ -151,9 +151,10 @@ parameter_seed_plotter <- function(df_full = FULL_DF_PARAMETERS, par_type = "r")
   par_plot <- df_full |> 
     dplyr::filter(type == par_type) |> 
     ggplot(aes(x= varName, y= mvalue.mean)) +
-    geom_point(aes(color= as.factor(numSeed)), position=position_dodge(0.3))+
     geom_errorbar(aes(ymin=mvalue.mean- 1.96*mvalue.sd,  ymax=mvalue.mean+ 1.96*mvalue.sd, color= as.factor(numSeed)), width=.2,
                  position=position_dodge(0.3))+
+    geom_point(aes(color= as.factor(numSeed)), position=position_dodge(0.3))+
+
     xlab("Replicate and variable") +
 
    # geom_segment(data= df_par_se_long,  aes(x = min_x-0.5, y = 0, xend = max_x+0.5, yend = 0), color= "black", linetype= "dashed")+
