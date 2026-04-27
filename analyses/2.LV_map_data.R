@@ -191,6 +191,9 @@ ggsave(ALPHA_MEAN_SD_PLOT, filename = paste0(fig_folder, fig_subfolder, "alpha_m
     create.dir = T
   )
 
+LONG_FULL_RT$type <- "r"
+LONG_FULL_ALPHA$type <- "a"
+
 
 LONG_FULL <- rbind(LONG_FULL_RT, LONG_FULL_ALPHA)
 

@@ -64,7 +64,7 @@ num_seed <- 1
 #this is nice cause you loop outside
 
 for (num_rep in c(1)) {
-  for (num_seed in seq(1:2)){
+  for (num_seed in seq(1:10)){
 for (enem in unique(DATA_IGP$enem)){
 
 chosen_enemies <- enem

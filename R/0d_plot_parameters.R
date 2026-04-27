@@ -123,9 +123,7 @@ shapes_used <- c(21, 22, 23, 24, 21, 22, 23, 24, 21, 22, 23, 24)
     geom_errorbar(aes(ymin=mvalue.mean- 1.96*mvalue.sd,  ymax=mvalue.mean+ 1.96*mvalue.sd), color= "black", width=0.01,
                  position=position_dodge(0.05)) +
     geom_point(aes(fill= varName, shape=varName), size=4)+
-   #geom_segment(aes(x = min(par_eq), y = min(par_eq) , xend = max(par_eq), yend = max(par_eq)), color= "black", linetype= "dashed")+
-   #geom_segment(aes(x = 0, y = min(mvalue.mean) , xend = 0, yend = max(mvalue.mean)), color= "black", linetype= "dashed")+
-   #geom_segment(aes(x = min(par_eq), y = 0 , xend = max(par_eq), yend = 0), color= "black", linetype= "dashed")+
+  
     geom_vline(xintercept = 0, color= "black", linetype= "dashed")+
      geom_hline(yintercept = 0, color= "black", linetype= "dashed")+
     geom_abline(intercept = 0, slope =1,color= "black", linetype= "dashed" )+
@@ -139,4 +137,35 @@ shapes_used <- c(21, 22, 23, 24, 21, 22, 23, 24, 21, 22, 23, 24)
    return(par_rep_av)
   
 
+}
+
+
+
+####this is for the long frame 
+
+
+
+parameter_seed_plotter <- function(df_full = FULL_DF_PARAMETERS, par_type = "r"){
+
+
+  par_plot <- df_full |> 
+    dplyr::filter(type == par_type) |> 
+    ggplot(aes(x= varName, y= mvalue.mean)) +
+    geom_point(aes(color= as.factor(numSeed)), position=position_dodge(0.3))+
+    geom_errorbar(aes(ymin=mvalue.mean- 1.96*mvalue.sd,  ymax=mvalue.mean+ 1.96*mvalue.sd, color= as.factor(numSeed)), width=.2,
+                 position=position_dodge(0.3))+
+    xlab("Replicate and variable") +
+
+   # geom_segment(data= df_par_se_long,  aes(x = min_x-0.5, y = 0, xend = max_x+0.5, yend = 0), color= "black", linetype= "dashed")+
+
+    facet_wrap(~enem, scales = "free", ncol= 3)+
+    geom_hline(yintercept = 0, color= "black", linetype= "dashed")+
+     scale_color_viridis_d() +
+
+
+    #facet_grid(varName~replicate, scales = "free")+
+
+    theme_bw()
+
+  return(par_plot)
 }
