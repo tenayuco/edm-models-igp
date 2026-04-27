@@ -59,9 +59,10 @@ DATA_IGP <- readr::read_csv("data/dataIGP_2025.csv")
 
 chosen_enemies <- "my+aa"
 rpresent <- FALSE
+num_rep <- 1
+num_seed <- 1
 
-
-  for (num_rep in c(1, 2,5)) {
+  for (num_rep in c(1)) {
 for (enem in unique(DATA_IGP$enem)){
 
 chosen_enemies <- enem
