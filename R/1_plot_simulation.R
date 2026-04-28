@@ -1,4 +1,4 @@
-ts_plotter <- function(outDF, plotted_var = c("R", "N", "P"), replicate= "replicate", legenda= "none"){
+ts_plotter <- function(outDF, plotted_var = c("R", "N", "P"), legenda= "none"){
 
   outLong <-  outDF  |> 
     tidyr::pivot_longer(cols= plotted_var, names_to = "varName", values_to = "value") |> 
@@ -10,10 +10,9 @@ ts_plotter <- function(outDF, plotted_var = c("R", "N", "P"), replicate= "replic
                          varName=="N" ~1,
                         varName == "R" ~0)) |> 
     ggplot(aes(x=time, y=value)) +
-    geom_line(aes(color= as.factor(replicate)), linewidth=1) + 
+    geom_line(aes(color= as.factor(block)), linewidth=1) + 
     xlab("Time") +
     facet_wrap(~forcats::fct_reorder(varName, orden, .desc = TRUE), scales = "free", ncol = 1)+
-    #facet_grid(forcats::fct_reorder(varName, orden, .desc = TRUE)~replicate, scales = "free")+
     scale_colour_viridis_d()+
 
     theme_bw()+ 
@@ -27,12 +26,12 @@ ts_plotter <- function(outDF, plotted_var = c("R", "N", "P"), replicate= "replic
 
 
   
-phase_plotter <- function(outDF, var1= "N", var2= "P", replicate= "replicate"){
+phase_plotter <- function(outDF, var1= "N", var2= "P"){
 
   PP <- outDF |> 
     ggplot(aes(x= !!sym(var1), y=!!sym(var2)))+
    # geom_path(aes(colour= time), linewidth=1)+
-     geom_point(aes(color= as.factor(replicate)))+
+     geom_point(aes(color= as.factor(block)))+
     scale_colour_viridis_d()+
     theme_bw()+
     theme(legend.position = "none")

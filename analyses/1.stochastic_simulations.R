@@ -1,5 +1,7 @@
 # -------------------------PART 1 - run the stochastic IGP model ----------------------------------------
-
+# Set up folders for saving figures - specifies where output plots will be saved
+fig_folder <- "./figures/simulation/stochastic_sim_lvmap/demographic_sto/" ### Directory path for the main figure folder
+fig_subfolder <- paste0("len", len_chosen,"/", "noise_", noise_chosen, "/", "reso_", reso, "/", "replicate_", num_rep, "/" ) ## Creates a subfolder name based on time length and noise level chosen
 
 DF_DISC_LV <-  data.frame()  # Initialize empty data frame to store all simulation results
 
@@ -45,7 +47,7 @@ disc_count = "disc_stoc"  # Store the model type as a label
 DF_temp<- DF_temp |>  
        dplyr::filter(time %in%  seq(tmin, tmax, reso))
 
-DF_temp$replicate <- i
+DF_temp$block <- i
 
 DF_DISC_LV <- rbind(DF_DISC_LV, DF_temp)
   
@@ -56,10 +58,10 @@ DF_DISC_LV <- rbind(DF_DISC_LV, DF_temp)
 
 #just for the plot, i put the time steps, as 1, 2, 3.. 
 
-TS_PLOT <- ts_plotter(outDF = DF_DISC_LV, plotted_var = c("R", "N", "P"), replicate = "replicate")
-PHASE_PLOT_PN <- phase_plotter(outDF = DF_DISC_LV, var1 = "N", var2 = "P", replicate = "replicate")
-PHASE_PLOT_PR <- phase_plotter(outDF = DF_DISC_LV, var1 = "R", var2 = "P", replicate = "replicate")
-PHASE_PLOT_NR <- phase_plotter(outDF = DF_DISC_LV, var1 = "R", var2 = "N", replicate = "replicate")
+TS_PLOT <- ts_plotter(outDF = DF_DISC_LV, plotted_var = c("R", "N", "P"))
+PHASE_PLOT_PN <- phase_plotter(outDF = DF_DISC_LV, var1 = "N", var2 = "P")
+PHASE_PLOT_PR <- phase_plotter(outDF = DF_DISC_LV, var1 = "R", var2 = "P")
+PHASE_PLOT_NR <- phase_plotter(outDF = DF_DISC_LV, var1 = "R", var2 = "N")
 
 FULL_PLOT <-  TS_PLOT + (PHASE_PLOT_PN/PHASE_PLOT_PR/PHASE_PLOT_NR)
 
@@ -79,7 +81,6 @@ rm(TS_PLOT,  PHASE_PLOT_NR, PHASE_PLOT_PR, PHASE_PLOT_PN, FULL_PLOT)
 
 
 S <-  length(LBLB_LV_list$init)
-Tmax <- len_chosen
 
 
 ###now I put here the real values of the data, according to the transformation 
@@ -122,12 +123,33 @@ DF_ALPHA_EQ$varName <- c("R.R", "N.R", "P.R", "R.N", "N.N", "P.N", "R.P", "N.P",
 # ----------------------------------------------------------------------------------
 
 # -------------------------PART 3- cross validatio ----------------------------------------
+#Tmax <- len_chosen
+
+
+#here I reorder the replicates just in case im gonnea stick them and i chnage the names to replicate s
+DF_DISC_LV_USED <- DF_DISC_LV
+
+REAS_DF <-  data.frame("block" = seq(1:10), "replicate" = sample(seq(1:10)))
+DF_DISC_LV_USED <-  dplyr::full_join(DF_DISC_LV_USED, REAS_DF, by= "block")
+DF_DISC_LV_USED$block <-  NULL
+
+
+
+DF_DISC_LV_USED <-  DF_DISC_LV_USED |> 
+dplyr::arrange(replicate, .by_group = FALSE)
+###########3
+
+##now I merge the values.. to make fake replicates..
+
+size_block <- size_chosen
+DF_DISC_LV_USED$replicate <- floor((DF_DISC_LV_USED$replicate-0.1)/size_block) +1 
+
 
 #---transforms to a matrix
 N_list_sim <- vector(mode = "list", length = num_rep)
 
-for (i in unique(DF_DISC_LV$replicate)){
-  df_temp <- DF_DISC_LV |> 
+for (i in unique(DF_DISC_LV_USED$replicate)){
+  df_temp <- DF_DISC_LV_USED |> 
     dplyr::filter(replicate == i)
 
   df_temp$time <- NULL
@@ -256,3 +278,5 @@ ggsave(ALPHA_EST, filename = paste0(fig_folder, fig_subfolder, "alpha_acc_", "tm
   )
 
 # --------------------------------------------------- ----------------------------------------
+##now with the re
+

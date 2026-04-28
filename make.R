@@ -35,26 +35,24 @@ source("./analyses/0.set_LBLB_model.R")
 
 set.seed(3)
 random_seed <- rnorm(1)
-num_rep <- 10
 diff_len <- FALSE
-
+num_rep <- 10
 #now we set a loop for different initial conditions
 #folders to save everything! 
 
-# Set up folders for saving figures - specifies where output plots will be saved
-fig_folder <- "./figures/simulation/stochastic_sim_lvmap/demographic_sto/" ### Directory path for the main figure folder
-fig_subfolder <- paste0("len", len_chosen,"/", "noise_", noise_chosen, "/", "reso_", reso, "/") ## Creates a subfolder name based on time length and noise level chosen
 
-
-for (l in c(100, 50)){
-for (res in c(1, 0.1)){
+for (l in c(50, 30)){
+  for (chsize in c(1, 10)){
+for (res in c(1)){  #can be 0.1 or 0.01 for real parameters 
   for (noi in c(0.1)){
 
+size_chosen <- chsize
 reso <-  res
 noise_chosen <- noi
 len_chosen <- l
 
 source("./analyses/1.stochastic_simulations.R")
+}
 }
 }
 }
@@ -100,3 +98,4 @@ chosen_enemies <- enem
 ###########now for plotting results
 
 source("./analyses/3b.data_LV_map_results.R")
+  
