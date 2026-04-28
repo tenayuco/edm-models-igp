@@ -1,9 +1,5 @@
 # -------------------------PART 1 - run the stochastic IGP model ----------------------------------------
 
-# Set up folders for saving figures - specifies where output plots will be saved
-fig_folder <- "./figures/simulation/stochastic_sim_lvmap/demographic_sto/" ### Directory path for the main figure folder
-fig_subfolder <- paste0("len", len_chosen,"/", "noise_", noise_chosen, "/", "reso_", reso, "/") ## Creates a subfolder name based on time length and noise level chosen
-
 
 DF_DISC_LV <-  data.frame()  # Initialize empty data frame to store all simulation results
 

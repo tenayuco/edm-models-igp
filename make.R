@@ -27,16 +27,24 @@ devtools::load_all()
 source("./analyses/0.set_LBLB_model.R")
 
 
+
 # Then run the inital conditions for that code 
 # set the random value that will taken for the demographic noise
 # num_rep tells you the replicates you wanna run
 # the diff_len tell tyo if you want to randomly cut some time series
+
 set.seed(3)
 random_seed <- rnorm(1)
 num_rep <- 10
 diff_len <- FALSE
 
 #now we set a loop for different initial conditions
+#folders to save everything! 
+
+# Set up folders for saving figures - specifies where output plots will be saved
+fig_folder <- "./figures/simulation/stochastic_sim_lvmap/demographic_sto/" ### Directory path for the main figure folder
+fig_subfolder <- paste0("len", len_chosen,"/", "noise_", noise_chosen, "/", "reso_", reso, "/") ## Creates a subfolder name based on time length and noise level chosen
+
 
 for (l in c(100, 50)){
 for (res in c(1, 0.1)){
