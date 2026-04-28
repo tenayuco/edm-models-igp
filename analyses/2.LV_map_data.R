@@ -34,30 +34,35 @@ REAS_DF <-  data.frame("block" = seq(1:10), "replicate" = sample(seq(1:10)))
 DATA_USED <-  dplyr::full_join(DATA_USED, REAS_DF, by= "block")
 DATA_USED$block <-  NULL
 
-
-names(DATA_USED) <- c("R", "N", "P", "time", "replicate")
-
-DATA_USED <-  DATA_USED |> 
-dplyr::arrange(replicate, .by_group = FALSE)
-###########3
 #here it just to remove the 0 values.. 
 
 for (i in seq(1, dim(DATA_USED)[1])){
 
-if(DATA_USED[i,]$R ==0){DATA_USED[i,]$R  <- max(DATA_USED$R)/100 * abs(rnorm(1,0,0.5))}
-if(DATA_USED[i,]$N ==0){DATA_USED[i,]$N  <- max(DATA_USED$R)/100 * abs(rnorm(1,0,0.5))} 
-if(DATA_USED[i,]$P ==0){DATA_USED[i,]$P  <- max(DATA_USED$R)/100 * abs(rnorm(1,0,0.5))} 
+if(DATA_USED[i,]$herbivore ==0){DATA_USED[i,]$herbivore  <- max(DATA_USED$herbivore)/100 * abs(rnorm(1,0,0.5))}
+if(DATA_USED[i,]$pred_1 ==0){DATA_USED[i,]$pred_1  <- max(DATA_USED$pred_1)/100 * abs(rnorm(1,0,0.5))} 
+if(DATA_USED[i,]$pred_2 ==0){DATA_USED[i,]$pred_2  <- max(DATA_USED$pred_2)/100 * abs(rnorm(1,0,0.5))} 
 
 }
 
 
 
-#TS_PLOT_DATA <- ts_plotter(outDF = DATA_USED, plotted_var = c("R", "N", "P"), replicate = "replicate", legenda = "right")
 
 
-###here i removed the R
-if (rpresent == FALSE){DATA_USED$R <- NULL}
+##now here a renaming
+names(DATA_USED) <- c("H", "X", "Y", "time", "replicate")
+
+###here i removed the H
+if (rpresent == FALSE){DATA_USED$H <- NULL}
   #we remove these as they have a strong autocorrelation.. 
+
+
+DATA_USED <-  DATA_USED |> 
+dplyr::arrange(replicate, .by_group = FALSE)
+###########3
+
+
+
+#TS_PLOT_DATA <- ts_plotter(outDF = DATA_USED, plotted_var = c("R", "N", "P"), replicate = "replicate", legenda = "right")
 
 
 

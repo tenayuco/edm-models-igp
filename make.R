@@ -1,3 +1,4 @@
+#=======================HEADER - ALWAYS RUN THIS=========================================
 
 rm(list = ls()) # clear memory
 graphics.off() # clear graphics
@@ -13,32 +14,32 @@ rdeps::add_deps()
 # Install/update packages listed in DESCRIPTION
 devtools::install_deps(upgrade = "never")
 
-
+###########RUN this alwys
 # Load packages under Depends and in R 
 devtools::load_all()
 
+#====================================================================================
 
-########run the procedures you need######3333
 
+#====================STOCASTIC SIMULATIONS=================================
 
+#First set the conditions for the LBLB model
 source("./analyses/0.set_LBLB_model.R")
 
 
-##here it runs the whole analysis and comparison with iy functions.. but you have to specify the noise you want to use.. 
-#works
-
-#------------------STOCHASTIC SIMULATIONS
-
+# Then run the inital conditions for that code 
+# set the random value that will taken for the demographic noise
+# num_rep tells you the replicates you wanna run
+# the diff_len tell tyo if you want to randomly cut some time series
 set.seed(3)
-
 random_seed <- rnorm(1)
-
 num_rep <- 10
 diff_len <- FALSE
-#reso = 0.1  # Resolution
+
+#now we set a loop for different initial conditions
 
 for (l in c(100, 50)){
-for (res in c(1, 0.1, 0.01)){
+for (res in c(1, 0.1)){
   for (noi in c(0.1)){
 
 reso <-  res
@@ -50,21 +51,28 @@ source("./analyses/1.1.stochastic_simulations.R")
 }
 }
 
+#=========================================================================================
 
+#============================DATA ANALYSE WITH LV MAP=============================================
 
-  ##########now with the data
-
+#========1.LV MAP======================
 DATA_IGP <- readr::read_csv("data/dataIGP_2025.csv")
 
-chosen_enemies <- "my+aa"
-rpresent <- FALSE
-num_rep <- 1
-num_seed <- 1
+#this is if you want to run a specifc test
+#chosen_enemies <- "my+aa"
+#rpresent <- FALSE
+#num_rep <- 1
+#num_seed <- 1
+#source("./analyses/2.LV_map_data.R")
 
 #this is nice cause you loop outside
 
-for (num_rep in c(1)) {
-  for (num_seed in seq(1:10)){
+
+rpresent <- FALSE
+num_rep <- 1
+
+
+for (num_seed in seq(1:10)){
 for (enem in unique(DATA_IGP$enem)){
 
 chosen_enemies <- enem
@@ -73,5 +81,10 @@ chosen_enemies <- enem
   source("./analyses/2.LV_map_data.R")
 }
   }
-}
 
+
+
+
+###########now for plotting results
+
+source("./analyses/2a.lv_map_results.R")
