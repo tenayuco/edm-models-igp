@@ -64,7 +64,7 @@ source("./analyses/1.stochastic_simulations.R")
 #============================DATA ANALYSE WITH LV MAP=============================================
 
 DATA_IGP <- readr::read_csv("data/dataIGP_2025.csv")
-
+source("./analyses/2.data_representation.R")
 
 
 #========2.LV MAP======================
@@ -77,6 +77,7 @@ DATA_IGP <- readr::read_csv("data/dataIGP_2025.csv")
 #source("./analyses/2.LV_map_data.R")
 
 #this is nice cause you loop outside
+DATA_IGP <- readr::read_csv("data/dataIGP_2025.csv")
 
 
 rpresent <- FALSE

@@ -21,7 +21,7 @@ DATA_PRED <-  pred_formatter(DATA_LONG)
 
 DATA_USED <- DATA_PRED |> 
   dplyr::filter(enem == chosen_enemies)|> 
-  dplyr::select(block, herbivore, pred_1, pred_2, week)|> 
+  dplyr::select(block, R, X, Y, week)|> 
   dplyr::filter()
 
 
@@ -38,9 +38,9 @@ DATA_USED$block <-  NULL
 
 for (i in seq(1, dim(DATA_USED)[1])){
 
-if(DATA_USED[i,]$herbivore ==0){DATA_USED[i,]$herbivore  <- max(DATA_USED$herbivore)/100 * abs(rnorm(1,0,0.5))}
-if(DATA_USED[i,]$pred_1 ==0){DATA_USED[i,]$pred_1  <- max(DATA_USED$pred_1)/100 * abs(rnorm(1,0,0.5))} 
-if(DATA_USED[i,]$pred_2 ==0){DATA_USED[i,]$pred_2  <- max(DATA_USED$pred_2)/100 * abs(rnorm(1,0,0.5))} 
+if(DATA_USED[i,]$R ==0){DATA_USED[i,]$R  <- max(DATA_USED$R)/100 * abs(rnorm(1,0,0.5))}
+if(DATA_USED[i,]$X ==0){DATA_USED[i,]$X  <- max(DATA_USED$X)/100 * abs(rnorm(1,0,0.5))} 
+if(DATA_USED[i,]$Y ==0){DATA_USED[i,]$Y  <- max(DATA_USED$Y)/100 * abs(rnorm(1,0,0.5))} 
 
 }
 
