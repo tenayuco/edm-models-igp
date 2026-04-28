@@ -54,7 +54,7 @@ reso <-  res
 noise_chosen <- noi
 len_chosen <- l
 
-source("./analyses/1.1.stochastic_simulations.R")
+source("./analyses/1.stochastic_simulations.R")
 }
 }
 }
@@ -63,8 +63,11 @@ source("./analyses/1.1.stochastic_simulations.R")
 
 #============================DATA ANALYSE WITH LV MAP=============================================
 
-#========1.LV MAP======================
 DATA_IGP <- readr::read_csv("data/dataIGP_2025.csv")
+
+
+
+#========2.LV MAP======================
 
 #this is if you want to run a specifc test
 #chosen_enemies <- "my+aa"
@@ -86,7 +89,7 @@ for (enem in unique(DATA_IGP$enem)){
 chosen_enemies <- enem
   num_rep <- num_rep
   num_seed <- num_seed
-  source("./analyses/2.LV_map_data.R")
+  source("./analyses/3a.data_LV_map.R")
 }
   }
 
@@ -95,4 +98,4 @@ chosen_enemies <- enem
 
 ###########now for plotting results
 
-source("./analyses/2a.lv_map_results.R")
+source("./analyses/3b.data_LV_map_results.R")

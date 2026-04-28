@@ -49,10 +49,10 @@ if(DATA_USED[i,]$pred_2 ==0){DATA_USED[i,]$pred_2  <- max(DATA_USED$pred_2)/100 
 
 
 ##now here a renaming
-names(DATA_USED) <- c("H", "X", "Y", "time", "replicate")
+names(DATA_USED) <- c("R", "X", "Y", "time", "replicate")
 
 ###here i removed the H
-if (rpresent == FALSE){DATA_USED$H <- NULL}
+if (rpresent == FALSE){DATA_USED$R <- NULL}
   #we remove these as they have a strong autocorrelation.. 
 
 
