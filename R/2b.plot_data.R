@@ -18,9 +18,26 @@ speciesCol <- c(
   "mp" = "darkgreen"
 )
 
+
+speciesCol_trop <- c(
+  "Y=ac" = "black",
+  "X=am" = "#996600",
+  "X=cc" = "#00BCD4",
+  "Y=my" = "#339900",
+  "Y=ma" = "orange",
+  "X=ol" = "red",
+  "X=aa" = "#FF9999",
+  "Y=ec" = "#FFCC00",
+  "X=sr" = "#CCFF66",
+  "R=mp" = "darkgreen"
+)
+
 ###here all
 plotter_data_all <- function(data_long, remove_aphid = FALSE) {
   aphid = ""
+
+  data_long <-  data_long |> 
+    tidyr::unite("fullname", c(trophic, species), sep= "=", remove= FALSE)
 
   if (remove_aphid == TRUE) {
     aphid = "noAphids"
@@ -28,16 +45,17 @@ plotter_data_all <- function(data_long, remove_aphid = FALSE) {
       dplyr::filter(species != "mp")
   }
 
+
   TIME_SERIES_ALL <- data_long |>
     ggplot(aes(x = week, y = individuals)) +
     geom_line(
-      aes(color = species, group = as.factor(interaction(block, species))),
+      aes(color = fullname, group = as.factor(interaction(block, species))),
       size = 0.5
     ) +
-    geom_point(aes(color = species), size = 1) +
+    geom_point(aes(color = fullname), size = 1) +
     facet_wrap(~enem, scales = "free_y") +
     scale_color_manual(
-      values = speciesCol
+      values = speciesCol_trop
     ) +
     theme_minimal()
 
@@ -53,6 +71,9 @@ plotter_data_all <- function(data_long, remove_aphid = FALSE) {
 plotter_data_mean <- function(data_mean, remove_aphid = FALSE) {
   aphid = ""
 
+    data_mean <-  data_mean |> 
+    tidyr::unite("fullname", c(trophic, species), sep= "=", remove= FALSE)
+
   if (remove_aphid == TRUE) {
     aphid = "noAphids"
 
@@ -62,18 +83,18 @@ plotter_data_mean <- function(data_mean, remove_aphid = FALSE) {
   TIME_SERIES_MEAN <- data_mean |>
     ggplot(aes(x = week, y = meanIndividuals)) +
     geom_line(
-      aes(color = species),
+      aes(color = fullname),
       size = 0.5
     ) +
-    geom_point(aes(color = species), size = 1) +
+    geom_point(aes(color = fullname), size = 1) +
     geom_errorbar(aes(
       ymin = meanIndividuals - sdIndividuals,
       ymax = meanIndividuals + sdIndividuals,
-      color = species
+      color = fullname
     )) +
     facet_wrap(~enem, scales = "free_y") +
     scale_color_manual(
-      values = speciesCol
+      values = speciesCol_trop
     ) +
     theme_minimal()
   ggsave(
@@ -86,12 +107,7 @@ plotter_data_mean <- function(data_mean, remove_aphid = FALSE) {
 }
 
 
-phaseplotter_all_block <- function(
-  data_pred,
-  trophic_1 = "pred1",
-  trophic_2 = "pred2",
-  enem_treatment = "cc+ma"
-) {
+phaseplotter_all_block <- function(data_pred,trophic_1 = "pred1",trophic_2 = "pred2",enem_treatment = "cc+ma") {
   PHASE_ALL <- data_pred |>
     dplyr::filter(enem == enem_treatment) |>
     ggplot(aes(x = !!sym(trophic_1), y = !!sym(trophic_2))) +
@@ -123,13 +139,7 @@ phaseplotter_all_block <- function(
 }
 
 
-phaseplotter_all <- function(
-  data_pred,
-  trophic_1 = "X",
-  trophic_2 = "Y",
-  enem_treatment = "cc+ma"
-) {
-  PHASE_ALL <- data_pred |>
+phaseplotter_all <- function(data_pred,trophic_1 = "X",trophic_2 = "Y",enem_treatment = "cc+ma") {PHASE_ALL <- data_pred |>
     dplyr::filter(enem == enem_treatment) |>
     ggplot(aes(x = !!sym(trophic_1), y = !!sym(trophic_2))) +
     #geom_path(
@@ -158,11 +168,7 @@ phaseplotter_all <- function(
 }
 
 
-phaseplotter_ts_all <- function(
-  data_pred,
-  data_long,
-  enem_treatment = "cc+ma"
-) {
+phaseplotter_ts_all <- function(data_pred,data_long,enem_treatment = "cc+ma") {
   data_long <- data_long |>
     dplyr::filter(enem == enem_treatment)
 
