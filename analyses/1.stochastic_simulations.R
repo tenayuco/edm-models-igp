@@ -1,26 +1,23 @@
 # -------------------------PART 1 - run the stochastic IGP model ----------------------------------------
 # Set up folders for saving figures - specifies where output plots will be saved
-fig_folder <- "./figures/simulation/stochastic_sim_lvmap/demographic_sto/" ### Directory path for the main figure folder
-fig_subfolder <- paste0("len", len_chosen,"/", "noise_", noise_chosen, "/", "reso_", reso, "/", "replicate_", num_rep, "/" ) ## Creates a subfolder name based on time length and noise level chosen
-
+fig_folder <- "./figures/simulation/demoStoc_lvmap/" ### Directory path for the main figure folder
+fig_subfolder <- paste0("len_", len_chosen,"/", "noise_", noise_chosen, "/", "numrep_", num_rep, "/", "R_", rpresent, "/") ## Creates a subfolder name based on time length and noise level chosen
 DF_DISC_LV <-  data.frame()  # Initialize empty data frame to store all simulation results
 
+
+
 # Loop through each replicate simulation
-for (i in seq(1:num_rep)){
+for (i in seq(1:num_block)){
 
-model_used <- LBLB_LV_list ## Load the model definition (includes initial conditions, parameters and equations)
-disc_or_cont <- "disc_stoc"  # Type of model: "disc_stoc" = discrete stochastic (other options: disc, cont)
+#model used
+model_used <- LBLB_LV_list 
+disc_or_cont <- "disc_stoc"  #
 d_t <- 0.01  # Time step for numerical integration
-par_ms = model_used[["parms"]]  # Extract parameters from the model
-par_ms[["s_d"]] = noise_chosen ## Set the noise level for this simulation
-#grow_function <- "logistic"   ## Alternative growth function option
+par_ms = model_used[["parms"]]  
+par_ms[["s_d"]] = noise_chosen 
 grow_function <- "semichemostat"   ## Selected growth function type (can be "logistic", "exponential", or "semichemostat")
-#grow_function <- "exponential"   ## Alternative growth function option
-  
-  
-  #par_ms[["grow_function"]] = "semichemostat" ##can be "logistic" or "exponential"
 
-    # Run the differential equation solver using Euler method (iteration)
+# Run the differential equation solver using Euler method (iteration)
 DF_temp<- deSolve::ode(
   y = model_used[["init"]],
   times = seq(from = 1, to = 500, by = d_t), ##check the step is 0.01 for euler method
@@ -29,7 +26,6 @@ DF_temp<- deSolve::ode(
   method = "iteration",
   dt = d_t) |> 
   as.data.frame() 
-
 
 ###import data frame and convert it to a matrix
 ### Select a subset of the time series data
@@ -40,17 +36,12 @@ tmax = tmin+len_chosen*reso
 # If diff_len is TRUE, randomly vary the time series length by up to 20%
 if (diff_len ==TRUE){tmax = tmin + round(tmin+len_chosen*d_t*abs(rnorm(1,mean=0,sd=0.2)), 2)}  ##is beacuse d_t is 0.01  
 
-
-disc_count = "disc_stoc"  # Store the model type as a label
-
   # Filter the data to only include the selected time window
 DF_temp<- DF_temp |>  
        dplyr::filter(time %in%  seq(tmin, tmax, reso))
 
 DF_temp$block <- i
-
-DF_DISC_LV <- rbind(DF_DISC_LV, DF_temp)
-  
+DF_DISC_LV <- rbind(DF_DISC_LV, DF_temp) 
 }  
 
 
@@ -66,7 +57,7 @@ PHASE_PLOT_NR <- phase_plotter(outDF = DF_DISC_LV, var1 = "R", var2 = "N")
 FULL_PLOT <-  TS_PLOT + (PHASE_PLOT_PN/PHASE_PLOT_PR/PHASE_PLOT_NR)
 
 ggsave(FULL_PLOT, filename = paste0(fig_folder, 
-  fig_subfolder, "fullPlot_", "numRep_", num_rep, "_tmin_", tmin,"_tmax_", tmax, "_reso_",reso, "grow_", grow_function,  ".png"),
+  fig_subfolder, "fullPlot", "_reso_",reso, "_grow_", grow_function, "_seed_", num_seed, ".png"),
 
    height = 10,
     width = 12,
@@ -81,10 +72,9 @@ rm(TS_PLOT,  PHASE_PLOT_NR, PHASE_PLOT_PR, PHASE_PLOT_PN, FULL_PLOT)
 
 
 S <-  length(LBLB_LV_list$init)
-
-
+ 
 ###now I put here the real values of the data, according to the transformation 
-fac_int <- reso 
+fac_int <- min(reso, 0.1) ##it just to remove the NA when the resolution is to strong and the parameters should jump to negative values  
 avR <- mean(DF_DISC_LV$R) #to reproduce the inflx 
 
 #check if it is the shemi
@@ -129,6 +119,8 @@ DF_ALPHA_EQ$varName <- c("R.R", "N.R", "P.R", "R.N", "N.N", "P.N", "R.P", "N.P",
 #here I reorder the replicates just in case im gonnea stick them and i chnage the names to replicate s
 DF_DISC_LV_USED <- DF_DISC_LV
 
+
+set.seed(num_seed)
 REAS_DF <-  data.frame("block" = seq(1:10), "replicate" = sample(seq(1:10)))
 DF_DISC_LV_USED <-  dplyr::full_join(DF_DISC_LV_USED, REAS_DF, by= "block")
 DF_DISC_LV_USED$block <-  NULL
@@ -141,11 +133,15 @@ dplyr::arrange(replicate, .by_group = FALSE)
 
 ##now I merge the values.. to make fake replicates..
 
-size_block <- size_chosen
+size_block <- num_block/num_rep  ## HAS to be an integer
+
+
 DF_DISC_LV_USED$replicate <- floor((DF_DISC_LV_USED$replicate-0.1)/size_block) +1 
 
 
 #---transforms to a matrix
+#num_rep <- length(unique(DF_DISC_LV_USED$replicate))
+
 N_list_sim <- vector(mode = "list", length = num_rep)
 
 for (i in unique(DF_DISC_LV_USED$replicate)){
@@ -224,54 +220,83 @@ ALPHA_TIME_PLOT <- par_time_plotter(DF_ALPHA, num_col =S)
 
 
 
-ggsave(RT_TIME_PLOT, filename = paste0(fig_folder, fig_subfolder, "rt_time_", "tmin_", tmin,"_tmax_", tmax,  "_mode_", disc_count, "_reso_",reso, "grow_", grow_function,  ".png"),
+ggsave(RT_TIME_PLOT, filename = paste0(fig_folder, fig_subfolder, "rt_time_",  "reso_",reso, "grow_", grow_function, "_seed_", num_seed,  ".png"),
    height = 4,
     width = 12,
     create.dir = T
   )
 
 
-ggsave(ALPHA_TIME_PLOT, filename = paste0(fig_folder, fig_subfolder, "alpha_time_", "tmin_", tmin,"_tmax_", tmax,  "_mode_", disc_count, "_reso_",reso, "grow_", grow_function,  ".png"),
+ggsave(ALPHA_TIME_PLOT, filename = paste0(fig_folder, fig_subfolder, "alpha_time_", "reso_",reso, "grow_", grow_function, "_seed_", num_seed,  ".png"),
    height = 10,
     width = 12,
     create.dir = T
   )
 
 
+
+LONG_FULL_RT<-long_par_formatter(df_par = DF_RT, df_par_se = DF_RT_SE)
+LONG_FULL_ALPHA <- long_par_formatter(df_par=DF_ALPHA, df_par_se = DF_ALPHA_SE)
 
 #now the mean and sd 
 
-RT_MEAN_SD_PLOT <- par_mean_sd_plotter(df_par_se_long =  long_par_formatter(df_par = DF_RT, df_par_se = DF_RT_SE), df_par_eq= DF_R_EQ, num_col=S)
-ALPHA_MEAN_SD_PLOT <- par_mean_sd_plotter(df_par_se_long =  long_par_formatter(df_par=DF_ALPHA, df_par_se = DF_ALPHA_SE), df_par_eq= DF_ALPHA_EQ, num_col=S)
+RT_MEAN_SD_PLOT <- par_mean_sd_plotter(df_par_se_long =  LONG_FULL_RT, df_par_eq= DF_R_EQ, num_col=S, trueParameters = 
+TRUE)
+ALPHA_MEAN_SD_PLOT <- par_mean_sd_plotter(df_par_se_long =  LONG_FULL_ALPHA , df_par_eq= DF_ALPHA_EQ, num_col=S, trueParameters = TRUE)
 
 
-ggsave(RT_MEAN_SD_PLOT, filename = paste0(fig_folder, fig_subfolder, "rt_mean_", "tmin_", tmin,"_tmax_", tmax,  "_mode_", disc_count, "_reso_",reso, "grow_", grow_function,  ".png"),
+ggsave(RT_MEAN_SD_PLOT, filename = paste0(fig_folder, fig_subfolder, "rt_mean_",  "reso_",reso, "grow_", grow_function, "_seed_", num_seed, ".png"),
    height = 4,
     width = 12,
     create.dir = T
   )
 
-ggsave(ALPHA_MEAN_SD_PLOT, filename = paste0(fig_folder, fig_subfolder, "alpha_mean_", "tmin_", tmin,"_tmax_", tmax,  "_mode_", disc_count, "_reso_",reso, "grow_", grow_function,  ".png"),
+ggsave(ALPHA_MEAN_SD_PLOT, filename = paste0(fig_folder, fig_subfolder, "alpha_mean_", "reso_",reso, "grow_", grow_function, "_seed_", num_seed, ".png"),
    height = 10,
     width = 12,
     create.dir = T
   )
 
 
+LONG_FULL_RT$type <- "r"
+LONG_FULL_ALPHA$type <- "a"
 
 
-##now check if it makes sense.. 
+LONG_FULL <- rbind(LONG_FULL_RT, LONG_FULL_ALPHA)
+
+
+LONG_FULL$numRep <- num_rep
+LONG_FULL$seed <- num_seed
+
+
+# Set up folders for saving figures - specifies where output plots will be saved
+out_folder <- "./outputs/simulation/demoStoc_lvmap/" ### Directory path for the main figure folder
+out_subfolder <- paste0("len_", len_chosen,"/", "noise_", noise_chosen, "/", "numrep_", num_rep, "/", "R_", rpresent, "/") ## Creates a subfolder name based on time length and noise level chosen
+
+
+
+dir.create(paste0(out_folder, out_subfolder), recursive = TRUE)
+
+write.csv(LONG_FULL, file= paste0(out_folder, out_subfolder, "DF_parameters_", "numrep", num_rep,  "_seed_", num_seed, ".csv"))
+
+
+
+
+
+
+
+##now check if it makes sense against the TRUE VALUES 
 #averages #does ot work YET
-ALPHA_EST <- av_comp_plotter_v2(df_par_se_long = long_par_formatter(df_par = DF_ALPHA, df_par_se = DF_ALPHA_SE), df_par_eq = DF_ALPHA_EQ)
-RT_EST <- av_comp_plotter_v2(df_par_se_long = long_par_formatter(df_par = DF_RT, df_par_se = DF_RT_SE), df_par_eq = DF_R_EQ)
+ALPHA_EST <- av_comp_plotter_v2(df_par_se_long = LONG_FULL_ALPHA, df_par_eq = DF_ALPHA_EQ)
+RT_EST <- av_comp_plotter_v2(df_par_se_long = LONG_FULL_RT, df_par_eq = DF_R_EQ)
 
-ggsave(RT_EST, filename = paste0(fig_folder, fig_subfolder,"rt_acc", "tmin_", tmin,"_tmax_", tmax,  "_mode_", disc_count, "_reso_",reso, "grow_", grow_function,  ".png"),
+ggsave(RT_EST, filename = paste0(fig_folder, fig_subfolder,"rt_acc_", "reso_",reso, "grow_", grow_function, "_seed_", num_seed,  ".png"),
    height = 10,
     width = 12,
     create.dir = T
   )
 
-ggsave(ALPHA_EST, filename = paste0(fig_folder, fig_subfolder, "alpha_acc_", "tmin_", tmin,"_tmax_", tmax,  "_mode_", disc_count, "_reso_",reso, "grow_", grow_function,  ".png"),
+ggsave(ALPHA_EST, filename = paste0(fig_folder, fig_subfolder, "alpha_acc_",  "reso_",reso, "grow_", grow_function, "_seed_", num_seed,  ".png"),
    height = 10,
     width = 12,
     create.dir = T
@@ -279,4 +304,3 @@ ggsave(ALPHA_EST, filename = paste0(fig_folder, fig_subfolder, "alpha_acc_", "tm
 
 # --------------------------------------------------- ----------------------------------------
 ##now with the re
-

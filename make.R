@@ -15,11 +15,10 @@ rdeps::add_deps()
 devtools::install_deps(upgrade = "never")
 
 ###########RUN this alwys
-# Load packages under Depends and in R 
+# Load packages under Depends and in R
 devtools::load_all()
 
 #====================================================================================
-
 
 #====================STOCASTIC SIMULATIONS=================================
 
@@ -27,34 +26,45 @@ devtools::load_all()
 source("./analyses/0.set_LBLB_model.R")
 
 
-
-# Then run the inital conditions for that code 
+# Then run the inital conditions for that code
 # set the random value that will taken for the demographic noise
 # num_rep tells you the replicates you wanna run
 # the diff_len tell tyo if you want to randomly cut some time series
 
-set.seed(3)
-random_seed <- rnorm(1)
+#set.seed(3)
+#random_seed <- rnorm(1)
 diff_len <- FALSE
-num_rep <- 10
+num_block <- 10
+num_rep <- 1 ##has to divide numblock
 #now we set a loop for different initial conditions
-#folders to save everything! 
+#folders to save everything!
+rpresent <- TRUE
 
 
-for (l in c(50, 30)){
-  for (chsize in c(1, 10)){
-for (res in c(1)){  #can be 0.1 or 0.01 for real parameters 
-  for (noi in c(0.1)){
+for (l in c(50)) {
+  for (num_rep in c(10, 1)) {
+    for (res in c(1)) {
+      #can be 0.1 or 0.01 for real parameters
+      for (noi in c(0.1)) {
+        for (num_seed in seq(1:5)) {
+          num_rep <- num_rep
+          reso <- res
+          noise_chosen <- noi
+          len_chosen <- l
+          num_seed <- num_seed
 
-size_chosen <- chsize
-reso <-  res
-noise_chosen <- noi
-len_chosen <- l
 
-source("./analyses/1.stochastic_simulations.R")
-}
-}
-}
+          tryCatch({print(paste0("rep", num_rep, "_seed", num_seed))
+
+          source("./analyses/1.stochastic_simulations.R")}, 
+          error = function(e){cat("ERROR :", conditionMessage(e), "/n")})
+
+
+          
+        }
+      }
+    }
+  }
 }
 
 #=========================================================================================
@@ -82,20 +92,16 @@ rpresent <- FALSE
 num_rep <- 1
 
 
-for (num_seed in seq(1:10)){
-for (enem in unique(DATA_IGP$enem)){
-
-chosen_enemies <- enem
-  num_rep <- num_rep
-  num_seed <- num_seed
-  source("./analyses/3a.data_LV_map.R")
-}
+for (num_seed in seq(1:10)) {
+  for (enem in unique(DATA_IGP$enem)) {
+    chosen_enemies <- enem
+    num_rep <- num_rep
+    num_seed <- num_seed
+    source("./analyses/3a.data_LV_map.R")
   }
-
-
+}
 
 
 ###########now for plotting results
 
 source("./analyses/3b.data_LV_map_results.R")
-  
