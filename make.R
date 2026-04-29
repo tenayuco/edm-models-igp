@@ -44,6 +44,16 @@ noise_chosen <- 0.1
 len_chosen <- 50
 
 
+fig_check_folder <- "./figures/simulation/demoStoc_lvmap/" ### Directory path for the main figure folder
+fig_check_subfolder <- paste0("len_", len_chosen,"/", "noise_", noise_chosen, "/") ## Creates a subfolder name based on time length and noise level chosen
+
+check_folder <- paste0(fig_check_folder, fig_check_subfolder)
+
+
+if (file.exists(check_folder)) {
+    print(paste0(check_folder," exists already. Verifiy before or erase before running any simulation"))
+  } else {
+    
   for (num_rep in c(10, 1)) {
     for (rpresent in c(TRUE, FALSE)){
       #can be 0.1 or 0.01 for real parameters
@@ -64,6 +74,10 @@ len_chosen <- 50
 #############then plotting these general resutls
 
 source("./analyses/1b.stochastic_allresults.R")
+
+  }
+
+
 
 #=========================================================================================
 
@@ -103,3 +117,4 @@ for (num_seed in seq(1:10)) {
 ###########now for plotting results
 
 source("./analyses/3b.data_LV_map_results.R")
+  
