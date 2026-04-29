@@ -115,6 +115,10 @@ DF_ALPHA_EQ$varName <- c("R.R", "N.R", "P.R", "R.N", "N.N", "P.N", "R.P", "N.P",
 # -------------------------PART 3- cross validatio ----------------------------------------
 #Tmax <- len_chosen
 
+###here i removed the R
+if (rpresent == FALSE){DF_DISC_LV$R <- NULL}
+  #we remove these as they have a strong autocorrelation.. 
+
 
 #here I reorder the replicates just in case im gonnea stick them and i chnage the names to replicate s
 DF_DISC_LV_USED <- DF_DISC_LV
@@ -266,7 +270,8 @@ LONG_FULL <- rbind(LONG_FULL_RT, LONG_FULL_ALPHA)
 
 
 LONG_FULL$numRep <- num_rep
-LONG_FULL$seed <- num_seed
+LONG_FULL$numSeed <- num_seed
+LONG_FULL$rpresent <- rpresent
 
 
 # Set up folders for saving figures - specifies where output plots will be saved

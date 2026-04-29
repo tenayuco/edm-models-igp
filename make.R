@@ -35,37 +35,35 @@ source("./analyses/0.set_LBLB_model.R")
 #random_seed <- rnorm(1)
 diff_len <- FALSE
 num_block <- 10
-num_rep <- 1 ##has to divide numblock
+#num_rep <- 1 ##has to divide numblock
 #now we set a loop for different initial conditions
 #folders to save everything!
-rpresent <- TRUE
+#rpresent <- TRUE
+reso <- 1
+noise_chosen <- 0.1
+len_chosen <- 50
 
 
-for (l in c(50)) {
   for (num_rep in c(10, 1)) {
-    for (res in c(1)) {
+    for (rpresent in c(TRUE, FALSE)){
       #can be 0.1 or 0.01 for real parameters
-      for (noi in c(0.1)) {
-        for (num_seed in seq(1:5)) {
+        for (num_seed in seq(1:10)) {
           num_rep <- num_rep
-          reso <- res
-          noise_chosen <- noi
-          len_chosen <- l
+          rpresent <- rpresent
           num_seed <- num_seed
-
-
-          tryCatch({print(paste0("rep", num_rep, "_seed", num_seed))
+          tryCatch({print(paste0("rep", num_rep, "_seed", num_seed, "R", rpresent))
 
           source("./analyses/1.stochastic_simulations.R")}, 
           error = function(e){cat("ERROR :", conditionMessage(e), "/n")})
-
-
           
         }
       }
     }
-  }
-}
+  
+
+#############then plotting these general resutls
+
+source("./analyses/1b.stochastic_allresults.R")
 
 #=========================================================================================
 
