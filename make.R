@@ -3,7 +3,6 @@
 rm(list = ls()) # clear memory
 graphics.off() # clear graphics
 
-
 library(ggplot2)
 library(patchwork)
 
@@ -58,14 +57,19 @@ fig_folder <- paste0(
    "/"
 ) ### Directory path for the main figure folder
 
+
+#===================================================
 #this will give the whole data series named DF_DISC_LV
 source("./analyses/1.stochastic_simulations.R")
+
+
+#=============================================================
 
 ###########2 cross validation. now we put it in the LV MAP. And here we can loop like crazy
 
 ##now we take that data base and we create the matrix and apply the cross validation across scenarios
 
-DF_USED<- readr::read_csv(paste0(out_folder, "DF_DISC_LV.csv"))
+DF_USED <- utils::read.csv(paste0(out_folder, "DF_DISC_LV.csv"))
 
 ###I HAVE NOW TO SAVE IT IN A LIST with
 ## NUM_REP OR IN A FOLDERT
@@ -102,9 +106,13 @@ DF_USED<- readr::read_csv(paste0(out_folder, "DF_DISC_LV.csv"))
   }
 }
 
-
+#=======================================================
+#=====================================================
 
 ### before plotint..
+
+#ued folder 
+
 
 
 #############then plotting these general resutls

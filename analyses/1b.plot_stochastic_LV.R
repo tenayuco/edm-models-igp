@@ -32,7 +32,7 @@ DF_ALPHA_EQ$varName <- c("R.R", "N.R", "P.R", "R.N", "N.N", "P.N", "R.P", "N.P",
 ###intento loco
 process_list <- function(data_list){
 df_total <- data.frame()
-for (i in 1:num_rep){
+for (i in 1:length(data_list)){
   df_rt_temp <- as.data.frame(data_list[[i]])
   df_rt_temp$replicate <- i
   df_rt_temp$time <- seq(1, dim(df_rt_temp)[1])
@@ -61,7 +61,7 @@ DF_ALPHA_SE <- process_list(data_list = list_treatment_used$alpha_se_list)
 #just for the plot, i put the time steps, as 1, 2, 3.. 
 
 
-
+##AQUI VOY, pero vamo lo meto en loop y ya
 
 ##how the parameters change in time
 RT_TIME_PLOT <- par_time_plotter(DF_RT, num_col =S)
@@ -80,8 +80,6 @@ ggsave(ALPHA_TIME_PLOT, filename = paste0(fig_folder, fig_subfolder, "alpha_time
     width = 12,
     create.dir = T
   )
-
-
 
 
 
@@ -106,6 +104,10 @@ ggsave(ALPHA_MEAN_SD_PLOT, filename = paste0(fig_folder, fig_subfolder, "alpha_m
     width = 12,
     create.dir = T
   )
+
+
+
+
 
 
 LONG_FULL_RT$type <- "r"
@@ -160,43 +162,5 @@ ggsave(ALPHA_EST, filename = paste0(fig_folder, fig_subfolder, "alpha_acc_",  "r
 ##########this is probabcly for another code
 
 
-
-
-
-
-FULL_DF_PARAMETERS <-  data.frame()
-
-
-for (i in 1:length(list.files(paste0(out_folder, out_subfolder), recursive = TRUE))){
-  df_temp <- readr::read_csv(paste0(out_folder, out_subfolder, list.files(paste0(out_folder,out_subfolder),recursive=TRUE)[[i]]))
-  FULL_DF_PARAMETERS <- rbind(FULL_DF_PARAMETERS, df_temp)
-}
-
-FULL_DF_PARAMETERS$...1 <- NULL
-
-FULL_DF_PARAMETERS_M <- FULL_DF_PARAMETERS |> 
-  dplyr::select(!replicate)|> 
-  dplyr::group_by(varName, type, numSeed, rpresent, numRep)|> 
-  dplyr::summarise_all(mean)
-
-PLOT_PAR_SIM_RT <-  parameter_seed_sim_plotter(df_full = FULL_DF_PARAMETERS_M, par_type = "r")
-PLOT_PAR_SIM_ALPHA <-  parameter_seed_sim_plotter(df_full = FULL_DF_PARAMETERS_M, par_type = "a")
-
-fig_folder <- "./figures/simulation/demoStoc_lvmap/" ### Directory path for the main figure folder
-fig_subfolder <- paste0("len_", len_chosen,"/", "noise_", noise_chosen, "/") ## Creates a subfolder name based on time length and noise level chosen
-
-
-ggsave(PLOT_PAR_SIM_RT, filename = paste0(fig_folder, fig_subfolder, "rt_allrep_allr_allseed_", ".png"),
-   height = 10,
-    width = 13,
-    create.dir = T
-  )
-
-
-ggsave(PLOT_PAR_SIM_ALPHA, filename = paste0(fig_folder, fig_subfolder, "alpha_allrep_allr_allseed_", ".png"),
-   height = 10,
-    width = 13,
-    create.dir = T
-  )
 
 

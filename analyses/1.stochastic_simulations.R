@@ -49,7 +49,7 @@ DF_DISC_LV <- rbind(DF_DISC_LV, DF_temp)
 
 dir.create(out_folder, recursive = TRUE)
 
-write.csv(DF_DISC_LV, file= paste0(out_folder, "DF_DISC_LV.csv"))
+utils::write.csv(DF_DISC_LV, file= paste0(out_folder, "DF_DISC_LV.csv"), row.names= FALSE)
 # ------------------------------------------------------------------------------------------
 
 

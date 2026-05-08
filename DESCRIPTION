@@ -26,7 +26,8 @@ Imports:
     rdeps,
     readr,
     rmarkdown,
-    tidyr
+    tidyr,
+    utils
 Depends: 
     ggplot2,
     latex2exp,
