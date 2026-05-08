@@ -52,3 +52,21 @@ dir.create(out_folder, recursive = TRUE)
 write.csv(DF_DISC_LV, file= paste0(out_folder, "DF_DISC_LV.csv"))
 # ------------------------------------------------------------------------------------------
 
+
+TS_PLOT <- ts_plotter(outDF = DF_DISC_LV, plotted_var = c("R", "N", "P"))
+PHASE_PLOT_PN <- phase_plotter(outDF = DF_DISC_LV, var1 = "N", var2 = "P")
+PHASE_PLOT_PR <- phase_plotter(outDF = DF_DISC_LV, var1 = "R", var2 = "P")
+PHASE_PLOT_NR <- phase_plotter(outDF = DF_DISC_LV, var1 = "R", var2 = "N")
+
+FULL_PLOT <-  TS_PLOT + (PHASE_PLOT_PN/PHASE_PLOT_PR/PHASE_PLOT_NR)
+
+
+ggsave(FULL_PLOT, filename = paste0(fig_folder, 
+   "fullPlot", "_reso_",reso, "_grow_", grow_function, "_noise_", noise_chosen, "_len_", len_chosen, ".png"),
+   height = 10,
+    width = 12,
+    create.dir = T
+  )
+
+rm(TS_PLOT,  PHASE_PLOT_NR, PHASE_PLOT_PR, PHASE_PLOT_PN, FULL_PLOT)
+

@@ -51,6 +51,13 @@ out_folder <- paste0(
    "/"
 ) ### Directory path for the main figure folder
 
+fig_folder <- paste0(
+  "./figures/simulation/demoStoc_lvmap/",
+  "len_",
+  len_chosen,
+   "/"
+) ### Directory path for the main figure folder
+
 #this will give the whole data series named DF_DISC_LV
 source("./analyses/1.stochastic_simulations.R")
 

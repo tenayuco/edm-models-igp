@@ -60,23 +60,6 @@ DF_ALPHA_SE <- process_list(data_list = list_treatment_used$alpha_se_list)
 
 #just for the plot, i put the time steps, as 1, 2, 3.. 
 
-TS_PLOT <- ts_plotter(outDF = DF_DISC_LV, plotted_var = c("R", "N", "P"))
-PHASE_PLOT_PN <- phase_plotter(outDF = DF_DISC_LV, var1 = "N", var2 = "P")
-PHASE_PLOT_PR <- phase_plotter(outDF = DF_DISC_LV, var1 = "R", var2 = "P")
-PHASE_PLOT_NR <- phase_plotter(outDF = DF_DISC_LV, var1 = "R", var2 = "N")
-
-FULL_PLOT <-  TS_PLOT + (PHASE_PLOT_PN/PHASE_PLOT_PR/PHASE_PLOT_NR)
-
-ggsave(FULL_PLOT, filename = paste0(fig_folder, 
-  fig_subfolder, "fullPlot", "_reso_",reso, "_grow_", grow_function, "_seed_", num_seed, ".png"),
-
-   height = 10,
-    width = 12,
-    create.dir = T
-  )
-
-rm(TS_PLOT,  PHASE_PLOT_NR, PHASE_PLOT_PR, PHASE_PLOT_PN, FULL_PLOT)
-
 
 
 
