@@ -31,52 +31,95 @@ source("./analyses/0.set_LBLB_model.R")
 # num_rep tells you the replicates you wanna run
 # the diff_len tell tyo if you want to randomly cut some time series
 
-#set.seed(3)
+set.seed(3)
 #random_seed <- rnorm(1)
 diff_len <- FALSE
-num_block <- 10
-#num_rep <- 1 ##has to divide numblock
-#now we set a loop for different initial conditions
-#folders to save everything!
-#rpresent <- TRUE
+num_block <- 10  #how many block (time series)
 reso <- 1
 noise_chosen <- 0.1
-len_chosen <- 50
+len_chosen <- 100
+
+#temporal kernel or spatial kernel
 
 
-fig_check_folder <- "./figures/simulation/demoStoc_lvmap/" ### Directory path for the main figure folder
-fig_check_subfolder <- paste0("len_", len_chosen,"/", "noise_", noise_chosen, "/") ## Creates a subfolder name based on time length and noise level chosen
+#1. First run the simulation. this creates the Nlist that is going to be used
+#this depends on the leng ant the noise, and diff lengths. The nun block and reso will be in the name.. 
+out_folder <- paste0(
+  "./outputs/simulation/demoStoc_lvmap/",
+  "len_",
+  len_chosen,
+   "/"
+) ### Directory path for the main figure folder
 
-check_folder <- paste0(fig_check_folder, fig_check_subfolder)
+#this will give the whole data series named DF_DISC_LV
+source("./analyses/1.stochastic_simulations.R")
+
+###########2 cross validation. now we put it in the LV MAP. And here we can loop like crazy
+
+##now we take that data base and we create the matrix and apply the cross validation across scenarios
+
+DF_USED<- readr::read_csv(paste0(out_folder, "DF_DISC_LV.csv"))
+
+###I HAVE NOW TO SAVE IT IN A LIST with
+## NUM_REP OR IN A FOLDERT
 
 
-if (file.exists(check_folder)) {
-    print(paste0(check_folder," exists already. Verifiy before or erase before running any simulation"))
-  } else {
-    
   for (num_rep in c(10, 1)) {
-    for (rpresent in c(TRUE, FALSE)){
-      #can be 0.1 or 0.01 for real parameters
-        for (num_seed in seq(1:10)) {
-          num_rep <- num_rep
-          rpresent <- rpresent
-          num_seed <- num_seed
-          tryCatch({print(paste0("rep", num_rep, "_seed", num_seed, "R", rpresent))
+    for (rpresent in c(TRUE, FALSE)) {
+        num_rep <- num_rep
+        rpresent <- rpresent
+        out_subfolder <- paste0("numrep_", num_rep, "/", "R_", rpresent, "/") ## Cn
+        if (file.exists(paste0(out_folder, out_subfolder))) {print(paste0(out_folder, out_subfolder, 
+    " exists already. Verifiy before or erase before running any simulation"
+  ))
+} else {
+      dir.create(paste0(out_folder, out_subfolder), recursive = TRUE)
+      for (num_seed in seq(1:2)) {
+        num_seed <- num_seed
 
-          source("./analyses/1.stochastic_simulations.R")}, 
-          error = function(e){cat("ERROR :", conditionMessage(e), "/n")})
-          
+        tryCatch(
+          {
+            print(paste0("rep", num_rep,  "_R", rpresent, "_seed", num_seed))
+
+            source("./analyses/1a.simulation_LV_map.R")
+            saveRDS(list_treatment, paste0(out_folder, out_subfolder, "listTreatment_", 
+            "noise_", noise_chosen, "_seed_", num_seed, ".rds"))
+            
+          },
+          error = function(e) {
+            cat("ERROR :", conditionMessage(e), "/n")
+          }
+        )
         }
-      }
-    }
-  
+        }
+  }
+}
+
+
+
+### before plotint..
+
 
 #############then plotting these general resutls
 
-source("./analyses/1b.stochastic_allresults.R")
-
+  for (num_rep in c(10, 1)) {
+    for (rpresent in c(TRUE, FALSE)) {
+        num_rep <- num_rep
+        rpresent <- rpresent
+        out_subfolder <- paste0("numrep_", num_rep, "/", "R_", rpresent, "/") ## Cn
+        used_path <- paste0(out_folder, out_subfolder)
+     ##aqui el cofigo
+        
   }
+}
 
+
+
+
+plot_out_folder <- out_folder ### Directory path for the main figure folder
+
+
+source("./analyses/1b.stochastic_allresults.R")
 
 
 #=========================================================================================
@@ -117,4 +160,3 @@ for (num_seed in seq(1:10)) {
 ###########now for plotting results
 
 source("./analyses/3b.data_LV_map_results.R")
-  
