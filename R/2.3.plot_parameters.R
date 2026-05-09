@@ -177,7 +177,7 @@ parameter_seed_plotter <- function(df_full = FULL_DF_PARAMETERS, par_type = "r")
 
 parameter_seed_sim_plotter <- function(df_full = FULL_DF_PARAMETERS, par_type = "r"){
 
-  var_order <- c("P.P", "N.N", "N.P", "P.N", "R.R", "R.P", "P.R", "R.N", "N.R")
+  var_order <- c("P.P", "N.N", "N.P", "P.N", "R.R", "R.P", "P.R", "R.N", "N.R", "P", "N", "R")
 
   par_plot <- df_full |> 
     dplyr::filter(type == par_type) |> 
