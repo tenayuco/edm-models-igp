@@ -7,7 +7,7 @@
 
 
 
-plotter_lv_map_treatment <- function(list_treatment_used, fig_path){
+plotter_lv_map_treatment <- function(list_treatment_used, fig_path, num_seed){
 ###primero volvemos en data frames 
 
 #for r
@@ -68,14 +68,14 @@ RT_TIME_PLOT <- par_time_plotter(DF_RT, num_col = S) ##to only include the varia
 ALPHA_TIME_PLOT <- par_time_plotter(DF_ALPHA, num_col =S)
 
 
-ggsave(RT_TIME_PLOT, filename = paste0(fig_path, "rt_time_",  "reso_",reso, "grow_", grow_function, "_seed_", num_seed,  ".png"),
+ggsave(RT_TIME_PLOT, filename = paste0(fig_path, "rt_time_",  "reso_",reso, "_seed_", num_seed,  ".png"),
    height = 4,
     width = 12,
     create.dir = T
   )
 
 
-ggsave(ALPHA_TIME_PLOT, filename = paste0(fig_path, "alpha_time_", "reso_",reso, "grow_", grow_function, "_seed_", num_seed,  ".png"),
+ggsave(ALPHA_TIME_PLOT, filename = paste0(fig_path, "alpha_time_", "reso_",reso, "_seed_", num_seed,  ".png"),
    height = 10,
     width = 12,
     create.dir = T
@@ -93,13 +93,13 @@ TRUE)
 ALPHA_MEAN_SD_PLOT <- par_mean_sd_plotter(df_par_se_long =  LONG_FULL_ALPHA , df_par_eq= DF_ALPHA_EQ, num_col=max(S, dim(DF_RT_EQ)[1]), trueParameters = TRUE)
 
 
-ggsave(RT_MEAN_SD_PLOT, filename = paste0(fig_path, "rt_mean_",  "reso_",reso, "grow_", grow_function, "_seed_", num_seed, ".png"),
+ggsave(RT_MEAN_SD_PLOT, filename = paste0(fig_path, "rt_mean_",  "reso_",reso, "_seed_", num_seed, ".png"),
    height = 4,
     width = 12,
     create.dir = T
   )
 
-ggsave(ALPHA_MEAN_SD_PLOT, filename = paste0(fig_path, "alpha_mean_", "reso_",reso, "grow_", grow_function, "_seed_", num_seed, ".png"),
+ggsave(ALPHA_MEAN_SD_PLOT, filename = paste0(fig_path, "alpha_mean_", "reso_",reso, "_seed_", num_seed, ".png"),
    height = 10,
     width = 12,
     create.dir = T
@@ -113,13 +113,13 @@ ggsave(ALPHA_MEAN_SD_PLOT, filename = paste0(fig_path, "alpha_mean_", "reso_",re
 ALPHA_EST <- av_comp_plotter_v2(df_par_se_long = LONG_FULL_ALPHA, df_par_eq = DF_ALPHA_EQ)
 RT_EST <- av_comp_plotter_v2(df_par_se_long = LONG_FULL_RT, df_par_eq = DF_RT_EQ)
 
-ggsave(RT_EST, filename = paste0(fig_path,"rt_acc_", "reso_",reso, "grow_", grow_function, "_seed_", num_seed,  ".png"),
+ggsave(RT_EST, filename = paste0(fig_path,"rt_acc_", "reso_",reso, "_seed_", num_seed,  ".png"),
    height = 10,
     width = 12,
     create.dir = T
   )
 
-ggsave(ALPHA_EST, filename = paste0(fig_path, "alpha_acc_",  "reso_",reso, "grow_", grow_function, "_seed_", num_seed,  ".png"),
+ggsave(ALPHA_EST, filename = paste0(fig_path, "alpha_acc_",  "reso_",reso, "_seed_", num_seed,  ".png"),
    height = 10,
     width = 12,
     create.dir = T
@@ -130,6 +130,7 @@ ggsave(ALPHA_EST, filename = paste0(fig_path, "alpha_acc_",  "reso_",reso, "grow
 
 
 ##########this is probabcly for another code
+
 
 
 

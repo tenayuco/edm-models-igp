@@ -78,8 +78,24 @@ v_rpresent = c(TRUE, FALSE)
 v_num_seed = seq(1:2)
 
 source("./analyses/1a.looper_LV_map.R")
-#protocool for the loop
+#protocool for the loop it run the functions of lv map, for each treatment. 
 lv_looper_lists(data_used, v_num_rep, v_rpresent, v_num_seed)
+
+#############3
+
+
+for (treatment in list.dirs(list.dirs(out_folder, recursive=FALSE),recursive=FALSE)){
+  for (i in seq(1:length(list.files(treatment)))){
+  #print(1:length(list.files(treatment)))
+  num_seed <- i
+  print(num_seed)
+  list_used <- readRDS(paste0(treatment,"/" , list.files(treatment)[i]))
+  fig_path <- paste0(fig_folder, stringr::str_remove(treatment, out_folder), "/")
+  plotter_lv_map_treatment(list_used, fig_path = fig_path, num_seed = num_seed)
+}
+}
+
+
 
 ###nice now porotocol for the 
 
@@ -116,6 +132,45 @@ plot_out_folder <- out_folder ### Directory path for the main figure folder
 
 
 source("./analyses/1b.stochastic_allresults.R")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 #=========================================================================================

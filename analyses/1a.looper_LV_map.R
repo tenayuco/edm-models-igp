@@ -46,7 +46,11 @@ lv_looper_lists <- function(data_used, v_num_rep, v_rpresent, v_num_seed){
 }
 
 
-lv_looper_plot <- function(v_num_rep, v_rpresent, v_num_seed){
+
+
+
+
+lv_looper_plot_v2 <- function(v_num_rep, v_rpresent, v_num_seed){
 
   for (num_rep in v_num_rep) {
     for (rpresent in v_rpresent) {
@@ -59,10 +63,21 @@ lv_looper_plot <- function(v_num_rep, v_rpresent, v_num_seed){
     " exists already. Verifiy before or erase before running any simulation"
   ))
 } else {
+          
+       tryCatch(
+          {    
+          
       for (i in 1:length(list.files(out_path))){
+        num_seed <- i ##this is only to plot the prider (same order as the seeds)
         list_used <- readRDS(paste0(out_path, list.files(out_path)[[i]]))
-        plotter_lv_map_treatment(list_used, fig_path = fig_path)}
-        }
+        plotter_lv_map_treatment(list_used, fig_path = fig_path, num_seed = num_seed)}
+      }, 
+      error = function(e) {
+            cat("ERROR :", conditionMessage(e), "/n")
+          }
+        )
+            
+          }
     }
     }
 }
