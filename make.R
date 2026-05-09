@@ -56,7 +56,7 @@ source("./analyses/0.set_LBLB_model.R")
 # the diff_len tell tyo if you want to randomly cut some time series
 
 #this will give the whole data series named DF_DISC_LV
-source("./analyses/1.stochastic_simulations.R")
+source("./analyses/1a.stochastic_simulations.R")
 
 #this will generate the time series, and the plot in the respective fig folder and out folder
 #=============================================================================================
@@ -74,7 +74,7 @@ v_num_rep = c(1, 10)
 v_rpresent = c(TRUE, FALSE)
 v_num_seed = seq(1:2)
 
-source("./analyses/1a.looper_LV_map.R")
+source("./analyses/1b.looper_LV_map.R")
 #protocool for the loop it run the functions of lv map, for each treatment. 
 lv_looper_lists(data_used, v_num_rep, v_rpresent, v_num_seed)
 
@@ -83,7 +83,7 @@ lv_looper_lists(data_used, v_num_rep, v_rpresent, v_num_seed)
 #========================I.C PLOT LV SIMULATIONS ============================
 
 
-source("./analyses/1b.plot_stochastic_LV_all_treatments.R")
+source("./analyses/1c.plot_stochastic_LV.R")
 plot_per_treatment(out_folder)
 extract_par_all_treatment(out_folder) ##generates the file
 ##============================================
