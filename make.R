@@ -19,8 +19,8 @@ devtools::load_all()
 
 #====================================================================================
 
-#====================STOCASTIC SIMULATIONS=================================
-
+#====================I. STOCASTIC SIMULATIONS=================================
+#==============RUN THIS ALWAYS
 
 set.seed(3)
 #random_seed <- rnorm(1)
@@ -30,10 +30,7 @@ reso <- 1
 noise_chosen <- 0.1
 len_chosen <- 100
 
-#temporal kernel or spatial kernel
-
-#1. First run the simulation. this creates the Nlist that is going to be used
-#this depends on the leng ant the noise, and diff lengths. The nun block and reso will be in the name.. 
+#names of the folders
 out_folder <- paste0(
   "./outputs/simulation/demoStoc_lvmap/",
   "len_",
@@ -49,7 +46,7 @@ fig_folder <- paste0(
 ) ### Directory path for the main figure folder
 
 
-#====================RUN SIMULATION DATA===============================================
+#====================I. A. RUN SIMULATION DATA===============================================
 #First set the conditions for the LBLB model
 source("./analyses/0.set_LBLB_model.R")
 
@@ -58,14 +55,14 @@ source("./analyses/0.set_LBLB_model.R")
 # num_rep tells you the replicates you wanna run
 # the diff_len tell tyo if you want to randomly cut some time series
 
-
 #this will give the whole data series named DF_DISC_LV
 source("./analyses/1.stochastic_simulations.R")
 
 #this will generate the time series, and the plot in the respective fig folder and out folder
 #=============================================================================================
 
-#==========================RUN LV MAP SPATIAL KERNEL=======================================
+
+#==========================I.B. RUN LV MAP SPATIAL KERNEL=======================================
 
 ###########2 cross validation. now we put it in the LV MAP. And here we can loop like crazy
 
@@ -81,62 +78,19 @@ source("./analyses/1a.looper_LV_map.R")
 #protocool for the loop it run the functions of lv map, for each treatment. 
 lv_looper_lists(data_used, v_num_rep, v_rpresent, v_num_seed)
 
-#############3
+#===========================================================================================
 
-### this ask to do the plots per treatment and saves into figures. 
+#========================I.C PLOT LV SIMULATIONS ============================
 
+
+source("./analyses/1b.plot_stochastic_LV_all_treatments.R")
 plot_per_treatment(out_folder)
-
-##this goes in makeR
-FULL_DF_PARAMETERS <- extract_par_all_treatment(out_folder)
-write.csv(FULL_DF_PARAMETERS, file= paste0(out_folder, "FULL_DF_parameters.csv"))
+extract_par_all_treatment(out_folder) ##generates the file
 ##============================================
-plotter_full_parameters(df_full = FULL_DF_PARAMETERS, fig_folder = fig_folder)
-##
 
 
-
-#############
-
-
-
-###nice now porotocol for the 
-
-
-
-# this will use my function of lv map per treatment, with a spatial kernel 
-## and generates all the list ready to be plotted 
-
-#===============================================================================================
-#=====================================================
-
-### before plotint..
-
-#ued folder 
-
-
-#############then plotting these general resutls
-
-  for (num_rep in c(10, 1)) {
-    for (rpresent in c(TRUE, FALSE)) {
-        num_rep <- num_rep
-        rpresent <- rpresent
-        out_subfolder <- paste0("numrep_", num_rep, "/", "R_", rpresent, "/") ## Cn
-        used_path <- paste0(out_folder, out_subfolder)
-     ##aqui el cofigo
-        
-  }
-}
-
-
-
-
-plot_out_folder <- out_folder ### Directory path for the main figure folder
-
-
-source("./analyses/1b.stochastic_allresults.R")
-
-
+#########################################333
+################################################3
 
 
 
