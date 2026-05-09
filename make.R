@@ -83,17 +83,20 @@ lv_looper_lists(data_used, v_num_rep, v_rpresent, v_num_seed)
 
 #############3
 
+### this ask to do the plots per treatment and saves into figures. 
 
-for (treatment in list.dirs(list.dirs(out_folder, recursive=FALSE),recursive=FALSE)){
-  for (i in seq(1:length(list.files(treatment)))){
-  #print(1:length(list.files(treatment)))
-  num_seed <- i
-  print(num_seed)
-  list_used <- readRDS(paste0(treatment,"/" , list.files(treatment)[i]))
-  fig_path <- paste0(fig_folder, stringr::str_remove(treatment, out_folder), "/")
-  plotter_lv_map_treatment(list_used, fig_path = fig_path, num_seed = num_seed)
-}
-}
+plot_per_treatment(out_folder)
+
+##this goes in makeR
+FULL_DF_PARAMETERS <- extract_par_all_treatment(out_folder)
+write.csv(FULL_DF_PARAMETERS, file= paste0(out_folder, "FULL_DF_parameters.csv"))
+##============================================
+plotter_full_parameters(df_full = FULL_DF_PARAMETERS, fig_folder = fig_folder)
+##
+
+
+
+#############
 
 
 

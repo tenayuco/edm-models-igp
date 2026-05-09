@@ -1,10 +1,11 @@
 ###now it is a function. inert
 
-lv_map_per_treatment <- function(DF_USED){
+lv_map_per_treatment <- function(DF_USED, rpresent, num_seed, num_rep){
 
 
 DF_DISC_LV <- DF_USED
 list_treatment <- list()
+
 
 # -------------------------PART 2- estimated "real parameters" changing to their LV framing----------------------------------------
 
@@ -153,7 +154,7 @@ return(list_treatment)
 
 
 
-#############here is with the big reshufflin 
+#############here is with the big reshuffNOT YETlin 
 
 lv_map_per_treatment_individual <- function(DF_USED){
 
