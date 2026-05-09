@@ -58,55 +58,27 @@ fig_folder <- paste0(
 ) ### Directory path for the main figure folder
 
 
-#===================================================
+#====================RUN SIMULATION DATA===============================================
 #this will give the whole data series named DF_DISC_LV
 source("./analyses/1.stochastic_simulations.R")
 
 
-#=============================================================
+#=============================================================================================
+
+#==========================RUN LV MAP SPATIAL KERNEL=======================================
 
 ###########2 cross validation. now we put it in the LV MAP. And here we can loop like crazy
 
 ##now we take that data base and we create the matrix and apply the cross validation across scenarios
 
+
 DF_USED <- utils::read.csv(paste0(out_folder, "DF_DISC_LV.csv"))
 
-###I HAVE NOW TO SAVE IT IN A LIST with
-## NUM_REP OR IN A FOLDERT
+looper_lv_map(data_used = DF_USED, v_num_rep = c(1, 10), v_rpresent = c(TRUE, FALSE), v_num_seed = seq(1:2))
 
 
-  for (num_rep in c(10, 1)) {
-    for (rpresent in c(TRUE, FALSE)) {
-        num_rep <- num_rep
-        rpresent <- rpresent
-        out_subfolder <- paste0("numrep_", num_rep, "/", "R_", rpresent, "/") ## Cn
-        if (file.exists(paste0(out_folder, out_subfolder))) {print(paste0(out_folder, out_subfolder, 
-    " exists already. Verifiy before or erase before running any simulation"
-  ))
-} else {
-      dir.create(paste0(out_folder, out_subfolder), recursive = TRUE)
-      for (num_seed in seq(1:2)) {
-        num_seed <- num_seed
 
-        tryCatch(
-          {
-            print(paste0("rep", num_rep,  "_R", rpresent, "_seed", num_seed))
-
-            source("./analyses/1a.simulation_LV_map.R")
-            saveRDS(list_treatment, paste0(out_folder, out_subfolder, "listTreatment_", 
-            "noise_", noise_chosen, "_seed_", num_seed, ".rds"))
-            
-          },
-          error = function(e) {
-            cat("ERROR :", conditionMessage(e), "/n")
-          }
-        )
-        }
-        }
-  }
-}
-
-#=======================================================
+#===============================================================================================
 #=====================================================
 
 ### before plotint..

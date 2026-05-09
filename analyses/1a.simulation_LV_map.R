@@ -1,3 +1,6 @@
+###now it is a function. inert
+
+lv_map_per_treatment <- function(DF_USED){
 
 
 DF_DISC_LV <- DF_USED
@@ -129,5 +132,6 @@ list_treatment$alpha_hat_list <- alpha_hat_list
 list_treatment$r_se_list <- r_se_list
 list_treatment$alpha_se_list <- alpha_se_list
 
-
-
+return(list_treatment)
+  
+}
