@@ -2,7 +2,11 @@
 ###I HAVE NOW TO SAVE IT IN A LIST with
 ## NUM_REP OR IN A FOLDERT
 
-looper_lv_map <- function(data_used, v_num_rep, v_rpresent, v_num_seed){
+## this is the looper
+## v_num_rep, v_rpresent and v_num seed are defined in the make R
+## i decided not to put in a function, but more like a protocol
+## in generates all the data bases per treatment
+
 
   for (num_rep in v_num_rep) {
     for (rpresent in v_rpresent) {
@@ -36,4 +40,3 @@ looper_lv_map <- function(data_used, v_num_rep, v_rpresent, v_num_seed){
   }
 }
 
-}

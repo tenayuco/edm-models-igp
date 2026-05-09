@@ -21,14 +21,6 @@ devtools::load_all()
 
 #====================STOCASTIC SIMULATIONS=================================
 
-#First set the conditions for the LBLB model
-source("./analyses/0.set_LBLB_model.R")
-
-
-# Then run the inital conditions for that code
-# set the random value that will taken for the demographic noise
-# num_rep tells you the replicates you wanna run
-# the diff_len tell tyo if you want to randomly cut some time series
 
 set.seed(3)
 #random_seed <- rnorm(1)
@@ -39,7 +31,6 @@ noise_chosen <- 0.1
 len_chosen <- 100
 
 #temporal kernel or spatial kernel
-
 
 #1. First run the simulation. this creates the Nlist that is going to be used
 #this depends on the leng ant the noise, and diff lengths. The nun block and reso will be in the name.. 
@@ -59,10 +50,19 @@ fig_folder <- paste0(
 
 
 #====================RUN SIMULATION DATA===============================================
+#First set the conditions for the LBLB model
+source("./analyses/0.set_LBLB_model.R")
+
+# Then run the inital conditions for that code
+# set the random value that will taken for the demographic noise
+# num_rep tells you the replicates you wanna run
+# the diff_len tell tyo if you want to randomly cut some time series
+
+
 #this will give the whole data series named DF_DISC_LV
 source("./analyses/1.stochastic_simulations.R")
 
-
+#this will generate the time series, and the plot in the respective fig folder and out folder
 #=============================================================================================
 
 #==========================RUN LV MAP SPATIAL KERNEL=======================================
@@ -71,12 +71,15 @@ source("./analyses/1.stochastic_simulations.R")
 
 ##now we take that data base and we create the matrix and apply the cross validation across scenarios
 
+## here is what the looper needs (it uses the same folder)
+data_used <- utils::read.csv(paste0(out_folder, "DF_DISC_LV.csv"))
+v_num_rep = c(1, 10)
+v_rpresent = c(TRUE, FALSE)
+v_num_seed = seq(1:2)
 
-DF_USED <- utils::read.csv(paste0(out_folder, "DF_DISC_LV.csv"))
-
-looper_lv_map(data_used = DF_USED, v_num_rep = c(1, 10), v_rpresent = c(TRUE, FALSE), v_num_seed = seq(1:2))
-
-
+source("./analyses/1a.looper_LV_map.R")
+# this will use my function of lv map per treatment, with a spatial kernel 
+## and generates all the list ready to be plotted 
 
 #===============================================================================================
 #=====================================================
