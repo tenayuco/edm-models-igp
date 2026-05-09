@@ -21,13 +21,13 @@ devtools::load_all()
 
 #====================I. STOCASTIC SIMULATIONS=================================
 #==============RUN THIS ALWAYS
-
 set.seed(3)
 #random_seed <- rnorm(1)
 diff_len <- FALSE
 num_block <- 10  #how many block (time series)
 reso <- 1
 noise_chosen <- 0.1
+#len_chosen <- 20, this does not work with replicates.. 
 len_chosen <- 100
 
 #names of the folders
@@ -72,7 +72,7 @@ source("./analyses/1a.stochastic_simulations.R")
 data_used <- utils::read.csv(paste0(out_folder, "DF_DISC_LV.csv"))
 v_num_rep = c(1, 10)
 v_rpresent = c(TRUE, FALSE)
-v_num_seed = seq(1:2)
+v_num_seed = seq(1:10) ###A lot of reshuflle 
 
 source("./analyses/1b.looper_LV_map.R")
 #protocool for the loop it run the functions of lv map, for each treatment. 
