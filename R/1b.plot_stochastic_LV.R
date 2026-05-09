@@ -5,10 +5,9 @@
 
 ##esto es para hacerlo para todas las seeds
 
-for (i in 1:length(list.files(used_path))){
-  list_treatment_used <- readRDS(paste0(used_path, list.files(used_path)[[i]]))
-}
 
+
+plotter_lv_map_treatment <- function(list_treatment_used, fig_path){
 ###primero volvemos en data frames 
 
 #for r
@@ -64,18 +63,19 @@ DF_ALPHA_SE <- process_list(data_list = list_treatment_used$alpha_se_list)
 ##AQUI VOY, pero vamo lo meto en loop y ya
 
 ##how the parameters change in time
-RT_TIME_PLOT <- par_time_plotter(DF_RT, num_col =S)
+S <- length(DF_RT)-2
+RT_TIME_PLOT <- par_time_plotter(DF_RT, num_col = S) ##to only include the varia
 ALPHA_TIME_PLOT <- par_time_plotter(DF_ALPHA, num_col =S)
 
 
-ggsave(RT_TIME_PLOT, filename = paste0(fig_folder, fig_subfolder, "rt_time_",  "reso_",reso, "grow_", grow_function, "_seed_", num_seed,  ".png"),
+ggsave(RT_TIME_PLOT, filename = paste0(fig_path, "rt_time_",  "reso_",reso, "grow_", grow_function, "_seed_", num_seed,  ".png"),
    height = 4,
     width = 12,
     create.dir = T
   )
 
 
-ggsave(ALPHA_TIME_PLOT, filename = paste0(fig_folder, fig_subfolder, "alpha_time_", "reso_",reso, "grow_", grow_function, "_seed_", num_seed,  ".png"),
+ggsave(ALPHA_TIME_PLOT, filename = paste0(fig_path, "alpha_time_", "reso_",reso, "grow_", grow_function, "_seed_", num_seed,  ".png"),
    height = 10,
     width = 12,
     create.dir = T
@@ -88,52 +88,22 @@ LONG_FULL_ALPHA <- long_par_formatter(df_par=DF_ALPHA, df_par_se = DF_ALPHA_SE)
 
 #now the mean and sd 
 
-RT_MEAN_SD_PLOT <- par_mean_sd_plotter(df_par_se_long =  LONG_FULL_RT, df_par_eq= DF_R_EQ, num_col=S, trueParameters = 
+RT_MEAN_SD_PLOT <- par_mean_sd_plotter(df_par_se_long =  LONG_FULL_RT, df_par_eq= DF_RT_EQ, num_col=max(S, dim(DF_RT_EQ)[1]), trueParameters = 
 TRUE)
-ALPHA_MEAN_SD_PLOT <- par_mean_sd_plotter(df_par_se_long =  LONG_FULL_ALPHA , df_par_eq= DF_ALPHA_EQ, num_col=S, trueParameters = TRUE)
+ALPHA_MEAN_SD_PLOT <- par_mean_sd_plotter(df_par_se_long =  LONG_FULL_ALPHA , df_par_eq= DF_ALPHA_EQ, num_col=max(S, dim(DF_RT_EQ)[1]), trueParameters = TRUE)
 
 
-ggsave(RT_MEAN_SD_PLOT, filename = paste0(fig_folder, fig_subfolder, "rt_mean_",  "reso_",reso, "grow_", grow_function, "_seed_", num_seed, ".png"),
+ggsave(RT_MEAN_SD_PLOT, filename = paste0(fig_path, "rt_mean_",  "reso_",reso, "grow_", grow_function, "_seed_", num_seed, ".png"),
    height = 4,
     width = 12,
     create.dir = T
   )
 
-ggsave(ALPHA_MEAN_SD_PLOT, filename = paste0(fig_folder, fig_subfolder, "alpha_mean_", "reso_",reso, "grow_", grow_function, "_seed_", num_seed, ".png"),
+ggsave(ALPHA_MEAN_SD_PLOT, filename = paste0(fig_path, "alpha_mean_", "reso_",reso, "grow_", grow_function, "_seed_", num_seed, ".png"),
    height = 10,
     width = 12,
     create.dir = T
   )
-
-
-
-
-
-
-LONG_FULL_RT$type <- "r"
-LONG_FULL_ALPHA$type <- "a"
-
-
-LONG_FULL <- rbind(LONG_FULL_RT, LONG_FULL_ALPHA)
-
-
-LONG_FULL$numRep <- num_rep
-LONG_FULL$numSeed <- num_seed
-LONG_FULL$rpresent <- rpresent
-
-
-# Set up folders for saving figures - specifies where output plots will be saved
-out_folder <- "./outputs/simulation/demoStoc_lvmap/" ### Directory path for the main figure folder
-out_subfolder <- paste0("len_", len_chosen,"/", "noise_", noise_chosen, "/", "numrep_", num_rep, "/", "R_", rpresent, "/") ## Creates a subfolder name based on time length and noise level chosen
-
-
-
-dir.create(paste0(out_folder, out_subfolder), recursive = TRUE)
-
-write.csv(LONG_FULL, file= paste0(out_folder, out_subfolder, "DF_parameters_", "numrep", num_rep,  "_seed_", num_seed, ".csv"))
-
-
-
 
 
 
@@ -141,15 +111,15 @@ write.csv(LONG_FULL, file= paste0(out_folder, out_subfolder, "DF_parameters_", "
 ##now check if it makes sense against the TRUE VALUES 
 #averages #does ot work YET
 ALPHA_EST <- av_comp_plotter_v2(df_par_se_long = LONG_FULL_ALPHA, df_par_eq = DF_ALPHA_EQ)
-RT_EST <- av_comp_plotter_v2(df_par_se_long = LONG_FULL_RT, df_par_eq = DF_R_EQ)
+RT_EST <- av_comp_plotter_v2(df_par_se_long = LONG_FULL_RT, df_par_eq = DF_RT_EQ)
 
-ggsave(RT_EST, filename = paste0(fig_folder, fig_subfolder,"rt_acc_", "reso_",reso, "grow_", grow_function, "_seed_", num_seed,  ".png"),
+ggsave(RT_EST, filename = paste0(fig_path,"rt_acc_", "reso_",reso, "grow_", grow_function, "_seed_", num_seed,  ".png"),
    height = 10,
     width = 12,
     create.dir = T
   )
 
-ggsave(ALPHA_EST, filename = paste0(fig_folder, fig_subfolder, "alpha_acc_",  "reso_",reso, "grow_", grow_function, "_seed_", num_seed,  ".png"),
+ggsave(ALPHA_EST, filename = paste0(fig_path, "alpha_acc_",  "reso_",reso, "grow_", grow_function, "_seed_", num_seed,  ".png"),
    height = 10,
     width = 12,
     create.dir = T
@@ -163,4 +133,4 @@ ggsave(ALPHA_EST, filename = paste0(fig_folder, fig_subfolder, "alpha_acc_",  "r
 
 
 
-
+}

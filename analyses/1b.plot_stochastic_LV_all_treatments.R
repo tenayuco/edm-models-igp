@@ -36,3 +36,31 @@ ggsave(PLOT_PAR_SIM_ALPHA, filename = paste0(fig_folder, fig_subfolder, "alpha_a
   )
 
 
+
+
+
+
+
+
+LONG_FULL_RT$type <- "r"
+LONG_FULL_ALPHA$type <- "a"
+
+
+LONG_FULL <- rbind(LONG_FULL_RT, LONG_FULL_ALPHA)
+
+
+LONG_FULL$numRep <- num_rep
+LONG_FULL$numSeed <- num_seed
+LONG_FULL$rpresent <- rpresent
+
+
+# Set up folders for saving figures - specifies where output plots will be saved
+out_folder <- "./outputs/simulation/demoStoc_lvmap/" ### Directory path for the main figure folder
+out_subfolder <- paste0("len_", len_chosen,"/", "noise_", noise_chosen, "/", "numrep_", num_rep, "/", "R_", rpresent, "/") ## Creates a subfolder name based on time length and noise level chosen
+
+
+
+dir.create(paste0(out_folder, out_subfolder), recursive = TRUE)
+
+write.csv(LONG_FULL, file= paste0(out_folder, out_subfolder, "DF_parameters_", "numrep", num_rep,  "_seed_", num_seed, ".csv"))
+

@@ -7,12 +7,15 @@
 ## i decided not to put in a function, but more like a protocol
 ## in generates all the data bases per treatment
 
+lv_looper_lists <- function(data_used, v_num_rep, v_rpresent, v_num_seed){
+
 
   for (num_rep in v_num_rep) {
     for (rpresent in v_rpresent) {
         num_rep <- num_rep
         rpresent <- rpresent
         out_subfolder <- paste0("numrep_", num_rep, "/", "R_", rpresent, "/") ## Cn
+        fig_subfolder <- out_subfolder
         if (file.exists(paste0(out_folder, out_subfolder))) {print(paste0(out_folder, out_subfolder, 
     " exists already. Verifiy before or erase before running any simulation"
   ))
@@ -37,6 +40,29 @@
         )
         }
         }
-  }
+    }
 }
 
+}
+
+
+lv_looper_plot <- function(v_num_rep, v_rpresent, v_num_seed){
+
+  for (num_rep in v_num_rep) {
+    for (rpresent in v_rpresent) {
+        num_rep <- num_rep
+        rpresent <- rpresent
+        out_subfolder <- paste0("numrep_", num_rep, "/", "R_", rpresent, "/") ## Cn
+        out_path <- paste0(out_folder, out_subfolder)
+        fig_path <-  paste(fig_folder, out_subfolder)
+        if (file.exists(fig_path)) {print(paste0(fig_path, 
+    " exists already. Verifiy before or erase before running any simulation"
+  ))
+} else {
+      for (i in 1:length(list.files(out_path))){
+        list_used <- readRDS(paste0(out_path, list.files(out_path)[[i]]))
+        plotter_lv_map_treatment(list_used, fig_path = fig_path)}
+        }
+    }
+    }
+}

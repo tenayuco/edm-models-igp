@@ -78,6 +78,13 @@ v_rpresent = c(TRUE, FALSE)
 v_num_seed = seq(1:2)
 
 source("./analyses/1a.looper_LV_map.R")
+#protocool for the loop
+lv_looper_lists(data_used, v_num_rep, v_rpresent, v_num_seed)
+
+###nice now porotocol for the 
+
+
+
 # this will use my function of lv map per treatment, with a spatial kernel 
 ## and generates all the list ready to be plotted 
 
