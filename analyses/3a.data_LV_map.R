@@ -1,15 +1,10 @@
 
 
-# Set up folders for saving figures - specifies where output plots will be saved
-fig_folder <- "./figures/microcosmos/" ### Directory path for the main figure folder
-fig_subfolder <- paste0("enem_", chosen_enemies,"/", "R_", rpresent,  "/") ## Creates a subfolder name based on time length and noise level chosen
 
-
-
-### heres is the data
+df_modifier_lv <- function(raw_data, chosen_enemies){
 
 ##here we use 2 formats of data
-DATA_LONG <-  long_formatter(DATA_IGP)
+DATA_LONG <-  long_formatter(raw_data)
 
 ##here we remove the 0 
 
@@ -17,13 +12,25 @@ DATA_LONG <-  long_formatter(DATA_IGP)
 DATA_PRED <-  pred_formatter(DATA_LONG) 
 
 
-
-
 DATA_USED <- DATA_PRED |> 
   dplyr::filter(enem == chosen_enemies)|> 
-  dplyr::select(block, R, X, Y, week)|> 
-  dplyr::filter()
+  dplyr::select(block, R, X, Y, week)
+  
+  
+return(DATA_USED)  
+}
 
+
+
+
+lv_map_microcosmos <- function(df_used, rpresent, num_seed, num_rep){
+
+list_treatment<- list()
+
+
+### heres is the data
+
+DATA_USED <- df_used
 
 ###here I change the values of the replicate to chage the order.
 
@@ -86,7 +93,7 @@ for (i in unique(DATA_USED$replicate)){
 }
 
 
-
+list_treatment$N_list_sim <- N_list_sim
 
 S <-  dim(N_list_sim[[1]])[2]
 
@@ -103,7 +110,7 @@ for (i in 1:num_rep) {
 }
 toc()
 
-
+list_treatment$cv_list_sim <- cv_list_sim
 
 
 # ========================
@@ -124,8 +131,41 @@ for (i in 1:num_rep) {
 }
 toc()
 
+list_treatment$out_list <- out_list
+list_treatment$r_hat_list <- r_hat_list
+list_treatment$alpha_hat_list <- alpha_hat_list
+list_treatment$r_se_list <- r_se_list
+list_treatment$alpha_se_list <- alpha_se_list
+
+  
+  
 
 
+
+return(list_treatment)
+  
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
 
 ##------------now plotting the parameters---------------
 
@@ -172,6 +212,16 @@ ggsave(ALPHA_TIME_PLOT, filename = paste0(fig_folder, fig_subfolder, "alpha_time
 ###########3
 
 
+
+
+
+
+
+
+
+
+
+
 #now the mean and sd 
 
 
@@ -214,3 +264,6 @@ out_subfolder <- paste0("R_", rpresent,  "/") ## Creates a subfolder name based 
 dir.create(paste0(out_folder, out_subfolder), recursive = TRUE)
 
 write.csv(LONG_FULL, file= paste0(out_folder, out_subfolder, "DF_parameters_", chosen_enemies, "_rep", num_rep, "_seed_", num_seed, ".csv"))
+  
+  
+  
