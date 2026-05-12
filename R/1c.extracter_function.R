@@ -33,6 +33,7 @@ LONG_FULL$numRep <- list_treatment_used$treatment[["num_rep"]]
 LONG_FULL$numSeed <- list_treatment_used$treatment[["num_seed"]]
 LONG_FULL$rpresent <- list_treatment_used$treatment[["rpresent"]]
 
+LONG_FULL$enem <- list_treatment_used$treatment[["enem"]]
 
 return(LONG_FULL)
   

@@ -152,7 +152,7 @@ DATA_IGP <- readr::read_csv("data/dataIGP_2025.csv")
 
 #names of the folders
 out_folder <- "./outputs/microcosmos/" ### Directory path for the main figure folder
-fig_folder <- out_folder
+fig_folder <- "./figures/microcosmos/"
 
 
 v_num_seed <- seq(1:10)
@@ -160,28 +160,17 @@ v_enemigos <-  unique(DATA_IGP$enem)
 num_rep <- 1
 rpresent <- FALSE
 
+
+#import the source 
+
 lv_looper_lists_microcosmos(raw_data = DATA_IGP, v_enemigos = v_enemigos, v_num_seed = v_num_seed, num_rep = num_rep, rpresent = rpresent)
 
 
 
-for (num_seed in seq(1:10)) {
-  for (enemigo in unique(DATA_IGP$enem)) {
-    num_rep <- num_rep
-    num_seed <- num_seed
-    fig_subfolder <- paste0("enem_", chosen_enemies,"/", "R_", rpresent,  "/") ## Creates a subfolder name based on time length and noise level chosen
+#source("./analyses/1c.plot_stochastic_LV.R")
+plot_per_treatment_microcosmos(out_folder)
 
-    #function modifie and extract per ennemies
-    data_used <- df_modifier_lv(rawdata = DATA_IGP, chosen_enemies = enemigo)
-    lv_map_microcosmos(df_used <- data_used, rpresent = rpresent, num_rep = num_rep, num_seed = num_seed)
-
-    #function to run the lv map
-
-
-
-    source("./analyses/3a.data_LV_map.R")
-  }
-}
-
+extract_par_all_treatment_microcosmos(out_folder) ##generates the file
 
 ###########now for plotting results
 

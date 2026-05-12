@@ -7,17 +7,25 @@
 
 
 
-plotter_lv_map_treatment <- function(list_treatment_used, fig_path, num_seed){
+plotter_lv_map_treatment <- function(list_treatment_used, fig_path, num_seed, true_values =TRUE, reso='NA'){
 ###primero volvemos en data frames 
 
+  
+if(true_values ==TRUE){
+  DF_RT_EQ <- as.double(list_treatment_used$r_eq)
+  DF_ALPHA_EQ <- as.double(list_treatment_used$alpha_eq)}
+
+if(true_values ==FALSE) {  
+  DF_RT_EQ <- as.double(c(0, 0, 0))
+  DF_ALPHA_EQ <- as.double(matrix(0L, ncol=3, nrow=3))}
+  
 #for r
-DF_RT_EQ <- as.double(list_treatment_used$r_eq)
+
 DF_RT_EQ <- as.data.frame(DF_RT_EQ)
 names(DF_RT_EQ) <- "par_eq"
 DF_RT_EQ$varName <- c("R","N","P")
 
 #for alpha
-DF_ALPHA_EQ <- as.double(list_treatment_used$alpha_eq)
 DF_ALPHA_EQ <- as.data.frame(DF_ALPHA_EQ)
 names(DF_ALPHA_EQ) <- "par_eq"
 DF_ALPHA_EQ$varName <- c("R.R", "N.R", "P.R", "R.N", "N.N", "P.N", "R.P", "N.P", "P.P")
@@ -89,8 +97,8 @@ LONG_FULL_ALPHA <- long_par_formatter(df_par=DF_ALPHA, df_par_se = DF_ALPHA_SE)
 #now the mean and sd 
 
 RT_MEAN_SD_PLOT <- par_mean_sd_plotter(df_par_se_long =  LONG_FULL_RT, df_par_eq= DF_RT_EQ, num_col=max(S, dim(DF_RT_EQ)[1]), trueParameters = 
-TRUE)
-ALPHA_MEAN_SD_PLOT <- par_mean_sd_plotter(df_par_se_long =  LONG_FULL_ALPHA , df_par_eq= DF_ALPHA_EQ, num_col=max(S, dim(DF_RT_EQ)[1]), trueParameters = TRUE)
+true_values)
+ALPHA_MEAN_SD_PLOT <- par_mean_sd_plotter(df_par_se_long =  LONG_FULL_ALPHA , df_par_eq= DF_ALPHA_EQ, num_col=max(S, dim(DF_RT_EQ)[1]), trueParameters = true_values)
 
 
 ggsave(RT_MEAN_SD_PLOT, filename = paste0(fig_path, "rt_mean_",  "reso_",reso, "_seed_", num_seed, ".png"),
@@ -106,6 +114,8 @@ ggsave(ALPHA_MEAN_SD_PLOT, filename = paste0(fig_path, "alpha_mean_", "reso_",re
   )
 
 
+
+if(true_values ==TRUE){
 
 
 ##now check if it makes sense against the TRUE VALUES 
@@ -124,6 +134,8 @@ ggsave(ALPHA_EST, filename = paste0(fig_path, "alpha_acc_",  "reso_",reso, "_see
     width = 12,
     create.dir = T
   )
+}
+
 
 # --------------------------------------------------- ----------------------------------------
 ##now with the re
@@ -164,3 +176,5 @@ ggsave(PLOT_PAR_SIM_ALPHA, filename = paste0(fig_folder, "alpha_allrep_allr_alls
   )
 
 }
+
+
