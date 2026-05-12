@@ -28,24 +28,6 @@ source("./analyses/1.simulated_LVmap_full.R")
 ################################################3
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #============================DATA ANALYSE WITH LV MAP=============================================
 
 DATA_IGP <- readr::read_csv("data/dataIGP_2025.csv")
