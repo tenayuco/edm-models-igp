@@ -47,7 +47,7 @@ stochastic_generator(model_used = model_used, disc_or_cont = disc_or_cont, noise
 data_used <- utils::read.csv(paste0(out_folder, "DF_DISC_LV.csv"))
 v_num_rep = c(1, 10)
 v_rpresent = c(TRUE, FALSE)
-v_num_seed = seq(1:2) ###A lot of reshuflle 
+v_num_seed = seq(1:10) ###A lot of reshuflle 
 
 source("./analyses/1b.looper_LV_map.R")
 #protocool for the loop it run the functions of lv map, for each treatment. 
