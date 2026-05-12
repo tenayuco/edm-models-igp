@@ -1,6 +1,6 @@
 ###now it is a function. inert
 
-lv_map_per_treatment <- function(DF_USED, rpresent, num_seed, num_rep){
+lv_map_sim_treatment <- function(DF_USED, rpresent, num_seed, num_rep, model_used){
 
 
 DF_DISC_LV <- DF_USED
@@ -15,6 +15,10 @@ S <-  length(LBLB_LV_list$init)
 fac_int <- min(reso, 0.1) ##it just to remove the NA when the resolution is to strong and the parameters should jump to negative values  
 avR <- mean(DF_DISC_LV$R) #to reproduce the inflx 
 
+  
+  
+par_ms = model_used[["parms"]]  
+ 
 #check if it is the shemi
 #here the rt is lackig a constant 
 r_eq <- c(log(par_ms[["rho"]]*(par_ms[["K"]]/avR)*fac_int +1), log(1-par_ms[["mun"]]*fac_int), log(1-par_ms[["mup"]]*fac_int)) # set the intrinsic growth rates

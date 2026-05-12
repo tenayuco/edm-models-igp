@@ -6,7 +6,7 @@
 ## i decided not to put in a function, but more like a protocol
 ## in generates all the data bases per treatment
 
-lv_looper_lists <- function(data_used, v_num_rep, v_rpresent, v_num_seed) {
+lv_looper_lists <- function(data_used, v_num_rep, v_rpresent, v_num_seed, model_used) {
   for (num_rep in v_num_rep) {
     for (rpresent in v_rpresent) {
       num_rep <- num_rep
@@ -28,15 +28,17 @@ lv_looper_lists <- function(data_used, v_num_rep, v_rpresent, v_num_seed) {
             {
               print(paste0("rep", num_rep, "_R", rpresent, "_seed", num_seed))
 
-              list_treatment <- lv_map_per_treatment(
+              list_treatment <- lv_map_sim_treatment(
                 data_used,
                 rpresent,
                 num_seed,
-                num_rep
+                num_rep, 
+                model_used
               )
               list_treatment$treatment["num_rep"] <- num_rep
               list_treatment$treatment["rpresent"] <- rpresent
               list_treatment$treatment["num_seed"] <- num_seed
+              list_treatment$treatment["enem"] <- "sim"
 
               saveRDS(list_treatment,
                 paste0(

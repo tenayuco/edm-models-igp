@@ -5,19 +5,18 @@
 #fig_folder <- "./figures/simulation/demoStoc_lvmap/" ### Directory path for the main figure folder
 #fig_subfolder <- paste0("len_", len_chosen,"/", "noise_", noise_chosen, "/", "numrep_", num_rep, "/", "R_", rpresent, "/") ## Creates a subfolder name based on time length and noise level chosen
 
+stochastic_generator <- function(model_used, disc_or_cont, noise_chosen){
+
 DF_DISC_LV <-  data.frame()  # Initialize empty data frame to store all simulation results
 
 
 # Loop through each replicate simulation
 for (i in seq(1:num_block)){
 
-#model used
-model_used <- LBLB_LV_list 
-disc_or_cont <- "disc_stoc"  #
+
 d_t <- 0.01  # Time step for numerical integration
 par_ms = model_used[["parms"]]  
 par_ms[["s_d"]] = noise_chosen 
-grow_function <- "semichemostat"   ## Selected growth function type (can be "logistic", "exponential", or "semichemostat")
 
 # Run the differential equation solver using Euler method (iteration)
 DF_temp<- deSolve::ode(
@@ -70,3 +69,4 @@ ggsave(FULL_PLOT, filename = paste0(fig_folder,
 
 rm(TS_PLOT,  PHASE_PLOT_NR, PHASE_PLOT_PR, PHASE_PLOT_PN, FULL_PLOT)
 
+  }

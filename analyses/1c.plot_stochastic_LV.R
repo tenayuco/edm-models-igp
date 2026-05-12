@@ -4,13 +4,11 @@
 plot_per_treatment <- function(out_folder){
 
 for (treatment in list.dirs(list.dirs(out_folder, recursive=FALSE),recursive=FALSE)){
-  for (i in seq(1:length(list.files(treatment)))){
-  #print(1:length(list.files(treatment)))
+  for (i in seq(1:length(list.files(treatment,  pattern = ".rds")))){
   num_seed <- i
-  print(num_seed)
-  list_used <- readRDS(paste0(treatment,"/" , list.files(treatment)[i]))
+  list_used <- readRDS(paste0(treatment,"/" , list.files(treatment,  pattern = ".rds")[i]))
   fig_path <- paste0(fig_folder, stringr::str_remove(treatment, out_folder), "/")
-  plotter_lv_map_treatment(list_used, fig_path = fig_path, num_seed = num_seed)
+  plotter_lv_map_treatment(list_used, fig_path = fig_path, num_seed = num_seed, true_values = TRUE)
 }
 }
 }
@@ -36,10 +34,12 @@ for (treatment in list.dirs(list.dirs(out_folder, recursive=FALSE),recursive=FAL
 print(head(full_df))
 write.csv(full_df, file= paste0(out_folder, "FULL_DF_parameters.csv"))
 
-plotter_full_parameters(df_full = full_df, fig_folder = fig_folder)
-##
+return(full_df)
 
 }
+
+
+
 
 
 ##==========================================
