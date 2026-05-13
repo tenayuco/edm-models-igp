@@ -106,6 +106,8 @@ tic()
 for (i in 1:num_rep) {
 
   out_cv <- LV_map_state_space_cross_validation(N_list_sim[[i]], theta_v = seq(0, 3, 0.01))
+  #out_cv <- LV_map_time_cross_validation(N_list_sim[[i]], theta_v = seq(0, 3, 0.01))
+
   cv_list_sim[[i]] <- out_cv
 }
 toc()

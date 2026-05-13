@@ -6,10 +6,11 @@ plot_per_treatment <- function(out_folder, true_values){
 for (treatment in list.dirs(list.dirs(out_folder, recursive=FALSE),recursive=FALSE)){
   for (i in seq(1:length(list.files(treatment,  pattern = ".rds")))){
   num_seed <- i
+  print(list.files(treatment,  pattern = ".rds")[i])
   list_used <- readRDS(paste0(treatment,"/" , list.files(treatment,  pattern = ".rds")[i]))
   fig_path <- paste0(fig_folder, stringr::str_remove(treatment, out_folder), "/")
   plotter_lv_map_treatment(list_used, fig_path = fig_path, num_seed = num_seed, true_values = true_values)
-}
+  }
 }
 }
 

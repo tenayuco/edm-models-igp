@@ -59,13 +59,11 @@ lv_looper_lists(data_used, v_num_rep, v_rpresent, v_num_seed, model_used)
 #NOW THE MORE GENERAL PLOTTINGS
 
 #========================I.C PLOT LV SIMULATIONS ============================
-
-
 source("./analyses/1_2.plot_extract_per_treatment.R")
-plot_per_treatment(out_folder)
+source("./analyses/1_2.plotter_LV.R")
+plot_per_treatment(out_folder, true_values = TRUE)
 full_df <- extract_par_all_treatment(out_folder) ##generates the file
 
-source("./analyses/1_2.plotter_LV.R")
 plotter_full_parameters(df_full = full_df, fig_folder = fig_folder)
 
 ##========================================================================================

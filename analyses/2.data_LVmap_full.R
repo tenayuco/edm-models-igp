@@ -36,11 +36,13 @@ lv_looper_lists_microcosmos(raw_data = DATA_IGP, v_enemigos = v_enemigos, v_num_
 #fives the list per treamtne 
 
 source("./analyses/1_2.plot_extract_per_treatment.R")
+source("./analyses/1_2.plotter_LV.R")
+
 plot_per_treatment(out_folder, true_values = FALSE)
 
 full_df <- extract_par_all_treatment(out_folder) ##generates the file
 
-source("./analyses/1_2.plotter_LV.R")
+
 plotter_full_parameters_microcosmos(df_full = full_df, fig_folder = fig_folder)
 
 ###########now for plotting results
