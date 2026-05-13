@@ -23,7 +23,7 @@ return(DATA_USED)
 
 
 
-lv_map_microcosmos <- function(df_used, rpresent, num_seed, num_rep){
+lv_map_microcosmos <- function(df_used, rpresent, num_seed, num_rep, kernel_chosen){
 
 list_treatment<- list()
 
@@ -105,8 +105,13 @@ cv_list_sim <- vector(mode = "list", length = num_rep)
 tic()
 for (i in 1:num_rep) {
 
-  out_cv <- LV_map_state_space_cross_validation(N_list_sim[[i]], theta_v = seq(0, 3, 0.01))
-  #out_cv <- LV_map_time_cross_validation(N_list_sim[[i]], theta_v = seq(0, 3, 0.01))
+  if(kernel_chosen == "state") {
+out_cv <- LV_map_state_space_cross_validation(N_list_sim[[i]], theta_v = seq(0, 3, 0.01))
+  }
+if(kernel_chosen == "time") {
+  out_cv <- LV_map_time_cross_validation(N_list_sim[[i]], theta_v = seq(0, 3, 0.01))
+  }
+
 
   cv_list_sim[[i]] <- out_cv
 }
@@ -125,7 +130,9 @@ alpha_se_list <- vector(mode = "list", length = num_rep)
 out_list <- vector(mode = "list", length = num_rep)
 tic()
 for (i in 1:num_rep) {
-  out_list[[i]] <- LV_map(N_list_sim[[i]], cv_list_sim[[i]]$theta_o)
+
+  
+  out_list[[i]] <- LV_map(N_list_sim[[i]], cv_list_sim[[i]]$theta_o, kernel = kernel_chosen)
   r_hat_list[[i]] <- out_list[[i]]$r_hat
   r_se_list[[i]] <- out_list[[i]]$r_se
   alpha_hat_list[[i]] <- out_list[[i]]$alpha_hat

@@ -2,15 +2,19 @@
 DATA_IGP <- readr::read_csv("data/dataIGP_2025.csv")
 
 #to represent the data
-source("./analyses/2a.data_representation.R")
 
 
 #========2.LV MAP======================
 
 #this is nice cause you loop outside
 #names of the folders
-out_folder <- "./outputs/microcosmos/" ### Directory path for the main figure folder
-fig_folder <- "./figures/microcosmos/"
+
+#kernel <- "time"
+kernel <- "state"
+
+
+out_folder <- paste0("./outputs/microcosmos/", kernel, "_kernel/") ### Directory path for the main figure folder
+fig_folder <- paste0("./figures/microcosmos/", kernel, "_kernel/")
 
 
 v_num_seed <- seq(1:10)
@@ -18,12 +22,14 @@ v_enemigos <-  unique(DATA_IGP$enem)
 num_rep <- 1
 rpresent <- FALSE
 
+#to represent the data
+#source("./analyses/2a.data_representation.R")
 
 #import the source 
 #==========================I.B. RUN LV MAP SPATIAL KERNEL on DATA=======================================
 source("./analyses/2b.looper_data_lv_map.R")
 
-lv_looper_lists_microcosmos(raw_data = DATA_IGP, v_enemigos = v_enemigos, v_num_seed = v_num_seed, num_rep = num_rep, rpresent = rpresent)
+lv_looper_lists_microcosmos(raw_data = DATA_IGP, v_enemigos = v_enemigos, v_num_seed = v_num_seed, num_rep = num_rep, rpresent = rpresent, kernel_chosen = kernel)
 
 
 #===========================================================================================

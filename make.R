@@ -30,6 +30,10 @@ toc()
 
 
 #============================DATA ANALYSE WITH LV MAP=============================================
+
+#here you can add a loop to have the time or spatial kernel kernel_v= c("state", "time")
+
+
 tic()
 source("./analyses/2.data_LVmap_full.R")
 toc()

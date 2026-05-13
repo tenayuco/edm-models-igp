@@ -156,6 +156,7 @@ parameter_seed_plotter <- function(df_full = FULL_DF_PARAMETERS, par_type = "r")
     geom_point(aes(color= as.factor(numSeed)), position=position_dodge(0.3))+
 
     xlab("Replicate and variable") +
+    ggtitle(paste0("kernel ", kernel)) +
 
    # geom_segment(data= df_par_se_long,  aes(x = min_x-0.5, y = 0, xend = max_x+0.5, yend = 0), color= "black", linetype= "dashed")+
 
@@ -194,7 +195,7 @@ parameter_seed_sim_plotter <- function(df_full = FULL_DF_PARAMETERS, par_type = 
     facet_grid(numRep~rpresent, scales = "free", labeller = labeller(.rows = label_both, .cols = label_both))+
     geom_hline(yintercept = 0, color= "black", linetype= "dashed")+
      scale_color_viridis_d() +
-
+    ggtitle(paste0("kernel ", kernel)) +
 
     theme_bw()
 
@@ -216,6 +217,7 @@ parameter_theta_plotter <- function(df_full = FULL_DF_PARAMETERS){
 
     facet_wrap(~enem, ncol= 3)+
      scale_color_viridis_d() +
+    ggtitle(paste0("kernel ", kernel)) +
 
 
     #facet_grid(varName~replicate, scales = "free")+

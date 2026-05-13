@@ -1,5 +1,5 @@
 
-lv_looper_lists_microcosmos <- function(raw_data,v_enemigos,v_num_seed, num_rep,rpresent) {
+lv_looper_lists_microcosmos <- function(raw_data,v_enemigos,v_num_seed, num_rep,rpresent, kernel_chosen) {
   for (enemigo in v_enemigos) {
     out_subfolder <- paste0("enem_", enemigo, "/", "R_", rpresent, "/") ## Creates a subfolder name based on time length and noise level chosen
     #fig_subfolder <- out_subfolder ## Creates a subfolder name based on time length and noise level chosen
@@ -15,7 +15,7 @@ lv_looper_lists_microcosmos <- function(raw_data,v_enemigos,v_num_seed, num_rep,
         tryCatch(
           {
             data_used <- df_modifier_lv(raw_data = raw_data,chosen_enemies = enemigo)
-            list_treatment <- lv_map_microcosmos(df_used = data_used, rpresent = rpresent,num_rep = num_rep,num_seed = num_seed)
+            list_treatment <- lv_map_microcosmos(df_used = data_used, rpresent = rpresent,num_rep = num_rep,num_seed = num_seed, kernel_chosen= kernel_chosen)
 
             list_treatment$treatment["enem"] <- enemigo
             list_treatment$treatment["num_rep"] <- num_rep
