@@ -200,3 +200,29 @@ parameter_seed_sim_plotter <- function(df_full = FULL_DF_PARAMETERS, par_type = 
 
   return(par_plot)
 }
+
+
+
+
+
+parameter_theta_plotter <- function(df_full = FULL_DF_PARAMETERS){
+
+
+  par_plot <- df_full |> 
+    ggplot(aes(x= theta_o, y= RMSE_o)) +
+    geom_point(aes(color= as.factor(numSeed)), size=4)+
+
+    xlab("Replicate and variable") +
+
+   # geom_segment(data= df_par_se_long,  aes(x = min_x-0.5, y = 0, xend = max_x+0.5, yend = 0), color= "black", linetype= "dashed")+
+
+    facet_wrap(~enem, ncol= 3)+
+     scale_color_viridis_d() +
+
+
+    #facet_grid(varName~replicate, scales = "free")+
+
+    theme_bw()
+
+  return(par_plot)
+}

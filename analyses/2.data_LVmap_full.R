@@ -45,4 +45,7 @@ full_df <- extract_par_all_treatment(out_folder) ##generates the file
 
 plotter_full_parameters_microcosmos(df_full = full_df, fig_folder = fig_folder)
 
+
+plotter_theta_microcosmos(df_full = full_df, fig_folder = fig_folder)
+
 ###########now for plotting results
