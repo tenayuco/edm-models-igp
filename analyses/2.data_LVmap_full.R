@@ -9,8 +9,9 @@ DATA_IGP <- readr::read_csv("data/dataIGP_2025.csv")
 #this is nice cause you loop outside
 #names of the folders
 
+#prefedined in the krnel
 #kernel <- "time"
-kernel <- "state"
+#kernel <- "state"
 
 
 out_folder <- paste0("./outputs/microcosmos/", kernel, "_kernel/") ### Directory path for the main figure folder

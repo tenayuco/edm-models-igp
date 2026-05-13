@@ -15,7 +15,10 @@ DATA_PRED <-  pred_formatter(DATA_LONG)
 DATA_USED <- DATA_PRED |> 
   dplyr::filter(enem == chosen_enemies)|> 
   dplyr::select(block, R, X, Y, week)
-  
+
+#I add a normalization That we did had.. 
+DATA_USED <- DATA_USED |> 
+  dplyr::mutate(R = R/max(R, na.rm = TRUE), X = X/max(X, na.rm = TRUE), Y = Y/max(Y, na.rm = TRUE) )
   
 return(DATA_USED)  
 }
