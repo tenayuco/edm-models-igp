@@ -21,13 +21,17 @@ DF_ALPHA_SE <- process_list(data_list = list_treatment_used$alpha_se_list)
   
  ##I add for the omega, eta 1 and eta2
   
-#DF_OMEGA <- process_list(data_list = list_treatment_used$log_Omega_mean_list)
-#DF_OMEGA_CI_DW <-  process_list(data_list = list_treatment_used$log_Omega_cimean_list[[1]])
-#DF_OMEGA_CI_UP <-  process_list(data_list = list_treatment_used$log_Omega_cimean_list[[2]])
+DF_OMEGA <- process_list(data_list = list_treatment_used$log_Omega_mean_list)
+DF_OMEGA_CI_DW <-  process_list(data_list = list_treatment_used$log_Omega_cimean_list[[1]])
+DF_OMEGA_CI_UP <-  process_list(data_list = list_treatment_used$log_Omega_cimean_list[[2]])
 
-#do not need any additional form
-#DF_OMEGA_FULL <-  dplyr::full_join(DF_OMEGA, DF_OMEGA_CI_DW, DF_OMEGA_CI_UP, by="replicate", suffix =c(".mean", ".dw", ".up"))
   
+  
+#do not need any additional form
+DF_OMEGA_FULL <-  dplyr::full_join(DF_OMEGA, DF_OMEGA_CI_DW, by=c("replicate", "time"))
+DF_OMEGA_FULL <-  dplyr::full_join(DF_OMEGA_FULL, DF_OMEGA_CI_UP, by=c("replicate", "time"))
+names(DF_OMEGA_FULL) <- c("omega_mean", "time", "replicate", "omega_dw", "omega_up")
+
   
   ###
 DF_THETA <- process_list(data_list = list_treatment_used$cv_list_sim)
@@ -53,6 +57,7 @@ LONG_FULL <- rbind(LONG_FULL_RT, LONG_FULL_ALPHA)
   #now we merge it with the thetas..
   # 
 LONG_FULL <- dplyr::inner_join(LONG_FULL, DF_THETA, by="replicate")
+LONG_FULL <- dplyr::inner_join(LONG_FULL, DF_OMEGA_FULL, by="replicate")
 
   
 LONG_FULL$numRep <- list_treatment_used$treatment[["num_rep"]]

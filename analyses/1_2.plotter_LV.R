@@ -233,3 +233,28 @@ ggsave(PLOT_PAR_THETA, filename = paste0(fig_folder, "theta_allrep_allr_allseed_
 
 }
 
+
+
+
+
+plotter_omega_microcosmos <- function(df_full, fig_folder){
+
+#just if you have several treatments (replicatess)
+FULL_DF_PARAMETERS_M <- df_full|> 
+  dplyr::select(!c(replicate, varName, type))|> 
+  dplyr::group_by(numSeed, rpresent, numRep, enem)|> 
+  dplyr::summarise_all(mean)
+
+
+PLOT_PAR_THETA <-  parameter_omega_plotter(df_full = FULL_DF_PARAMETERS_M)
+
+  
+ggsave(PLOT_PAR_THETA, filename = paste0(fig_folder, "omega_allrep_allr_allseed_", ".png"),
+   height = 10,
+    width = 13,
+    create.dir = T
+  )
+
+}
+
+

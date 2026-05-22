@@ -38,7 +38,7 @@ lv_looper_lists_microcosmos(raw_data = DATA_IGP, v_enemigos = v_enemigos, v_num_
 #SO AT THIS POINT WE HAVE DONE THE HEAVY ANALYSIS 
 #NOW THE MORE GENERAL PLOTTINGS
 
-#========================I.C PLOT LV SIMULATIONS ============================
+#========================I.C PLOT LV <MICRSO ============================
 
 #fives the list per treamtne 
 
@@ -54,5 +54,8 @@ plotter_full_parameters_microcosmos(df_full = full_df, fig_folder = fig_folder)
 
 
 plotter_theta_microcosmos(df_full = full_df, fig_folder = fig_folder)
+
+plotter_omega_microcosmos(df_full = full_df, fig_folder = fig_folder)
+
 
 ###########now for plotting results
