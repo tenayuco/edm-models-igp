@@ -152,6 +152,40 @@ list_treatment$alpha_se_list <- alpha_se_list
   
   
 
+# =========================
+# Calculating omega and eta
+# =========================
+log_Omega_mean_list <- array(NA, dim = num_rep)
+eta1_mean_list <- array(NA, dim = num_rep)
+eta2_mean_list <- array(NA, dim = num_rep)
+log_Omega_cimean_list <- array(NA, dim = c(num_rep, S))
+eta1_cimean_list <- array(NA, dim = c(num_rep, S))
+eta2_cimean_list <- array(NA, dim = c(num_rep, S))
+
+
+tic()
+for (i in 1:num_rep) {
+  o_coexistence <- coexistence_metrics_f2(out_list[[i]])
+  log_Omega_mean_list[i] <- mean(o_coexistence$log_Omega_hat)
+  eta1_mean_list[i] <- mean(o_coexistence$eta_hat[, 1])
+  eta2_mean_list[i] <- mean(o_coexistence$eta_hat[, 2])
+  log_Omega_cimean_list[i, ] <- colMeans(o_coexistence$log_Omega_ci)
+  eta1_cimean_list[i, ] <- colMeans(o_coexistence$eta_ci[, 1, ])
+  eta2_cimean_list[i, ] <- colMeans(o_coexistence$eta_ci[, 2, ])
+}
+toc()
+
+
+  
+list_treatment$log_Omega_mean_list <- log_Omega_mean_list
+list_treatment$eta1_mean_list<- eta1_mean_list
+list_treatment$eta2_mean_list <- eta2_mean_list
+list_treatment$log_Omega_cimean_list <-  log_Omega_cimean_list
+list_treatment$eta1_cimean_list <- eta1_cimean_list
+list_treatment$eta2_cimean_list <- eta2_cimean_list
+
+  
+  
 
 
 return(list_treatment)
