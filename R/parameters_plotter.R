@@ -221,7 +221,7 @@ parameter_omega_plotter <- function(df_full = FULL_DF_PARAMETERS){
 
    # geom_segment(data= df_par_se_long,  aes(x = min_x-0.5, y = 0, xend = max_x+0.5, yend = 0), color= "black", linetype= "dashed")+
 
-    facet_wrap(~enem, scales = "free", ncol= 3)+
+    facet_wrap(~enem, ncol= 3)+
     geom_hline(yintercept = 0, color= "black", linetype= "dashed")+
      scale_color_viridis_d() +
 

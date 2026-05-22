@@ -258,3 +258,25 @@ size = 0.5) +
   )
 }
 
+plotter_coex <- function(data_coex) {
+
+COEX_PLOT <- data_coex |>
+    ggplot(aes(x = week, y = survival)) +
+    geom_area(fill = "steelblue", alpha = 0.3) +
+    geom_line(size = 1) +
+    facet_wrap(~enem) +
+    theme_minimal()
+
+
+  ggsave(
+    COEX_PLOT,
+    filename = paste0("./figures/coexistence", ".png"),
+    height = 9,
+    width = 10,
+    create.dir = T
+  )
+}
+
+
+
+

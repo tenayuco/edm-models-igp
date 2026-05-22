@@ -51,3 +51,21 @@ return(DATA_IGP_WIDER)
 
 
 
+
+pred_coexistence_formatter <- function(data_pred) {
+DATA_TIMES <- data_pred |> 
+  dplyr::mutate(coex = ifelse(X > 0 & Y > 0, 1, 0))|> 
+  dplyr::select(enem, block, week, coex) |> 
+  tidyr::complete(enem, block, week)
+  
+DATA_TIMES$coex[is.na(DATA_TIMES$coex)] <- 0 
+
+  DATA_TIMES <- DATA_TIMES|>
+  dplyr::group_by(enem, week) |> 
+  dplyr::summarise(survival= 100*sum(coex)/10)
+
+return(DATA_TIMES)
+}
+
+
+
