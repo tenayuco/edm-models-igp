@@ -15,7 +15,7 @@ par_time_plotter <- function(df_par, replicate= "replicate", plotted_var = c("N"
     ggplot(aes(x=time, y=value)) +
     geom_line(aes(color= as.factor(replicate), group=replicate), linewidth=1) + 
     xlab("Time") +
-    facet_wrap(~varName, scales = "free", ncol = num_col)+
+    facet_wrap(~varName, ncol = num_col)+
     #facet_grid(varName~replicate, scales = "free")+
 
     theme_bw()

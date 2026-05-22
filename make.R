@@ -33,7 +33,7 @@ toc()
 
 #here you can add a loop to have the time or spatial kernel kernel_v= c("state", "time")
 
-for (kernel in c(c("state", "time"))){
+for (kernel in c("state", "time")){
 
 tic()
 source("./analyses/2.data_LVmap_full.R")
