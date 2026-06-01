@@ -23,7 +23,7 @@ multisp_CCM <- function(x, niter){
   
   if(length(levels(as.factor(x$country)))>1 & nrow(x)>=50){
     
-    x_multi_ccm <- plyr::ddply(x, .(country), .fun=add_row, .parallel = F)
+    x_multi_ccm <- plyr::ddply(x, plyr::.(country), .fun= tibble::add_row, .parallel = F)
     Accm <- x_multi_ccm$Abd_std[-nrow(x_multi_ccm)]
     
     maxE <- 4
@@ -270,7 +270,7 @@ multisp_CCM_test <- function(x, niter){
   
   if(length(levels(as.factor(x$country)))>1 & nrow(x)>=50){
     
-    x_multi_ccm <- plyr::ddply(x, .(country), .fun=add_row, .parallel = F)
+    x_multi_ccm <- plyr::ddply(x, .(country), .fun=tibble:add_row, .parallel = F)
     Accm <- x_multi_ccm$Index[-nrow(x_multi_ccm)]
     Bccm <- x_multi_ccm[-nrow(x_multi_ccm),"value"]
       

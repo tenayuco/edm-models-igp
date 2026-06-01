@@ -234,7 +234,30 @@ df_press3 <- df_press3[order(df_press3$Species, df_press3$country, df_press3$yea
 
 # Detrend when needed  #THIS IS RELEVANT FOR MY TIME SERIES< SEE THE DETREND
 
-## now, this is new, Im gonna have only two cpuntires
+## now, this is new, Im gonna have only two cpuntires, and two species
+
+df_press_example <- df_press3 |> 
+  dplyr::filter(Species == "Accipiter nisus")
+#|> 
+ #   dplyr::filter(Species %in% c("Acanthis flammea", "Alauda arvensis"))
+
+##so the detrend is not working
+#df_press4 <- data.frame(droplevels(df_press_sub3[df_press_sub3$count > 4 & df_press_sub3$sum_ab > 20 & df_press_sub3$country!="Luxembourg",]) |> dplyr::group_by(Species, country) |> dplyr::mutate(temp_std=detrend_data(temp), urb_std=detrend_data(urb), hico_std=detrend_data(hico), forest_std=detrend_data(forest), Index_std=detrend_data(Index), Abd_std=detrend_data(Abd)))
 
 
-df_press4 <- data.frame(droplevels(df_press3[df_press3$count > 4 & df_press3$sum_ab > 20 & df_press3$country!="Luxembourg",]) |> dplyr::group_by(Species, country) |> dplyr::mutate(temp_std=detrend_data(temp), urb_std=detrend_data(urb), hico_std=detrend_data(hico), forest_std=detrend_data(forest), Index_std=detrend_data(Index), Abd_std=detrend_data(Abd)))
+####################now lets apply the functions... (openly to see what happens.. )
+
+#this is the short version, now Im gonna open it because it is just sendind NA
+
+#
+
+ccm_sp_test <- plyr::ddply(df_press_sub3, plyr::.(Species), .fun = multisp_CCM, niter=1000, .parallel = F, .progress = "text")
+
+
+## this is repated in R folder
+
+##we subfiltered now one species. And thenI will do a looooop
+ #x <- df_press_sub3 |> dplyr::filter(Species == "Acrocephalus palustris")
+
+#multisp_CCM <- function(x, niter){
+  
