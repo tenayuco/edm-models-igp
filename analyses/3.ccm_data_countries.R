@@ -242,7 +242,32 @@ df_press3 <- df_press3 |>
 
 #modified, just to have complete case..
 
+utils::write.csv(df_press3, "./data/df_press3.csv")
 
+
+
+
+
+
+
+##########################################################################################3
+
+#///////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+###############START FROM HERE##########33
+
+df_press3 <- readr::read_csv("data/df_press3.csv")
+df_press3$...1 <- NULL
 
 # Detrend when needed  #THIS IS RELEVANT FOR MY TIME SERIES< SEE THE DETREND
 
@@ -254,9 +279,10 @@ df_press_example <- df_press3 |>
   dplyr::filter(Species %in% c("Accipiter nisus"))
 
 
-
 df_press_example_std <-df_press_example  |> 
  dplyr::mutate(temp_std=detrend_data(temp), urb_std=detrend_data(urb), hico_std=detrend_data(hico), forest_std=detrend_data(forest), Index_std=detrend_data(Index), Abd_std=detrend_data(Abd))
+
+
 
 
 ####################now lets apply the functions... (openly to see what happens.. )
