@@ -26,7 +26,7 @@ multisp_CCM <- function(x, niter){
     x_multi_ccm <- plyr::ddply(x, plyr::.(country), .fun= tibble::add_row, .parallel = F)
     Accm <- x_multi_ccm$Abd_std[-nrow(x_multi_ccm)]
     
-    maxE <- 4
+    maxE <- 4 
     
     Emat <- matrix(nrow=maxE-1, ncol=1)
     
@@ -40,7 +40,7 @@ multisp_CCM <- function(x, niter){
     
     multisp_CCM_intern <- function(x_multi_ccm,Accm,pressure=c("temp","urb","hico","forest"),niter){
       
-      Bccm <- x_multi_ccm[-nrow(x_multi_ccm),paste0(pressure,"_std")]
+      Bccm <- x_multi_ccm[-nrow(x_multi_ccm),paste0(pressure,"_std")]  ##here you pick each of the variables, but me, it is going to be the second.. 
       
       maxE <- 4
       

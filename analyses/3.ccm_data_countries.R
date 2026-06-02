@@ -232,17 +232,31 @@ to_remove2 <- data.frame(na.omit(df_press2) |> dplyr::group_by(Species, country)
 df_press3 <- merge(df_press3,to_remove2, by=c("Species","country"))
 df_press3 <- df_press3[order(df_press3$Species, df_press3$country, df_press3$year),]
 
+
+
+####NOWWW. THERE WAS A PROBLEM WITH THE DATA SET, CAUSE OF THE COMMAS \
+
+df_press3 <- df_press3 |> 
+  dplyr::mutate(dplyr::across(c(temp, urb, hico, forest, Index, Abd), 
+                ~ as.numeric(gsub(",", ".", .))))
+
+#modified, just to have complete case..
+
+
+
 # Detrend when needed  #THIS IS RELEVANT FOR MY TIME SERIES< SEE THE DETREND
 
 ## now, this is new, Im gonna have only two cpuntires, and two species
 
-df_press_example <- df_press3 |> 
-  dplyr::filter(Species == "Accipiter nisus")
-#|> 
- #   dplyr::filter(Species %in% c("Acanthis flammea", "Alauda arvensis"))
 
-##so the detrend is not working
-#df_press4 <- data.frame(droplevels(df_press_sub3[df_press_sub3$count > 4 & df_press_sub3$sum_ab > 20 & df_press_sub3$country!="Luxembourg",]) |> dplyr::group_by(Species, country) |> dplyr::mutate(temp_std=detrend_data(temp), urb_std=detrend_data(urb), hico_std=detrend_data(hico), forest_std=detrend_data(forest), Index_std=detrend_data(Index), Abd_std=detrend_data(Abd)))
+
+df_press_example <- df_press3 |> 
+  dplyr::filter(Species %in% c("Accipiter nisus"))
+
+
+
+df_press_example_std <-df_press_example  |> 
+ dplyr::mutate(temp_std=detrend_data(temp), urb_std=detrend_data(urb), hico_std=detrend_data(hico), forest_std=detrend_data(forest), Index_std=detrend_data(Index), Abd_std=detrend_data(Abd))
 
 
 ####################now lets apply the functions... (openly to see what happens.. )
@@ -251,7 +265,7 @@ df_press_example <- df_press3 |>
 
 #
 
-ccm_sp_test <- plyr::ddply(df_press_sub3, plyr::.(Species), .fun = multisp_CCM, niter=1000, .parallel = F, .progress = "text")
+ccm_sp_test <- plyr::ddply(df_press_example_std , plyr::.(Species), .fun = multisp_CCM, niter=1000, .parallel = F, .progress = "text")
 
 
 ## this is repated in R folder
@@ -260,4 +274,6 @@ ccm_sp_test <- plyr::ddply(df_press_sub3, plyr::.(Species), .fun = multisp_CCM, 
  #x <- df_press_sub3 |> dplyr::filter(Species == "Acrocephalus palustris")
 
 #multisp_CCM <- function(x, niter){
-  
+
+
+#now Ill have to try to ccm 
