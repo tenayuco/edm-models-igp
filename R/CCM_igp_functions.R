@@ -6,10 +6,12 @@ multisp_CCM_igp <- function(x, niter){
     dplyr::mutate(contador =1)|> 
     dplyr::group_by(block) |> 
     dplyr::summarise(m = sum(contador))
-  
-  maxE <- min(x_count$m-1)
+
+  maxE <- (min(x_count$m)/2)-1  #following weak whitney theorem 
+  #maxE <- 4
   print(paste0("maxE", maxE))
   
+
   x <- droplevels(x)
 
   if(length(levels(as.factor(x$block)))>1 & nrow(x)>=50){

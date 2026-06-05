@@ -8,6 +8,9 @@ DATA_PRED <-  pred_formatter(DATA_LONG)
 
 ### we gonna detrend.. so this is hard, and I wonder how it looks. 
 
+
+
+
 ##we detrend
 DATA_PRED_std <-DATA_PRED  |> 
  dplyr::mutate(X=detrend_data(X), Y=detrend_data(Y), R=detrend_data(R))
@@ -18,7 +21,9 @@ DATA_PRED_std <- DATA_PRED
 ccm_sp_igp <- data.frame()
 
 for (enemies in unique(DATA_PRED_std$enem)){
+
   DATA_PRED_enem <- DATA_PRED_std |> 
+  dplyr::mutate(R = R/max(R, na.rm = TRUE), X = X/max(X, na.rm = TRUE), Y = Y/max(Y, na.rm = TRUE) )|> 
   dplyr::filter(enem==enemies)
   ccm_enem <-  multisp_CCM_igp(x = DATA_PRED_enem, niter = 1000)
   ccm_enem$enem <- enemies
