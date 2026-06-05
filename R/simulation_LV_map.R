@@ -138,6 +138,9 @@ list_treatment$alpha_hat_list <- alpha_hat_list
 list_treatment$r_se_list <- r_se_list
 list_treatment$alpha_se_list <- alpha_se_list
 
+  
+
+  
 return(list_treatment)
   
 }

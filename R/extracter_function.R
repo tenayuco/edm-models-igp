@@ -1,4 +1,4 @@
-extracter_data_frame  <- function(list_treatment_used){
+extracter_data_frame  <- function(list_treatment_used, coex_cal =TRUE){
 
 ### ok now im gonna run all over the lists, not so much the DF maybe similar.. 
 process_list <- function(data_list){
@@ -20,7 +20,9 @@ DF_ALPHA_SE <- process_list(data_list = list_treatment_used$alpha_se_list)
   
   
  ##I add for the omega, eta 1 and eta2
-  
+
+if(coex_cal ==TRUE){
+
 DF_OMEGA <- process_list(data_list = list_treatment_used$log_Omega_mean_list)
 DF_OMEGA_CI_DW <-  process_list(data_list = list_treatment_used$log_Omega_cimean_list[[1]])
 DF_OMEGA_CI_UP <-  process_list(data_list = list_treatment_used$log_Omega_cimean_list[[2]])
@@ -40,7 +42,7 @@ DF_THETA <- DF_THETA |>
 
 #i can do this cause you inly have one value per replicate 
 DF_THETA <- unique(DF_THETA)
-  
+}
 
 
 
@@ -56,9 +58,11 @@ LONG_FULL <- rbind(LONG_FULL_RT, LONG_FULL_ALPHA)
 
   #now we merge it with the thetas..
   # 
+
+if(coex_cal ==TRUE){
 LONG_FULL <- dplyr::inner_join(LONG_FULL, DF_THETA, by="replicate")
 LONG_FULL <- dplyr::inner_join(LONG_FULL, DF_OMEGA_FULL, by="replicate")
-
+}
   
 LONG_FULL$numRep <- list_treatment_used$treatment[["num_rep"]]
 LONG_FULL$numSeed <- list_treatment_used$treatment[["num_seed"]]

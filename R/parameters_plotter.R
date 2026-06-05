@@ -192,7 +192,9 @@ parameter_seed_sim_plotter <- function(df_full = FULL_DF_PARAMETERS, par_type = 
 
    # geom_segment(data= df_par_se_long,  aes(x = min_x-0.5, y = 0, xend = max_x+0.5, yend = 0), color= "black", linetype= "dashed")+
 
-    facet_grid(numRep~rpresent, scales = "free", labeller = labeller(.rows = label_both, .cols = label_both))+
+    facet_grid(numRep~rpresent, labeller = labeller(.rows = label_both, .cols = label_both))+
+    #facet_grid(numRep~rpresent, scales = "free", labeller = labeller(.rows = label_both, .cols = label_both))+
+
     geom_hline(yintercept = 0, color= "black", linetype= "dashed")+
      scale_color_viridis_d() +
     ggtitle(paste0("kernel ", kernel)) +

@@ -37,6 +37,7 @@ stochastic_generator(model_used = model_used, disc_or_cont = disc_or_cont, noise
 #=============================================================================================
 
 
+
 #==========================I.B. RUN LV MAP SPATIAL KERNEL=======================================
 
 ###########2 cross validation. now we put it in the LV MAP. And here we can loop like crazy
@@ -47,7 +48,26 @@ stochastic_generator(model_used = model_used, disc_or_cont = disc_or_cont, noise
 data_used <- utils::read.csv(paste0(out_folder, "DF_DISC_LV.csv"))
 v_num_rep = c(1, 10)
 v_rpresent = c(TRUE, FALSE)
-v_num_seed = seq(1:10) ###A lot of reshuflle 
+v_num_seed = seq(1:5) ###A lot of reshuflle 
+
+
+################NEW ALERNATIVE CODE TO WORK WITH DIFFERENCS######################3
+
+
+if (dif_cond ==TRUE){
+out_folder <- paste0(out_folder, "differences/") 
+fig_folder <- paste0(fig_folder, "differences/") 
+
+data_used <- data_used |> 
+  dplyr::group_by(block) |> 
+  dplyr::mutate(R= c(NA, diff(R)+10), N= c(NA, diff(N)+10), P= c(NA, diff(P)+10))|> 
+  tidyr::drop_na()  
+}
+
+
+#------------------------------------------
+
+
 
 source("./analyses/1b.looper_LV_map.R")
 #protocool for the loop it run the functions of lv map, for each treatment. 
@@ -62,7 +82,7 @@ lv_looper_lists(data_used, v_num_rep, v_rpresent, v_num_seed, model_used)
 source("./analyses/1_2.plot_extract_per_treatment.R")
 source("./analyses/1_2.plotter_LV.R")
 plot_per_treatment(out_folder, true_values = TRUE)
-full_df <- extract_par_all_treatment(out_folder) ##generates the file
+full_df <- extract_par_all_treatment(out_folder, coex_cal = FALSE) ##generates the file
 
 plotter_full_parameters(df_full = full_df, fig_folder = fig_folder)
 

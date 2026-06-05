@@ -22,10 +22,14 @@ devtools::load_all()
 #=simulation
 #either enter source("./analyses/2.data_representation.R")
 
+#
 #or source if you wanto to have the full analisis 
-tic()
+for (kernel in c("state", "time")){
+dif_cond = TRUE
+  tic()
 source("./analyses/1.simulated_LVmap_full.R")
 toc()
+}
 ################################################3
 
 

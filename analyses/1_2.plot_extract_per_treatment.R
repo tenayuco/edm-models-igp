@@ -18,7 +18,7 @@ for (treatment in list.dirs(list.dirs(out_folder, recursive=FALSE),recursive=FAL
 #######now a function to stract the general plot of all treatments#####
 
 
-extract_par_all_treatment <- function(out_folder){
+extract_par_all_treatment <- function(out_folder, coex_cal = TRUE){
 
 full_df<-  data.frame()
 
@@ -26,7 +26,7 @@ for (treatment in list.dirs(list.dirs(out_folder, recursive=FALSE),recursive=FAL
   for (i in seq(1:length(list.files(treatment)))){
   #print(1:length(list.files(treatment)))
   list_used <- readRDS(paste0(treatment,"/" , list.files(treatment)[i]))
-  LONG_FULL <- extracter_data_frame(list_used)
+  LONG_FULL <- extracter_data_frame(list_used, coex_cal = coex_cal)
   
   full_df <- rbind(full_df, LONG_FULL)
   }
