@@ -1,87 +1,22 @@
-##code for explorations 
+##1. DATA preparation
+
 
 DATA_IGP <- readr::read_csv("data/dataIGP_2025.csv")
 
+detrend_data = TRUE
+DATA <-  prep_data(raw_data_igp = DATA_IGP, de_trend = detrend_data)
 
-##here we use 2 formats of data
-DATA_LONG <-  long_formatter(DATA_IGP)
-DATA_MEAN <-  mean_formatter(DATA_LONG)
-DATA_PRED <-  pred_formatter(DATA_LONG)
-
-### we gonna detrend.. so this is hard, and I wonder how it looks. 
-
-
-#here I create a simple function to see how the data changes..
-
-
-##here normalized not detrended 
-##normalization
-DATA_PRED_norm <-DATA_PRED  |> 
-  dplyr::group_by(enem) |> 
-  dplyr::mutate(R = R/max(R, na.rm = TRUE), X = X/max(X, na.rm = TRUE), Y = Y/max(Y, na.rm = TRUE))
-
-
-##we detrend using first differences
-
-DATA_PRED_std<-DATA_PRED |> 
-  dplyr::group_by(block, enem) |> 
-  dplyr::mutate(X= c(NA, diff(X)), Y= c(NA, diff(Y)), R= c(NA, diff(R)))|> 
-  tidyr::drop_na()  
-
-##normalization
-DATA_PRED_std_norm <-DATA_PRED_std  |> 
-  dplyr::group_by(enem) |> 
-  dplyr::mutate(R = R/max(R, na.rm = TRUE), X = X/max(X, na.rm = TRUE), Y = Y/max(Y, na.rm = TRUE))
+list_CCM_total <- run_total_enemies_CCM(data_prep = DATA, niter= 10)
 
 
 
-
-
-
-
-
-
-
-typeData = c("norm", "diff_norm", "abs", "diff_abs")
-
-
-for (data in typeData){
-
-if (data== "norm"){chosen_data <- DATA_PRED_norm}
-if (data== "diff_norm"){chosen_data <- DATA_PRED_std_norm}
-if (data== "abs"){chosen_data <- DATA_PRED}
-if (data== "diff_abs"){chosen_data <- DATA_PRED_std}
-
-
+saveRDS(list_CCM_total, file  = paste0("./outputs/CCM/", "detrend_", detrend_data,  "/", 
+"list_CCM_total.rds"))
  ##plot tjis data
 
   ###
-plot_ts <-  data_ts_CCM(chosen_data)
 
-ggsave(
-    plot_ts,
-    filename = paste0("./outputs/CCM/", data, "/", "plot_ts.png"),
-    height = 10,
-    width = 10,
-    create.dir = T
-  )
 
-  
-  
-full_list_ccm <- list()
-
-for (enemies in unique(chosen_data$enem)) {
-  data_enem <- chosen_data |> 
-    dplyr::filter(enem == enemies)
-  print(enemies)
-  list_ccm_enem <- multisp_CCM_igp(x = data_enem, niter = 1000)
-  
-  # Create a nested list with enemy name and results
-  full_list_ccm[[as.character(enemies)]] <- list(
-    enem = enemies,
-    list_ccm_enem = list_ccm_enem
-  )
-}
 
 #condensed results
 #this add a column to the data frame of the enemi, and will bind them 
@@ -163,7 +98,7 @@ ggsave(
   )
 
 
-}
+
 #plot(full_list_ccm$`cc+ma`$list_ccm_enem$CCM_boot_A$rho)
 
 

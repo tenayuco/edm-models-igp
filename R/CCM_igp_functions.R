@@ -1,5 +1,9 @@
 multisp_CCM_igp <- function(x, niter){
   
+  #1. Calculate optimal E
+
+
+
   list_CCM <- list() #created by emilio
   #calculating the maximum E (with E< m-1) where m is the minum step of time series  
   x_count <- x |> 
@@ -11,6 +15,7 @@ multisp_CCM_igp <- function(x, niter){
   #maxE <- 4
   print(paste0("maxE", maxE))
   
+
 
   x <- droplevels(x)
 
@@ -39,8 +44,9 @@ multisp_CCM_igp <- function(x, niter){
 
     print(paste0("emant", E_A, E_B))
 
-
-    #Check data for nonlinear signal that is not dominated by noise
+    #export Ea, eb
+    
+    #2. Check data for nonlinear signal that is not dominated by noise
 #Checks whether predictive ability of processes declines with
 #increasing time distance
 #See manuscript and R code for details
