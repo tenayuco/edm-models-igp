@@ -8,7 +8,10 @@ source("./analyses/3b.runCCM.R")
 
 
 detrend_data = TRUE
-DATA <-  prep_data(raw_data_igp = DATA_IGP, de_trend = detrend_data)
+DATA <-  prep_data(raw_data_igp = DATA_IGP, de_trend = detrend_data, remove_last_ceros =TRUE)
+
+#hist_data(DATA)  #too see the length of replicates.. 
+
 
 list_CCM_total <- run_total_enemies_CCM(data_prep = DATA, niter= 10)
 

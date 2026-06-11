@@ -55,7 +55,7 @@ multisp_CCM_igp <- function(x, niter){
     min_good_pho_E_B <- min(as.data.frame(na.omit(Emat[,2]))|> dplyr::filter(na.omit(Emat[,2]) >= 0.8*max_pho_E_B))
 
   # now we select from the original matrix. 
-   E_A <- which((Emat[,1])== min_good_pho_E_A ) +1  #i added this as stan. I think it has to do with the indices. 
+   E_A <- which((Emat[,1])== min_good_pho_E_A ) +1  #the +1 is only beacuse the E mat starts at 1
      E_B <- which((Emat[,2])== min_good_pho_E_B) +1
 
     print(paste0("emant", E_A, E_B))

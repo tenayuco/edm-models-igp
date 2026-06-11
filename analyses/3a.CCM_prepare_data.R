@@ -1,6 +1,6 @@
 
 
-prep_data <- function(raw_data_igp, detrend_method = "firstDiff", de_trend = T){
+prep_data <- function(raw_data_igp, detrend_method = "firstDiff", de_trend = T, remove_last_ceros){
 
 ##here we use 2 formats of data
 DATA_LONG <-  long_formatter(raw_data_igp)
@@ -41,3 +41,25 @@ ggsave(
   return(DATA_PRED)
 
 }
+
+#prefilter
+
+
+hist_data <- function(data){
+
+x <- data |> 
+    dplyr::mutate(contador =1)|> 
+    dplyr::group_by(block, enem) |> 
+    dplyr::summarise(m = sum(contador))
+
+hist_x <- x |> ggplot(aes(m))+ 
+  geom_histogram(aes(fill= as.factor(block)), binwidth = 1)+
+    facet_wrap(~enem)+ 
+    theme_minimal()+
+    scale_fill_viridis_d()+
+    xlab("Length of replicate")
+
+  return(hist_x)
+}
+
+
