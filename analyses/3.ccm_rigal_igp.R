@@ -12,9 +12,9 @@ DATA_PRED <- prep_data(raw_data_igp = DATA_IGP)
 
 plot_ts <- data_ts_CCM(DATA_PRED)
 
-detrend_data = TRUE
+detrend_data = T
 
-DATA <-  norm_detrend_data(data_pred = DATA_PRED, de_trend = detrend_data, remove_last_ceros =TRUE)
+DATA <-  norm_detrend_data(data_pred = DATA_PRED, de_trend = T)
 
 
 plot_ts_prep <-  data_ts_CCM(DATA)
@@ -26,7 +26,7 @@ ggsave(plot_ts,filename = paste0("./outputs/CCM/", "detrend_", detrend_data,  "/
 #hist_data(DATA)  #too see the length of replicates.. 
 
 
-list_CCM_total <- run_total_enemies_CCM(data_prep = DATA, niter= 1000)
+list_CCM_total <- run_total_enemies_CCM(data_prep = DATA, niter= 10)
 
 
 
@@ -45,93 +45,35 @@ list_CCM_total <- readRDS("./outputs/CCM/detrend_TRUE/list_CCM_total.rds")
 
 #condensed results
 
-##embedding dimension
 
-embed_DF <- data.frame()
-
-for (enem in names(list_CCM_total)){
-  embed_temp <-  as.data.frame(list_CCM_total[[enem]]$list_ccm_enem$Emat)
-  embed_temp$enem <- enem
-  embed_temp$embDim <- seq(1:nrow(embed_temp))
-  embed_DF <- rbind(embed_DF, embed_temp)
-
-}
-
+EMBED_DF <- embed_df_sum(list_CCM = list_CCM_total)
 
 ##plottinh embedding 
-embedding_plotter(embed_DF)
+embedding_plotter(EMBED_DF)
+
+### function to create the signficante test data frame
 
 
 
-#this add a column to the data frame of the enemi, and will bind them 
-ccm_sp_igp <- data.frame()
+###now to run the CCM_test that also summarizes the embedding dim 
+CCM_TEST <- ccm_sp_test(list_CCM = list_CCM_total)
 
-for (enemies in names(list_CCM_total)){
-  list_CCM_total[[enemies]]$list_ccm_enem$result$enem <- enemies
-  ccm_sp_igp <-rbind(ccm_sp_igp, list_CCM_total[[enemies]]$list_ccm_enem$result)  
-}
 
-  
 dir.create(paste0("./outputs/CCM/", detrend_data)) 
-write.csv(ccm_sp_igp, paste0("./outputs/CCM/", "detrend_", detrend_data, "/", "ccm_sp_igp.csv"))
+write.csv(CCM_TEST, paste0("./outputs/CCM/", "detrend_", detrend_data, "/", "ccm_sp_igp.csv"))
 ############now lets plot the embedding dimension and the rho
 
 ##first the pho
 
 #function to plot the rho for each time series and for each enem 
 
-##extreact the rho values for each enem and put ir into a data frame 
 
-RHO_DATA <- data.frame()
 
-for (enemies in names(list_CCM_total)){
-  print(enemies)
-  
-  if(is.na(list_CCM_total[[enemies]]$list_ccm_enem$CCM_boot_A)[[1]]){
-    rho_X <- 0
-    rho_X_sdev <- 0
-    lobsX <- 0
-    print("case1")
-  } else {
-    rho_X <- list_CCM_total[[enemies]]$list_ccm_enem$CCM_boot_A$rho
-    rho_X_sdev <- list_CCM_total[[enemies]]$list_ccm_enem$CCM_boot_A$sdevrho
-    lobsX <- list_CCM_total[[enemies]]$list_ccm_enem$CCM_boot_A$Lobs
-  }
-  
-  if(is.na(list_CCM_total[[enemies]]$list_ccm_enem$CCM_boot_B)[[1]]){
-    rho_Y <- 0
-    rho_Y_sdev <- 0
-    lobsY <- 0
-    print("case2")
-  } else {
-    rho_Y <- list_CCM_total[[enemies]]$list_ccm_enem$CCM_boot_B$rho
-    rho_Y_sdev <- list_CCM_total[[enemies]]$list_ccm_enem$CCM_boot_B$sdevrho
-    lobsY <- list_CCM_total[[enemies]]$list_ccm_enem$CCM_boot_B$Lobs
-  }
-  
-  temp_data_X <- data.frame(
-    lobs = lobsX,
-    rho = rho_X,
-    rho_sdev = rho_X_sdev,
-    variable = "X"
-  )
-
-  temp_data_Y <- data.frame(
-    lobs = lobsY,
-    rho = rho_Y,
-    rho_sdev = rho_Y_sdev,
-    variable = "Y"
-  )
-
-  temp_data <- rbind(temp_data_X, temp_data_Y)
-  temp_data$enem <-  enemies
-
-  RHO_DATA<- rbind(RHO_DATA, temp_data)
-}
+RHO_DATA <- rho_data_sum(list_CCM = list_CCM_total)
 
 write.csv(RHO_DATA,  paste0("./outputs/CCM/", "detrend_", detrend_data, "/",  "RHO_DATA.csv"))
 
-rho_plot <- plot_rho_CCM(RHO_DATA)
+RHO_PLOT <- plot_rho_CCM(RHO_DATA)
 
 ggsave(
     rho_plot,
@@ -160,11 +102,70 @@ ggsave(
 
 ### now we gonna run the test on the surrogates spatial
 
-surro_df <- surrogater_all_enem_df(data=DATA_PRED)
-plot_ts_surro <-  data_ts_CCM(surro_df)
+#SURRO_DF <- surrogater_all_enem_df(data=DATA_PRED)
 
-ggsave(plot_ts_surro,filename = paste0("./outputs/CCM/", "detrend_", detrend_data,  "/", "plot_ts_surro.png"),height = 10,width = 10,create.dir = T
-  )
+SURRO_DF <- surrogater_all_df(data = DATA_PRED)
+
+#plot_ts_surro <-  data_ts_CCM(surro_df)
+
+#ggsave(plot_ts_surro,filename = paste0("./outputs/CCM/", "detrend_", detrend_data,  "/", "plot_ts_surro.png"),height = 10,width = 10,create.dir = T
+ # )
 
 
 #now I gonna apply the cCM to this new stuff, what would be the embedding and all of that.. 
+
+
+### first we put the embeddin optim data fra 
+
+
+#this add a column to the data frame of the enemi, and will bind them 
+
+dfEmbeddingCCM <- CCM_TEST[c("enem", "E_X", "E_Y")] |> 
+  dplyr::rename(E_A= E_X, E_B=E_Y)
+
+
+list_CCM_surro <- run_total_enemies_CCM(data_prep =SURRO_DF , niter= 10, df_embedding_CCM = dfEmbeddingCCM, force_embedding = T)
+
+
+###now lets see this surrogate.. 
+CCM_TEST_SURRO <- ccm_sp_test(list_CCM = list_CCM_surro)
+
+
+###now lets see the pho values of this surrogete..
+
+
+RHO_DATA_SURRO <- rho_data_sum(list_CCM = list_CCM_surro)
+
+write.csv(RHO_DATA,  paste0("./outputs/CCM/", "detrend_", detrend_data, "/",  "RHO_DATA.csv"))
+
+RHO_PLOT_SURRO <- plot_rho_CCM(RHO_DATA_SURRO)
+
+ggsave(
+    rho_plot_surro,
+    filename = paste0("./outputs/CCM/", "detrend_", detrend_data, "/", "rho_plot_surro.png"),
+    height = 10,
+    width = 10,
+    create.dir = T
+  )
+
+#############now lets do it for multiple and save the rho, the deviation 
+
+numSurro =3
+
+TOTAL_RHO_SURRO <- data.frame()
+
+for (i in (1:numSurro)){
+list_CCM_surro <- run_total_enemies_CCM(data_prep =SURRO_DF , niter= 10, df_embedding_CCM = dfEmbeddingCCM, force_embedding = T)
+RHO_DATA_SURRO_temp <- rho_data_sum(list_CCM = list_CCM_surro)
+RHO_DATA_SURRO_temp$surro <- i
+TOTAL_RHO_SURRO <- rbind(TOTAL_RHO_SURRO, RHO_DATA_SURRO_temp)
+}
+
+
+#now we summarize this shit  
+
+TOTAL_RHO_SURRO_SUM <- TOTAL_RHO_SURRO |> 
+  dplyr::group_by(enem, lobs, variable)|> 
+  dplyr::summarise(rho = mean(rho), rho_sdev = mean(rho_sdev))
+
+RHO_PLOT_SURRO_TOTAL <- plot_rho_CCM(TOTAL_RHO_SURRO_SUM)

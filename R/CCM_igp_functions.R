@@ -1,4 +1,4 @@
-multisp_CCM_igp <- function(x, niter){
+multisp_CCM_igp <- function(x, niter, force_embedding = FALSE, E_A_real, E_B_real){
   
   #tun this line if you wanna see examples
   #x <-  DATA |> dplyr::filter(enem== "ma+ol")
@@ -54,10 +54,22 @@ multisp_CCM_igp <- function(x, niter){
     min_good_pho_E_A <- min(as.data.frame(na.omit(Emat[,1]))|> dplyr::filter(na.omit(Emat[,1]) >= 0.8*max_pho_E_A))
     min_good_pho_E_B <- min(as.data.frame(na.omit(Emat[,2]))|> dplyr::filter(na.omit(Emat[,2]) >= 0.8*max_pho_E_B))
 
+
+
+
+
   # now we select from the original matrix. 
-   E_A <- which((Emat[,1])== min_good_pho_E_A ) +1  #the +1 is only beacuse the E mat starts at 1
+    
+    E_A <- which((Emat[,1])== min_good_pho_E_A ) +1  #the +1 is only beacuse the E mat starts at 1
      E_B <- which((Emat[,2])== min_good_pho_E_B) +1
 
+    ## now, here we force the embedding if need (bit then you put if for each nati ene)
+    if (force_embedding ==TRUE){
+      E_A = E_A_real
+      E_B = E_B_real
+    }
+    
+    
     print(paste0("emant", E_A, E_B))
 
     #export Ea, eb
@@ -144,20 +156,22 @@ TIME_SERIES_ALL <- data_pred |>
 
 plot_rho_CCM <-  function(rho_data){
 
-RHO_PLOT <-rho_data |>
+RHO_PLOT <- rho_data |>
   ggplot(aes(x = lobs, y = rho)) +
-  geom_line(aes(color= as.factor(variable)),
-      size = 0.5
-    ) +
-   geom_errorbar(aes(ymin=rho- 1.96*rho_sdev,  ymax=rho+ 1.96*rho_sdev, color= as.factor(variable)), width=.2,
-                 position=position_dodge(0.3))+
-  geom_point(aes(color= as.factor(variable)), position=position_dodge(0.3))+
-    facet_wrap(~enem) +
-    theme_minimal()
+  geom_line(aes(color = as.factor(variable)), size = 0.5) +
+  geom_ribbon(aes(ymin = rho - 1.96 * rho_sdev, 
+                  ymax = rho + 1.96 * rho_sdev, 
+                  fill = as.factor(variable)), 
+              alpha = 0.2, color = NA) +
+  geom_point(aes(color = as.factor(variable))) +
+  facet_wrap(~enem) +
+  theme_minimal()
   
   
   return(RHO_PLOT)
 }
+
+
 
 
 

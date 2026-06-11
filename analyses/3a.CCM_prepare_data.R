@@ -9,7 +9,7 @@ DATA_PRED <-  pred_formatter(DATA_LONG)
 
 
 
-norm_detrend_data <- function(data_pred, detrend_method = "firstDiff", de_trend = T, remove_last_ceros){
+norm_detrend_data <- function(data_pred, detrend_method = "firstDiff", de_trend = T){
 
 ##here we use 2 formats of data
 
@@ -64,7 +64,7 @@ hist_x <- x |> ggplot(aes(m))+
 
 ### create one surrogate from wthe data 
 
-surrogater_all_enem_df <- function(data){
+surrogater_all_enem_df_old <- function(data){
   surro_df <- data.frame()
   for (enemy in unique(data$enem)){
 
@@ -86,6 +86,17 @@ surrogater_all_enem_df <- function(data){
   surro_df <- rbind(surro_df, surro_df_temp)
     }
 }
+  return(surro_df)
+  }
+
+
+
+surrogater_all_df <- function(data){
+  surro_df <- data.frame()
+
+  idx_shuffle = sample(1:nrow(data), nrow(data), replace = FALSE) # permutes the row order of the dataset (shuffles without replacement).
+  surro_df = data[idx_shuffle, c("block", "enem", "week", "R", "Y", "X")] #i desorganize within block and natr
+   
   return(surro_df)
   }
 
