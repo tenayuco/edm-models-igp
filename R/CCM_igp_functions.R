@@ -1,5 +1,7 @@
 multisp_CCM_igp <- function(x, niter){
   
+  #tun this line if you wanna see examples
+  #x <-  DATA |> dplyr::filter(enem== "ma+ol")
   #1. Calculate optimal E
 
 
@@ -39,8 +41,22 @@ multisp_CCM_igp <- function(x, niter){
     
     list_CCM$Emat <- Emat
 
-    E_A <- which.max(na.omit(Emat[,1]))+1 
-    E_B <- which.max(na.omit(Emat[,2]))+1
+
+        #E_A <- which.max(na.omit(Emat[,1])) 
+    #E_B <- which.max(na.omit(Emat[,2]))
+
+  ##new procedure to get the min embedding dime that explains at least 90% of the max possible 
+    
+    max_pho_E_A <- max(na.omit(Emat[,1])) 
+    max_pho_E_B <- max(na.omit(Emat[,2]))
+    
+
+    min_good_pho_E_A <- min(as.data.frame(na.omit(Emat[,1]))|> dplyr::filter(na.omit(Emat[,1]) >= 0.8*max_pho_E_A))
+    min_good_pho_E_B <- min(as.data.frame(na.omit(Emat[,2]))|> dplyr::filter(na.omit(Emat[,2]) >= 0.8*max_pho_E_B))
+
+  # now we select from the original matrix. 
+   E_A <- which((Emat[,1])== min_good_pho_E_A ) +1  #i added this as stan. I think it has to do with the indices. 
+     E_B <- which((Emat[,2])== min_good_pho_E_B) +1
 
     print(paste0("emant", E_A, E_B))
 
@@ -141,4 +157,24 @@ RHO_PLOT <-rho_data |>
   
   
   return(RHO_PLOT)
+}
+
+
+
+embedding_plotter <-  function(embed_DF){
+
+
+PLOT_EMBED <- embed_DF |>
+  dplyr::rename(X=A, Y=B)|>
+  tidyr::pivot_longer(cols=c(X, Y), names_to = "variable", values_to = "pho_embed")|>
+  ggplot(aes(x =embDim, y =pho_embed )) +
+    geom_line(
+      aes(color= as.factor(variable), group = as.factor(interaction(variable))),
+      size = 0.5
+    ) +
+    geom_point(aes(color = variable), size = 1) +
+    facet_wrap(~enem) +
+    theme_minimal()
+
+  return(PLOT_EMBED)
 }

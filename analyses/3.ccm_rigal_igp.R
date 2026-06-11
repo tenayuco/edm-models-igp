@@ -3,6 +3,10 @@
 
 DATA_IGP <- readr::read_csv("data/dataIGP_2025.csv")
 
+source("./analyses/3a.CCM_prepare_data.R")
+source("./analyses/3b.runCCM.R")
+
+
 detrend_data = TRUE
 DATA <-  prep_data(raw_data_igp = DATA_IGP, de_trend = detrend_data)
 
@@ -16,9 +20,37 @@ saveRDS(list_CCM_total, file  = paste0("./outputs/CCM/", "detrend_", detrend_dat
 
   ###
 
+##now
+
+
+list_CCM_total <- readRDS("./outputs/CCM/detrend_TRUE/list_CCM_total.rds")
 
 
 #condensed results
+
+##embedding dimension
+
+list_CCM_total[["cc+my"]]$list_ccm_enem$Emat
+
+embed_DF <- data.frame()
+
+for (enem in names(list_CCM_total)){
+  embed_temp <-  as.data.frame(list_CCM_total[[enem]]$list_ccm_enem$Emat)
+  embed_temp$enem <- enem
+  embed_temp$embDim <- seq(1:nrow(embed_temp))
+  embed_DF <- rbind(embed_DF, embed_temp)
+
+}
+
+
+##plottinh embedding 
+
+embed_plot <- embed_DF |> 
+  ggplot
+
+
+
+
 #this add a column to the data frame of the enemi, and will bind them 
 ccm_sp_igp <- data.frame()
 
