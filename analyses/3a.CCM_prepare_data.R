@@ -1,10 +1,18 @@
 
-
-prep_data <- function(raw_data_igp, detrend_method = "firstDiff", de_trend = T, remove_last_ceros){
-
-##here we use 2 formats of data
+prep_data <- function(raw_data_igp){
 DATA_LONG <-  long_formatter(raw_data_igp)
 DATA_PRED <-  pred_formatter(DATA_LONG)
+  
+  return(DATA_PRED)
+
+}
+
+
+
+norm_detrend_data <- function(data_pred, detrend_method = "firstDiff", de_trend = T, remove_last_ceros){
+
+##here we use 2 formats of data
+
 
 ### we gonna detrend.. so this is hard, and I wonder how it looks. 
 
@@ -16,7 +24,7 @@ DATA_PRED <-  pred_formatter(DATA_LONG)
 if (de_trend == T) {
 
   #here we gonna adapt the method
-DATA_PRED<-DATA_PRED |> 
+DATA_PRED<-data_pred |> 
   dplyr::group_by(block, enem) |> 
   dplyr::mutate(X= c(NA, diff(X)), Y= c(NA, diff(Y)), R= c(NA, diff(R)))|> 
   tidyr::drop_na()  
@@ -28,15 +36,6 @@ DATA_PRED <-DATA_PRED  |>
   dplyr::mutate(R = R/max(R, na.rm = TRUE), X = X/max(X, na.rm = TRUE), Y = Y/max(Y, na.rm = TRUE))
 
 
-plot_ts <-  data_ts_CCM(DATA_PRED)
-
-ggsave(
-    plot_ts,
-    filename = paste0("./outputs/CCM/", "detrend_", de_trend,  "/", "plot_ts.png"),
-    height = 10,
-    width = 10,
-    create.dir = T
-  )
 
   return(DATA_PRED)
 
@@ -62,4 +61,31 @@ hist_x <- x |> ggplot(aes(m))+
   return(hist_x)
 }
 
+
+### create one surrogate from wthe data 
+
+surrogater_all_enem_df <- function(data){
+  surro_df <- data.frame()
+  for (enemy in unique(data$enem)){
+
+    for(block in unique(data$block)){
+
+
+  data_enem_block <-  data |> 
+    dplyr::filter(enem == enemy)|> 
+    dplyr::filter(block == block)
+  
+    print(head(data_enem_block))
+
+  idx_shuffle = sample(1:nrow(data_enem_block), nrow(data_enem_block), replace = FALSE) # permutes the row order of the dataset (shuffles without replacement).
+  print(idx_shuffle)
+    surro_df_temp = data_enem_block[idx_shuffle, c("R", "Y", "X")] #i desorganize within block and natr
+    surro_df_temp$week <- data_enem_block$week  #i add the week, to show the desorgani
+    surro_df_temp$enem <- enemy  #i add these names that do not change
+    surro_df_temp$block <- block
+  surro_df <- rbind(surro_df, surro_df_temp)
+    }
+}
+  return(surro_df)
+  }
 

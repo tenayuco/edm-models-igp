@@ -167,7 +167,7 @@ embedding_plotter <-  function(embed_DF){
 PLOT_EMBED <- embed_DF |>
   dplyr::rename(X=A, Y=B)|>
   tidyr::pivot_longer(cols=c(X, Y), names_to = "variable", values_to = "pho_embed")|>
-  ggplot(aes(x =embDim, y =pho_embed )) +
+  ggplot(aes(x =embDim +1, y =pho_embed )) +
     geom_line(
       aes(color= as.factor(variable), group = as.factor(interaction(variable))),
       size = 0.5
