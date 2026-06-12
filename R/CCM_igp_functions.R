@@ -82,7 +82,10 @@ multisp_CCM_igp <- function(x, niter, force_embedding = FALSE, E_A_real, E_B_rea
     if(length(E_A)>0 & length(E_B)>0){
       signal_A_out <- multispatialCCM::SSR_check_signal(A=Accm, E=E_A, tau=1, predsteplist=1:10)
       signal_B_out <- multispatialCCM::SSR_check_signal(A=Bccm, E=E_B, tau=1, predsteplist=1:10)
-        
+      
+      list_CCM$signal_A_out <-  signal_A_out
+      list_CCM$signal_B_out <-  signal_B_out
+
       if(summary(lm(signal_A_out$predatout$rho~signal_A_out$predatout$predstep))$coeff[2,1]<0 &
        summary(lm(signal_B_out$predatout$rho~signal_B_out$predatout$predstep))$coeff[2,1]<0){
           
@@ -191,4 +194,75 @@ PLOT_EMBED <- embed_DF |>
     theme_minimal()
 
   return(PLOT_EMBED)
+}
+
+
+
+
+
+rho_pred_plotter <-  function(predSteps_DF){
+
+
+PLOT_STEPS <- predSteps_DF |>
+  ggplot(aes(x =predstep, y =rho)) +
+    geom_line(
+      aes(color= as.factor(variable), group = as.factor(interaction(variable))),
+      size = 0.5
+    ) +
+    geom_point(aes(color = variable), size = 1) +
+    facet_wrap(~enem) +
+    theme_minimal()
+
+  return(PLOT_STEPS)
+}
+
+
+
+########rho plot against surrogates
+
+plot_rho_data_surro_CCM <-  function(rho_data_surro, ccm_test){
+
+  cols_rho <- c("random" = "darkgray", "data" = "darkred")
+
+ccm_test_mod <- ccm_test |> 
+  tidyr::pivot_longer(cols=c(X_cause_Y, Y_cause_X), names_to = "variable", values_to = "pvalue")
+
+
+full_data <- rho_data_surro |> 
+  dplyr::inner_join(ccm_test_mod, by = c("variable", "enem"))
+
+
+
+  
+RHO_PLOT <- full_data |>
+  ggplot(aes(x = lobs, y = rho)) +
+
+  
+  geom_line(aes(color = as.factor(cat)), size = 0.5) +
+  geom_ribbon(aes(ymin = rho - 1.96 * rho_sdev, 
+                  ymax = rho + 1.96 * rho_sdev, 
+                  fill = as.factor(cat)), 
+              alpha = 0.2, color = NA) +
+  
+  geom_text(aes(x = 130, y = 0.8, label = paste("pvalue_clark =",  round(pvalue, digits = 3), sep = "")))+
+  #geom_point(aes(color = as.factor(cat))) +
+  facet_wrap(enem~variable) +
+  theme_minimal()+
+  theme(panel.border = element_rect(color = "black", fill = NA, linewidth = 1),
+        panel.spacing = unit(1, "lines"),
+        # Increase all text sizes
+        text = element_text(size = 14),  # Base text size
+        axis.title = element_text(size = 12),  # Axis titles
+        axis.text = element_text(size = 12),   # Axis tick labels
+        strip.text = element_text(size = 12),  # Facet labels
+        legend.text = element_text(size = 12), # Legend text
+        legend.title = element_text(size = 12)) +# Le
+
+  scale_color_manual(values =  cols_rho)+
+    scale_fill_manual(values =  cols_rho)+
+  labs(color ="Type", fill="Type")
+
+  
+  
+  return(RHO_PLOT)
 }

@@ -119,3 +119,27 @@ for (enemies in names(list_CCM)){
   
   return(ccm_sp_igp)
 }
+
+
+
+rho_preSteps <- function(list_CCM){
+
+#this add a column to the data frame of the enemi, and will bind them 
+pred_steps <- data.frame()
+
+for (enem in names(list_CCM)){
+  pred_temp_A <-  as.data.frame(list_CCM[[enem]]$list_ccm_enem$signal_A_out$predatout)
+  pred_temp_B <-  as.data.frame(list_CCM[[enem]]$list_ccm_enem$signal_B_out$predatout)
+  pred_temp_A$variable <- "X simplex"
+    pred_temp_B$variable <- "Y simplex"
+
+
+  pred_temp <- rbind(pred_temp_A,  pred_temp_B)
+
+  pred_temp$enem <- enem
+
+  pred_steps <- rbind(pred_steps, pred_temp)
+}
+  
+  return(pred_steps)
+}
