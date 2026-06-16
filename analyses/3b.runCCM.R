@@ -60,102 +60,6 @@ for (enemy in unique(data_prep$enem)) {
 }
 
 
-run_ccm_surro_per_enem <-  function(data_prep, niter, min_per=0.8, num_surro=10){
-  
-full_list_ccm <- list()
-
- ##NOW I HAVE TO SEND THE REAL EMBEDDING PER ENEM 
-  
-for (enemy in unique(data_prep$enem)) {
- 
-  data_enem <- data_prep |> 
-  dplyr::filter(enem == enemy)
-  print(enemy)
-
-
-  ##1. calculate the embedding dimensions of the real data (to have it here)
-
-  list_embed <- embedding_ccm(x= data_enem, min_per= min_per)
-
-###2. run the surro
-  
-  data_surro <-  surrogater_df(data_enem)
-  
-  ##3. run the CCM with the data
-
-  ##used embed
-
-  E_A_used <-  list_embed$E_A
-  E_B_used <-  list_embed$E_B
-
-
-  ## run the surrogate, and the ccm per surrog
-
-  list_ccm <- multisp_CCM_igp(x = data_surro, niter = niter, E_A_used = E_A_used, E_B_used = E_B_used)
-
-  ## 4. run the CCM with the surrogates 
-
-
-
- # Create a nested list with enemy name and results
-  full_list_ccm[[as.character(enemy)]] <- list(
-    enem = enemy,
-    list_embed = list_embed,
-    list_ccm = list_ccm
-  )
-
-
-}
-  return(full_list_ccm)
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-run_total_enemies_CCM <-  function(data_prep, niter, force_embedding = FALSE, df_embedding_CCM= NULL){
-  
-full_list_ccm <- list()
-
- ##NOW I HAVE TO SEND THE REAL EMBEDDING PER ENEM 
-  
-for (enemy in unique(data_prep$enem)) {
-
-  if (force_embedding== T){
-  df_embedding_CCM_enem <- df_embedding_CCM|> 
-    dplyr::filter(enem == enemy)
-  }
-  data_enem <- data_prep |> 
-    dplyr::filter(enem == enemy)
-  print(enemy)
-  list_ccm_enem <- multisp_CCM_igp(x = data_enem, niter = niter, force_embedding = force_embedding, E_A_real=df_embedding_CCM_enem[["E_A"]], E_B_real=df_embedding_CCM_enem[["E_B"]])
-  
-  # Create a nested list with enemy name and results
-  full_list_ccm[[as.character(enemy)]] <- list(
-    enem = enemy,
-    list_ccm_enem = list_ccm_enem
-  )
-
-}
-  return(full_list_ccm)
-
-}
-  
 
 
 ##extreact the rho values for each enem and put ir into a data frame 
@@ -214,23 +118,6 @@ return(RHO_DATA)
 }
 
 
-##embedding dimension 
-##function to extract the embedein
-
-embed_df_sum <- function(list_CCM){
-
-embed_DF <- data.frame()
-
-for (enem in names(list_CCM)){
-  embed_temp <-  as.data.frame(list_CCM[[enem]]$list_ccm_enem$Emat)
-  embed_temp$enem <- enem
-  embed_temp$embDim <- seq(1:nrow(embed_temp))
-  embed_DF <- rbind(embed_DF, embed_temp)
-
-}
-  
-return(embed_DF)  
-}
 
 
 

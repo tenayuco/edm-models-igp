@@ -184,6 +184,60 @@ surrogater_df <- function(data){
 
 
 
+### functions to extract and plot
+
+##embedding dimension 
+##function to extract the embedein
+
+embed_df_sum <- function(list_CCM){
+
+embed_DF <- data.frame()
+
+for (enem in names(list_CCM)){
+  embed_temp <-  as.data.frame(list_CCM[[enem]]$list_embed$Emat)
+  embed_temp$enem <- enem
+  embed_temp$embDim <- seq(1:nrow(embed_temp))
+  embed_temp$E_A <- list_CCM[[enem]]$list_embed$E_A
+  embed_temp$E_B<- list_CCM[[enem]]$list_embed$E_A
+  embed_DF <- rbind(embed_DF, embed_temp)
+
+}
+  
+return(embed_DF)  
+}
+
+
+
+embedding_plotter <-  function(embed_DF){
+
+
+PLOT_EMBED <- embed_DF |>
+  dplyr::rename(X=A, Y=B)|>
+  tidyr::pivot_longer(cols=c(X, Y), names_to = "variable", values_to = "pho_embed")|>
+  ggplot(aes(x =embDim +1, y =pho_embed )) +
+    geom_line(
+      aes(color= as.factor(variable), group = as.factor(interaction(variable))),
+      size = 0.5
+    ) +
+    geom_point(aes(color = variable), size = 1) +
+  
+   # Add vertical lines for E_A and E_B
+    geom_vline(aes(xintercept = E_A, color = "E_A"),
+      linetype = "dashed",
+      size = 0.5
+    ) +
+    geom_vline(aes(xintercept = E_B, color = "E_B"),
+      linetype = "dashed",
+      size = 0.5)+
+  
+  
+    facet_wrap(~enem) +
+    theme_minimal()
+
+  return(PLOT_EMBED)
+}
+
+
 
 
 
@@ -365,25 +419,6 @@ RHO_PLOT <- rho_data |>
 
 
 
-
-
-embedding_plotter <-  function(embed_DF){
-
-
-PLOT_EMBED <- embed_DF |>
-  dplyr::rename(X=A, Y=B)|>
-  tidyr::pivot_longer(cols=c(X, Y), names_to = "variable", values_to = "pho_embed")|>
-  ggplot(aes(x =embDim +1, y =pho_embed )) +
-    geom_line(
-      aes(color= as.factor(variable), group = as.factor(interaction(variable))),
-      size = 0.5
-    ) +
-    geom_point(aes(color = variable), size = 1) +
-    facet_wrap(~enem) +
-    theme_minimal()
-
-  return(PLOT_EMBED)
-}
 
 
 

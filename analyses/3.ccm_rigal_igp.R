@@ -51,8 +51,8 @@ mega_list_CCM_surrogates <- list()
 
 for (i in (1:numSurro)){
 
-
-list_CCM_surro <- run_ccm_per_enem(data_prep = DATA, niter= 10, min_per = 0.8, use_surrogate = T)
+print(paste0("surro_", i))
+list_CCM_surro <- run_ccm_per_enem(data_prep = DATA, niter= 100, min_per = 0.8, use_surrogate = T)
 
 # Create a nested list with enemy name and results
   mega_list_CCM_surrogates[[as.character(i)]] <- list(
@@ -64,26 +64,25 @@ list_CCM_surro <- run_ccm_per_enem(data_prep = DATA, niter= 10, min_per = 0.8, u
 
 
 
+saveRDS(mega_list_CCM_surrogates, file  = paste0("./outputs/CCM/", "detrend_", detrend_data,  "/", 
+"mega_list_CCM_surrogates.rds"))
+
+
+
+#################PART 2/ Extracting infor and plotting #########################33
+
+
+
+
 #list_CCM_total <- run_ccm_per_enem(data_prep = DATA, niter= 10, min_per = 0.8, use_surrogate = F)
 
 
 
-
-
+### let start with data
 
 
 
 list_CCM_total <- readRDS("./outputs/CCM/detrend_TRUE/list_CCM_total.rds")
-
-
-
-
-
-
-list_CCM_total_surro <- run_ccm_per_enem(data_prep = DATA, niter= 10, min_per = 0.8, use_surrogate = T)
-
-
-
 
 
 #condensed results
