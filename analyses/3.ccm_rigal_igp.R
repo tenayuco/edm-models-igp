@@ -11,18 +11,32 @@ source("./analyses/3b.runCCM.R")
 
 
 DATA_IGP <- readr::read_csv("data/dataIGP_2025.csv")
-
-#fist prepre data
-
 DATA_PRED <- prep_data(raw_data_igp = DATA_IGP)
 #plot_ts <- data_ts_CCM(DATA_PRED)
 
 detrend_data = T
 
-DATA <-  norm_detrend_data(data_pred = DATA_PRED, de_trend = T)
-plot_ts_prep <-  data_ts_CCM(DATA)
 
-ggsave(plot_ts,filename = paste0("./outputs/CCM/", "detrend_", detrend_data,  "/", "plot_ts.png"),height = 10,width = 10,create.dir = T
+DATA <-  norm_detrend_data(data_pred = DATA_PRED, de_trend = detrend_data)
+
+
+###examples ofthe surro
+DATA_PRED_SURRO <- surrogater_df(DATA_PRED)
+DATA_SURRO <-  norm_detrend_data(data_pred = DATA_PRED_SURRO, de_trend = detrend_data)
+
+#some plots to show
+plot_ts_pred <-  data_ts_CCM(DATA_PRED)
+plot_ts_data <-  data_ts_CCM(DATA)
+plot_ts_pred_surro <-  data_ts_CCM(DATA_PRED_SURRO)
+plot_ts_surro <-  data_ts_CCM(DATA_SURRO)
+
+ggsave(plot_ts_pred,filename = paste0("./outputs/CCM/", "detrend_", detrend_data,  "/", "plot_ts_pred.png"),height = 10,width = 10,create.dir = T
+  )
+ggsave(plot_ts_data,filename = paste0("./outputs/CCM/", "detrend_", detrend_data,  "/", "plot_ts_data.png"),height = 10,width = 10,create.dir = T
+  )
+ggsave(plot_ts_pred_surro,filename = paste0("./outputs/CCM/", "detrend_", detrend_data,  "/", "plot_pred_surro.png"),height = 10,width = 10,create.dir = T
+  )
+ggsave(plot_ts_surro,filename = paste0("./outputs/CCM/", "detrend_", detrend_data,  "/", "plot_ts_surro.png"),height = 10,width = 10,create.dir = T
   )
 
 
@@ -30,29 +44,42 @@ ggsave(plot_ts,filename = paste0("./outputs/CCM/", "detrend_", detrend_data,  "/
 
 
 ##2run tests 
-
+iteraciones <- 1000
 
 ###this is with the data 
-list_CCM_total <- run_ccm_per_enem(data_prep = DATA, niter= 10, min_per = 0.8, use_surrogate = F)
+list_CCM_total <- run_ccm_per_enem(data_prep = DATA, niter= iteraciones, min_per = 0.8)
 
 ##this we save 
 
 saveRDS(list_CCM_total, file  = paste0("./outputs/CCM/", "detrend_", detrend_data,  "/", 
-"list_CCM_total.rds"))
+"list_CCM_total_", "niter_", iteraciones, ".rds"))
 
 
 
 ### now from this we can get some of the infoo lets run the surrogates and save it in a mega data frame
+### test of the surrogetes
+  
+#  if(use_surrogate ==TRUE){
+ # data_enem <-  surrogater_df(data_enem)}
 
 numSurro =10
 
-mega_list_CCM_surrogates <- list()
 
+
+#data_ts_CCM(data_pred = DATA_PRED)
+#data_ts_CCM(data_pred = DATA_SURRO)
+
+mega_list_CCM_surrogates <- list()
 
 for (i in (1:numSurro)){
 
+  DATA_PRED_SURRO <- surrogater_df(DATA_PRED)
+  DATA_SURRO <-  norm_detrend_data(data_pred = DATA_PRED_SURRO, de_trend = detrend_data)
+#plot_ts_prep <-  data_ts_CCM(DATA)
+  
+
 print(paste0("surro_", i))
-list_CCM_surro <- run_ccm_per_enem(data_prep = DATA, niter= 100, min_per = 0.8, use_surrogate = T)
+list_CCM_surro <- run_ccm_per_enem_surro(data_surro = DATA_SURRO, niter= iteraciones, list_data = list_CCM_total)
 
 # Create a nested list with enemy name and results
   mega_list_CCM_surrogates[[as.character(i)]] <- list(
@@ -65,7 +92,7 @@ list_CCM_surro <- run_ccm_per_enem(data_prep = DATA, niter= 100, min_per = 0.8, 
 
 
 saveRDS(mega_list_CCM_surrogates, file  = paste0("./outputs/CCM/", "detrend_", detrend_data,  "/", 
-"mega_list_CCM_surrogates.rds"))
+"mega_list_CCM_surrogates_", "niter_", iteraciones, ".rds"))
 
 
 
@@ -82,7 +109,8 @@ saveRDS(mega_list_CCM_surrogates, file  = paste0("./outputs/CCM/", "detrend_", d
 
 
 
-list_CCM_total <- readRDS("./outputs/CCM/detrend_TRUE/list_CCM_total.rds")
+list_CCM_total <- readRDS("./outputs/CCM/detrend_TRUE/list_CCM_total_niter_10.rds")
+mega_list_CCM_surrogates <- readRDS("./outputs/CCM/detrend_TRUE/mega_list_CCM_surrogates_niter_1000.rds")
 
 
 #condensed results
@@ -103,6 +131,8 @@ ggsave(
   )
 
 ### function to create the signficante test data frame
+
+#---------------------extract significancy----------------------------------------
 
 
 
@@ -126,13 +156,13 @@ write.csv(RHO_DATA,  paste0("./outputs/CCM/", "detrend_", detrend_data, "/",  "R
 
 RHO_PLOT <- plot_rho_CCM(RHO_DATA)
 
-ggsave(
-    RHO_PLOT,
-    filename = paste0("./outputs/CCM/", "detrend_", detrend_data, "/", "rho_plot.png"),
-    height = 10,
-    width = 10,
-    create.dir = T
-  )
+#ggsave(
+ #   RHO_PLOT,
+  #  filename = paste0("./outputs/CCM/", "detrend_", detrend_data, "/", "rho_plot.png"),
+   # height = 10,
+   # width = 10,
+    #create.dir = T
+ # )
 
 
 
@@ -152,87 +182,30 @@ ggsave(
 
 
 
-
-
-#to run rest:
-#so normaly it wull be donde by ene
-#x<- chosen_data |> dplyr::filter(enem=="cc+ma")
-
-
-#this is how the data looks 
-
-### now we gonna run the test on the surrogates spatial
-
-#SURRO_DF <- surrogater_all_enem_df(data=DATA_PRED)
-
-SURRO_DF <- surrogater_all_df(data = DATA_PRED)
-
-#plot_ts_surro <-  data_ts_CCM(surro_df)
-
-#ggsave(plot_ts_surro,filename = paste0("./outputs/CCM/", "detrend_", detrend_data,  "/", "plot_ts_surro.png"),height = 10,width = 10,create.dir = T
- # )
-
-
-#now I gonna apply the cCM to this new stuff, what would be the embedding and all of that.. 
-
-
-### first we put the embeddin optim data fra 
-
-
-#this add a column to the data frame of the enemi, and will bind them 
-
-dfEmbeddingCCM <- CCM_TEST[c("enem", "E_X", "E_Y")] |> 
-  dplyr::rename(E_A= E_X, E_B=E_Y)
-
-
-###now lets see this surrogate.. 
-
-
 #############now lets do it for multiple and save the rho, the deviation 
-
-numSurro =100
 
 TOTAL_RHO_SURRO <- data.frame()
 
-for (i in (1:numSurro)){
-SURRO_DF <- surrogater_all_df(data = DATA_PRED)
-list_CCM_surro <- run_total_enemies_CCM(data_prep =SURRO_DF , niter= 100, df_embedding_CCM = dfEmbeddingCCM, force_embedding = T)  
-RHO_DATA_SURRO_temp <- rho_data_sum(list_CCM = list_CCM_surro)
-RHO_DATA_SURRO_temp$surro <- i
+for (numSurro in names(mega_list_CCM_surrogates)){
+RHO_DATA_SURRO_temp <- rho_data_sum(list_CCM = mega_list_CCM_surrogates[[numSurro]]$list_CCM_surro)
+RHO_DATA_SURRO_temp$surro <- numSurro
 TOTAL_RHO_SURRO <- rbind(TOTAL_RHO_SURRO, RHO_DATA_SURRO_temp)
 }
 
 
-#now we summarize this shit  
+#now we summarize this shit  by the MEAN of this shit 
 
 TOTAL_RHO_SURRO_SUM <- TOTAL_RHO_SURRO |> 
   dplyr::group_by(enem, lobs, variable)|> 
   dplyr::summarise(rho = mean(rho), rho_sdev = mean(rho_sdev))
 
 
+#RHO_PLOT_SUR <- plot_rho_CCM(TOTAL_RHO_SURRO_SUM)
+
+
 write.csv(TOTAL_RHO_SURRO_SUM,  paste0("./outputs/CCM/", "detrend_", detrend_data, "/",  "surrogate_rho.csv"))
 
-
-RHO_PLOT_SURRO_TOTAL <- plot_rho_CCM(TOTAL_RHO_SURRO_SUM)
-
-
-ggsave(
-    RHO_PLOT_SURRO_TOTAL,
-    filename = paste0("./outputs/CCM/", "detrend_", detrend_data, "/", "rho_plot_surro.png"),
-    height = 10,
-    width = 10,
-    create.dir = T
-  )
-
-
-
-####now, i have to do two things
-## do a plot mixing informations of ther clark p test, and each X_casue, against the surrogates. 
-
-
-###soo here I can import ir grom the generated!! change that. 
-
-
+##now i merge them..
 
 RHO_DATA$cat <- "data"
 TOTAL_RHO_SURRO_SUM$cat <- "random"
@@ -251,3 +224,6 @@ ggsave(
     width = 14,
     create.dir = T
   )
+
+############  now the mega plot loop per enemy 
+

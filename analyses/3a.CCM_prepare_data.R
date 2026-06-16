@@ -21,23 +21,25 @@ norm_detrend_data <- function(data_pred, detrend_method = "firstDiff", de_trend 
 ##2. Two different types, with and without first differences. 
 ##here normalized not detrended 
 
+data_mod <- data_pred  
+  
 if (de_trend == T) {
 
   #here we gonna adapt the method
-DATA_PRED<-data_pred |> 
+data_mod<-data_mod |> 
   dplyr::group_by(block, enem) |> 
   dplyr::mutate(X= c(NA, diff(X)), Y= c(NA, diff(Y)), R= c(NA, diff(R)))|> 
   tidyr::drop_na()  
 }
   
 ##normalization
-DATA_PRED <-DATA_PRED  |> 
+data_mod <-data_mod  |> 
   dplyr::group_by(enem) |> 
   dplyr::mutate(R = R/max(R, na.rm = TRUE), X = X/max(X, na.rm = TRUE), Y = Y/max(Y, na.rm = TRUE))
 
 
 
-  return(DATA_PRED)
+  return(data_mod)
 
 }
 

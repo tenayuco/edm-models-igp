@@ -163,15 +163,15 @@ return(list_CCM)
 
 
 
-surrogater_df <- function(data){
+surrogater_df <- function(data_pred){
   surro_df <- data.frame()
 
 
-  surro_df <- data |> 
-  dplyr::group_by(block) |> 
+  surro_df <- data_pred |> 
+  dplyr::group_by(block, enem) |> 
   dplyr::mutate(week = sample(week, dplyr::n(), replace = FALSE)) |>  # shuffles within each block #gives the curreng grpup size dplyr::n()
   dplyr::ungroup() |> 
-  dplyr::select(block, R, Y, X, week)
+  dplyr::select(block, R, Y, X, week, enem)
 
  # idx_shuffle = sample(1:nrow(data), nrow(data), replace = FALSE) # permutes the row order of the dataset (shuffles without replacement).
  # surro_df = data[idx_shuffle, c("block", "R", "Y", "X")] #i desorganize within block and natr
@@ -198,7 +198,7 @@ for (enem in names(list_CCM)){
   embed_temp$enem <- enem
   embed_temp$embDim <- seq(1:nrow(embed_temp))
   embed_temp$E_A <- list_CCM[[enem]]$list_embed$E_A
-  embed_temp$E_B<- list_CCM[[enem]]$list_embed$E_A
+  embed_temp$E_B<- list_CCM[[enem]]$list_embed$E_B
   embed_DF <- rbind(embed_DF, embed_temp)
 
 }
@@ -212,7 +212,8 @@ embedding_plotter <-  function(embed_DF){
 
 
 PLOT_EMBED <- embed_DF |>
-  dplyr::rename(X=A, Y=B)|>
+  dplyr::rename(X=A, Y=B, E_X=E_A, E_Y=E_B)|>
+
   tidyr::pivot_longer(cols=c(X, Y), names_to = "variable", values_to = "pho_embed")|>
   ggplot(aes(x =embDim +1, y =pho_embed )) +
     geom_line(
@@ -222,11 +223,11 @@ PLOT_EMBED <- embed_DF |>
     geom_point(aes(color = variable), size = 1) +
   
    # Add vertical lines for E_A and E_B
-    geom_vline(aes(xintercept = E_A, color = "E_A"),
+    geom_vline(aes(xintercept = E_X, color = "E_X"),
       linetype = "dashed",
       size = 0.5
     ) +
-    geom_vline(aes(xintercept = E_B, color = "E_B"),
+    geom_vline(aes(xintercept = E_Y, color = "E_Y"),
       linetype = "dashed",
       size = 0.5)+
   
@@ -237,6 +238,111 @@ PLOT_EMBED <- embed_DF |>
   return(PLOT_EMBED)
 }
 
+
+
+#################get tthe singi
+
+
+ccm_sp_test <- function(list_CCM){
+
+#this add a column to the data frame of the enemi, and will bind them 
+ccm_sp_igp <- data.frame()
+
+for (enemies in names(list_CCM)){
+  list_CCM[[enemies]]$list_ccm$result$enem <- enemies
+  ccm_sp_igp <-rbind(ccm_sp_igp, list_CCM[[enemies]]$list_ccm$result)  
+}
+  
+  return(ccm_sp_igp)
+}
+
+
+#get the predicitvie steps
+
+
+
+rho_preSteps <- function(list_CCM){
+
+#this add a column to the data frame of the enemi, and will bind them 
+pred_steps <- data.frame()
+
+for (enem in names(list_CCM)){
+  pred_temp_A <-  as.data.frame(list_CCM[[enem]]$list_ccm$signal_A_out$predatout)
+  pred_temp_B <-  as.data.frame(list_CCM[[enem]]$list_ccm$signal_B_out$predatout)
+  pred_temp_A$variable <- "X"
+   pred_temp_B$variable <- "Y"
+
+
+  pred_temp <- rbind(pred_temp_A,  pred_temp_B)
+
+  pred_temp$enem <- enem
+
+  pred_steps <- rbind(pred_steps, pred_temp)
+}
+  
+  return(pred_steps)
+}
+
+
+
+#-------------plot
+
+#---------------rho
+
+##extreact the rho values for each enem and put ir into a data frame 
+
+rho_data_sum <- function(list_CCM){
+
+RHO_DATA <- data.frame()
+
+for (enemies in names(list_CCM)){
+  print(enemies)
+  
+  if(is.na(list_CCM[[enemies]]$list_ccm$CCM_boot_A)[[1]]){
+    rho_X <- 0
+    rho_X_sdev <- 0
+    lobsX <- 0
+    print("case1")
+  } else {
+    rho_X <- list_CCM[[enemies]]$list_ccm$CCM_boot_A$rho
+    rho_X_sdev <- list_CCM[[enemies]]$list_ccm$CCM_boot_A$sdevrho
+    lobsX <- list_CCM[[enemies]]$list_ccm$CCM_boot_A$Lobs
+  }
+  
+  if(is.na(list_CCM[[enemies]]$list_ccm$CCM_boot_B)[[1]]){
+    rho_Y <- 0
+    rho_Y_sdev <- 0
+    lobsY <- 0
+    print("case2")
+  } else {
+    rho_Y <- list_CCM[[enemies]]$list_ccm$CCM_boot_B$rho
+    rho_Y_sdev <- list_CCM[[enemies]]$list_ccm$CCM_boot_B$sdevrho
+    lobsY <- list_CCM[[enemies]]$list_ccm$CCM_boot_B$Lobs
+  }
+  
+  temp_data_X <- data.frame(
+    lobs = lobsX,
+    rho = rho_X,
+    rho_sdev = rho_X_sdev,
+    variable = "X_cause_Y"
+  )
+
+  temp_data_Y <- data.frame(
+    lobs = lobsY,
+    rho = rho_Y,
+    rho_sdev = rho_Y_sdev,
+    variable = "Y_cause_X"
+  )
+
+  temp_data <- rbind(temp_data_X, temp_data_Y)
+  temp_data$enem <-  enemies
+
+  RHO_DATA<- rbind(RHO_DATA, temp_data)
+}
+
+return(RHO_DATA)
+
+}
 
 
 
@@ -418,30 +524,6 @@ RHO_PLOT <- rho_data |>
 }
 
 
-
-
-
-
-
-
-rho_pred_plotter <-  function(predSteps_DF){
-
-
-PLOT_STEPS <- predSteps_DF |>
-  ggplot(aes(x =predstep, y =rho)) +
-    geom_line(
-      aes(color= as.factor(variable), group = as.factor(interaction(variable))),
-      size = 0.5
-    ) +
-    geom_point(aes(color = variable), size = 1) +
-    facet_wrap(~enem) +
-    theme_minimal()
-
-  return(PLOT_STEPS)
-}
-
-
-
 ########rho plot against surrogates
 
 plot_rho_data_surro_CCM <-  function(rho_data_surro, ccm_test){
@@ -489,4 +571,47 @@ RHO_PLOT <- full_data |>
   
   
   return(RHO_PLOT)
+}
+
+
+
+
+
+rho_pred_plotter <-  function(predSteps_DF){
+
+
+PLOT_STEPS <- predSteps_DF |>
+  ggplot(aes(x =predstep, y =rho)) +
+    geom_line(
+      aes(color= as.factor(variable), group = as.factor(interaction(variable))),
+      size = 0.5
+    ) +
+    geom_point(aes(color = variable), size = 1) +
+    facet_wrap(~enem) +
+    theme_minimal()
+
+  return(PLOT_STEPS)
+}
+
+
+
+plot_ts_emb_step_rho_per_enem <- function(rho_data_surro, ccm_test, data_ts, predSteps_DF){
+
+
+  for (enem in unique()){}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
