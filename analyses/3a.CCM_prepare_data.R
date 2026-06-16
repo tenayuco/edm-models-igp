@@ -64,39 +64,4 @@ hist_x <- x |> ggplot(aes(m))+
 
 ### create one surrogate from wthe data 
 
-surrogater_all_enem_df_old <- function(data){
-  surro_df <- data.frame()
-  for (enemy in unique(data$enem)){
-
-    for(block in unique(data$block)){
-
-
-  data_enem_block <-  data |> 
-    dplyr::filter(enem == enemy)|> 
-    dplyr::filter(block == block)
-  
-    print(head(data_enem_block))
-
-  idx_shuffle = sample(1:nrow(data_enem_block), nrow(data_enem_block), replace = FALSE) # permutes the row order of the dataset (shuffles without replacement).
-  print(idx_shuffle)
-    surro_df_temp = data_enem_block[idx_shuffle, c("R", "Y", "X")] #i desorganize within block and natr
-    surro_df_temp$week <- data_enem_block$week  #i add the week, to show the desorgani
-    surro_df_temp$enem <- enemy  #i add these names that do not change
-    surro_df_temp$block <- block
-  surro_df <- rbind(surro_df, surro_df_temp)
-    }
-}
-  return(surro_df)
-  }
-
-
-
-surrogater_all_df <- function(data){
-  surro_df <- data.frame()
-
-  idx_shuffle = sample(1:nrow(data), nrow(data), replace = FALSE) # permutes the row order of the dataset (shuffles without replacement).
-  surro_df = data[idx_shuffle, c("block", "enem", "week", "R", "Y", "X")] #i desorganize within block and natr
-   
-  return(surro_df)
-  }
 

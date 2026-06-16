@@ -32,40 +32,39 @@ ggsave(plot_ts,filename = paste0("./outputs/CCM/", "detrend_", detrend_data,  "/
 ##2run tests 
 
 
+###this is with the data 
+list_CCM_total <- run_ccm_per_enem(data_prep = DATA, niter= 10, min_per = 0.8, use_surrogate = F)
 
-list_CCM_total <- run_ccm_per_enem(data_prep = DATA, niter= 10, min_per = 0.8)
-
+##this we save 
 
 saveRDS(list_CCM_total, file  = paste0("./outputs/CCM/", "detrend_", detrend_data,  "/", 
 "list_CCM_total.rds"))
- ##plot tjis data
 
 
 
+### now from this we can get some of the infoo lets run the surrogates and save it in a mega data frame
 
-  ###
+numSurro =10
 
-##now
-
-#############now the surrogates 
-
+mega_list_CCM_surrogates <- list()
 
 
+for (i in (1:numSurro)){
 
 
+list_CCM_surro <- run_ccm_per_enem(data_prep = DATA, niter= 10, min_per = 0.8, use_surrogate = T)
 
-
-
-
-
-
-
-
-
-
+# Create a nested list with enemy name and results
+  mega_list_CCM_surrogates[[as.character(i)]] <- list(
+    surro = i,
+    list_CCM_surro = list_CCM_surro
+  )
+  
+}
 
 
 
+#list_CCM_total <- run_ccm_per_enem(data_prep = DATA, niter= 10, min_per = 0.8, use_surrogate = F)
 
 
 
@@ -73,11 +72,18 @@ saveRDS(list_CCM_total, file  = paste0("./outputs/CCM/", "detrend_", detrend_dat
 
 
 
-
-
-#############run from here if.. 
 
 list_CCM_total <- readRDS("./outputs/CCM/detrend_TRUE/list_CCM_total.rds")
+
+
+
+
+
+
+list_CCM_total_surro <- run_ccm_per_enem(data_prep = DATA, niter= 10, min_per = 0.8, use_surrogate = T)
+
+
+
 
 
 #condensed results

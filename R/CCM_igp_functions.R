@@ -163,6 +163,27 @@ return(list_CCM)
 
 
 
+surrogater_df <- function(data){
+  surro_df <- data.frame()
+
+
+  surro_df <- data |> 
+  dplyr::group_by(block) |> 
+  dplyr::mutate(week = sample(week, dplyr::n(), replace = FALSE)) |>  # shuffles within each block #gives the curreng grpup size dplyr::n()
+  dplyr::ungroup() |> 
+  dplyr::select(block, R, Y, X, week)
+
+ # idx_shuffle = sample(1:nrow(data), nrow(data), replace = FALSE) # permutes the row order of the dataset (shuffles without replacement).
+ # surro_df = data[idx_shuffle, c("block", "R", "Y", "X")] #i desorganize within block and natr
+   
+ #surro_df <- merge(surro_df, data[c("block", "week")], by = "block")
+
+  return(surro_df)
+  }
+
+
+
+
 
 
 

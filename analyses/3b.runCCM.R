@@ -2,7 +2,7 @@
 
 
 
-run_ccm_per_enem <-  function(data_prep, niter, min_per=0.8){
+run_ccm_per_enem <-  function(data_prep, niter, min_per=0.8, use_surrogate =F){
   
 full_list_ccm <- list()
 
@@ -13,6 +13,11 @@ for (enemy in unique(data_prep$enem)) {
   data_enem <- data_prep |> 
   dplyr::filter(enem == enemy)
   print(enemy)
+
+
+  ##if surrogate ==TRUE, uses the surrogate 
+
+  
 
 
   ##1. calculate the embedding dimensions
@@ -27,6 +32,12 @@ for (enemy in unique(data_prep$enem)) {
 
   E_A_used <-  list_embed$E_A
   E_B_used <-  list_embed$E_B
+
+
+## 
+  
+  if(use_surrogate ==TRUE){
+  data_enem <-  surrogater_df(data_enem)}
 
 
   list_ccm <- multisp_CCM_igp(x = data_enem, niter = niter, E_A_used = E_A_used, E_B_used = E_B_used)
@@ -47,6 +58,73 @@ for (enemy in unique(data_prep$enem)) {
   return(full_list_ccm)
 
 }
+
+
+run_ccm_surro_per_enem <-  function(data_prep, niter, min_per=0.8, num_surro=10){
+  
+full_list_ccm <- list()
+
+ ##NOW I HAVE TO SEND THE REAL EMBEDDING PER ENEM 
+  
+for (enemy in unique(data_prep$enem)) {
+ 
+  data_enem <- data_prep |> 
+  dplyr::filter(enem == enemy)
+  print(enemy)
+
+
+  ##1. calculate the embedding dimensions of the real data (to have it here)
+
+  list_embed <- embedding_ccm(x= data_enem, min_per= min_per)
+
+###2. run the surro
+  
+  data_surro <-  surrogater_df(data_enem)
+  
+  ##3. run the CCM with the data
+
+  ##used embed
+
+  E_A_used <-  list_embed$E_A
+  E_B_used <-  list_embed$E_B
+
+
+  ## run the surrogate, and the ccm per surrog
+
+  list_ccm <- multisp_CCM_igp(x = data_surro, niter = niter, E_A_used = E_A_used, E_B_used = E_B_used)
+
+  ## 4. run the CCM with the surrogates 
+
+
+
+ # Create a nested list with enemy name and results
+  full_list_ccm[[as.character(enemy)]] <- list(
+    enem = enemy,
+    list_embed = list_embed,
+    list_ccm = list_ccm
+  )
+
+
+}
+  return(full_list_ccm)
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
