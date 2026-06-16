@@ -1,9 +1,13 @@
+#This code will do every step of the CCM process. The basal functions will be stores in /R and the subprotocols as 3.a, 3.b, 3.c
+
+#1. import data for subprotocols. 
+
 source("./analyses/3a.CCM_prepare_data.R")
 source("./analyses/3b.runCCM.R")
 
 
 
-##1. DATA preparation
+##1. DATA preparation  (all enemies together)
 
 
 DATA_IGP <- readr::read_csv("data/dataIGP_2025.csv")
@@ -11,7 +15,6 @@ DATA_IGP <- readr::read_csv("data/dataIGP_2025.csv")
 #fist prepre data
 
 DATA_PRED <- prep_data(raw_data_igp = DATA_IGP)
-
 #plot_ts <- data_ts_CCM(DATA_PRED)
 
 detrend_data = T
@@ -30,7 +33,7 @@ ggsave(plot_ts,filename = paste0("./outputs/CCM/", "detrend_", detrend_data,  "/
 
 
 
-list_CCM_total <- run_total_enemies_CCM(data_prep = DATA, niter= 1000)
+list_CCM_total <- run_ccm_per_enem(data_prep = DATA, niter= 10, min_per = 0.8)
 
 
 saveRDS(list_CCM_total, file  = paste0("./outputs/CCM/", "detrend_", detrend_data,  "/", 
@@ -188,7 +191,7 @@ TOTAL_RHO_SURRO <- data.frame()
 
 for (i in (1:numSurro)){
 SURRO_DF <- surrogater_all_df(data = DATA_PRED)
-list_CCM_surro <- run_total_enemies_CCM(data_prep =SURRO_DF , niter= 10, df_embedding_CCM = dfEmbeddingCCM, force_embedding = T)  
+list_CCM_surro <- run_total_enemies_CCM(data_prep =SURRO_DF , niter= 100, df_embedding_CCM = dfEmbeddingCCM, force_embedding = T)  
 RHO_DATA_SURRO_temp <- rho_data_sum(list_CCM = list_CCM_surro)
 RHO_DATA_SURRO_temp$surro <- i
 TOTAL_RHO_SURRO <- rbind(TOTAL_RHO_SURRO, RHO_DATA_SURRO_temp)
