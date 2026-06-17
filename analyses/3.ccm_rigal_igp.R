@@ -42,7 +42,9 @@ DATA <-  norm_detrend_data(data_pred = DATA_PRED, de_trend = detrend_data)
 iteraciones <- 1000  # estas son las iteraciones de clark, en realidad lo que me importa es el final L
 
 ###this is with the data 
+tic()
 list_CCM_total <- run_ccm_per_enem(data_prep = DATA, niter= iteraciones, min_per = 0.8)
+toc()
 
 ##this we save 
 
@@ -64,18 +66,17 @@ numSurro =100 ##esto es relevante
 #data_ts_CCM(data_pred = DATA_PRED)
 #data_ts_CCM(data_pred = DATA_SURRO)
 
+tic()
 mega_list_CCM_surrogates <- list()
 
 for (i in (1:numSurro)){
 
-  tic()
   DATA_PRED_SURRO <- surrogater_df_twin(DATA_PRED)
   DATA_SURRO <-  norm_detrend_data(data_pred = DATA_PRED_SURRO, de_trend = detrend_data)
   #print(data_ts_CCM(DATA_SURRO))
 #plot_ts_prep <-  data_ts_CCM(DATA)
 #print(paste0("surro_", i))
 list_CCM_surro <- run_ccm_per_enem_surro(data_surro = DATA_SURRO, niter= iteraciones, list_data = list_CCM_total)
-toc()
  
 RHO_SURRO <- rho_data_sum(list_CCM = list_CCM_surro)
 
@@ -88,11 +89,11 @@ RHO_SURRO <- rho_data_sum(list_CCM = list_CCM_surro)
   )
   
 }
-
+toc()
 
 
 saveRDS(mega_list_CCM_surrogates, file  = paste0("./outputs/CCM/", "detrend_", detrend_data,  "/", 
-"mega_list_CCM_surrogates_", "niter_", iteraciones, ".rds"))
+"mega_list_CCM_surrogates_", "surro_", numSurro, "niter_", iteraciones, ".rds"))
 
 
 
