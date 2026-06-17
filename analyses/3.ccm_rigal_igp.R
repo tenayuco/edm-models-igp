@@ -44,7 +44,7 @@ ggsave(plot_ts_surro,filename = paste0("./outputs/CCM/", "detrend_", detrend_dat
 
 
 ##2run tests 
-iteraciones <- 1000
+iteraciones <- 100
 
 ###this is with the data 
 list_CCM_total <- run_ccm_per_enem(data_prep = DATA, niter= iteraciones, min_per = 0.8)
@@ -62,7 +62,7 @@ saveRDS(list_CCM_total, file  = paste0("./outputs/CCM/", "detrend_", detrend_dat
 #  if(use_surrogate ==TRUE){
  # data_enem <-  surrogater_df(data_enem)}
 
-numSurro =10
+numSurro =100
 
 
 
@@ -73,14 +73,18 @@ mega_list_CCM_surrogates <- list()
 
 for (i in (1:numSurro)){
 
-  DATA_PRED_SURRO <- surrogater_df(DATA_PRED)
+  DATA_PRED_SURRO <- surrogater_df_twin(DATA_PRED)
   DATA_SURRO <-  norm_detrend_data(data_pred = DATA_PRED_SURRO, de_trend = detrend_data)
+  #print(data_ts_CCM(DATA_SURRO))
 #plot_ts_prep <-  data_ts_CCM(DATA)
-  
-
-print(paste0("surro_", i))
+#print(paste0("surro_", i))
 list_CCM_surro <- run_ccm_per_enem_surro(data_surro = DATA_SURRO, niter= iteraciones, list_data = list_CCM_total)
 
+ 
+RHO_SURRO <- rho_data_sum(list_CCM = list_CCM_surro)
+
+print(plot_rho_CCM(RHO_SURRO)) 
+  
 # Create a nested list with enemy name and results
   mega_list_CCM_surrogates[[as.character(i)]] <- list(
     surro = i,
@@ -109,8 +113,8 @@ saveRDS(mega_list_CCM_surrogates, file  = paste0("./outputs/CCM/", "detrend_", d
 
 
 
-list_CCM_total <- readRDS("./outputs/CCM/detrend_TRUE/list_CCM_total_niter_10.rds")
-mega_list_CCM_surrogates <- readRDS("./outputs/CCM/detrend_TRUE/mega_list_CCM_surrogates_niter_1000.rds")
+list_CCM_total <- readRDS("./outputs/CCM/detrend_TRUE/list_CCM_total_niter_100.rds")
+mega_list_CCM_surrogates <- readRDS("./outputs/CCM/detrend_TRUE/mega_list_CCM_surrogates_niter_100.rds")
 
 
 #condensed results
@@ -226,4 +230,5 @@ ggsave(
   )
 
 ############  now the mega plot loop per enemy 
+
 
