@@ -12,6 +12,11 @@ source("./analyses/3b.runCCM.R")
 
 DATA_IGP <- readr::read_csv("data/dataIGP_2025.csv")
 DATA_PRED <- prep_data(raw_data_igp = DATA_IGP)
+
+##lets remove ec+am, ec+sr, no real utility as the data is super ba
+
+DATA_PRED <-  DATA_PRED |> dplyr::filter(enem!="ec+am")|> dplyr::filter(enem!="ec+sr")
+
 #plot_ts <- data_ts_CCM(DATA_PRED)
 
 detrend_data = T
@@ -21,30 +26,20 @@ DATA <-  norm_detrend_data(data_pred = DATA_PRED, de_trend = detrend_data)
 
 
 ###examples ofthe surro
-DATA_PRED_SURRO <- surrogater_df(DATA_PRED)
-DATA_SURRO <-  norm_detrend_data(data_pred = DATA_PRED_SURRO, de_trend = detrend_data)
+#DATA_PRED_SURRO <- surrogater_df(DATA_PRED)
+#DATA_SURRO <-  norm_detrend_data(data_pred = DATA_PRED_SURRO, de_trend = detrend_data)
 
 #some plots to show
-plot_ts_pred <-  data_ts_CCM(DATA_PRED)
-plot_ts_data <-  data_ts_CCM(DATA)
-plot_ts_pred_surro <-  data_ts_CCM(DATA_PRED_SURRO)
-plot_ts_surro <-  data_ts_CCM(DATA_SURRO)
-
-ggsave(plot_ts_pred,filename = paste0("./outputs/CCM/", "detrend_", detrend_data,  "/", "plot_ts_pred.png"),height = 10,width = 10,create.dir = T
-  )
-ggsave(plot_ts_data,filename = paste0("./outputs/CCM/", "detrend_", detrend_data,  "/", "plot_ts_data.png"),height = 10,width = 10,create.dir = T
-  )
-ggsave(plot_ts_pred_surro,filename = paste0("./outputs/CCM/", "detrend_", detrend_data,  "/", "plot_pred_surro.png"),height = 10,width = 10,create.dir = T
-  )
-ggsave(plot_ts_surro,filename = paste0("./outputs/CCM/", "detrend_", detrend_data,  "/", "plot_ts_surro.png"),height = 10,width = 10,create.dir = T
-  )
-
+#plot_ts_pred <-  data_ts_CCM(DATA_PRED)
+#plot_ts_data <-  data_ts_CCM(DATA)
+#plot_ts_pred_surro <-  data_ts_CCM(DATA_PRED_SURRO)
+#plot_ts_surro <-  data_ts_CCM(DATA_SURRO)
 
 #hist_data(DATA)  #too see the length of replicates.. 
 
 
 ##2run tests 
-iteraciones <- 100
+iteraciones <- 1000  # estas son las iteraciones de clark, en realidad lo que me importa es el final L
 
 ###this is with the data 
 list_CCM_total <- run_ccm_per_enem(data_prep = DATA, niter= iteraciones, min_per = 0.8)
@@ -62,7 +57,7 @@ saveRDS(list_CCM_total, file  = paste0("./outputs/CCM/", "detrend_", detrend_dat
 #  if(use_surrogate ==TRUE){
  # data_enem <-  surrogater_df(data_enem)}
 
-numSurro =100
+numSurro =100 ##esto es relevante 
 
 
 
@@ -73,17 +68,18 @@ mega_list_CCM_surrogates <- list()
 
 for (i in (1:numSurro)){
 
+  tic()
   DATA_PRED_SURRO <- surrogater_df_twin(DATA_PRED)
   DATA_SURRO <-  norm_detrend_data(data_pred = DATA_PRED_SURRO, de_trend = detrend_data)
   #print(data_ts_CCM(DATA_SURRO))
 #plot_ts_prep <-  data_ts_CCM(DATA)
 #print(paste0("surro_", i))
 list_CCM_surro <- run_ccm_per_enem_surro(data_surro = DATA_SURRO, niter= iteraciones, list_data = list_CCM_total)
-
+toc()
  
 RHO_SURRO <- rho_data_sum(list_CCM = list_CCM_surro)
 
-print(plot_rho_CCM(RHO_SURRO)) 
+#print(plot_rho_CCM(RHO_SURRO)) 
   
 # Create a nested list with enemy name and results
   mega_list_CCM_surrogates[[as.character(i)]] <- list(
@@ -113,8 +109,8 @@ saveRDS(mega_list_CCM_surrogates, file  = paste0("./outputs/CCM/", "detrend_", d
 
 
 
-list_CCM_total <- readRDS("./outputs/CCM/detrend_TRUE/list_CCM_total_niter_100.rds")
-mega_list_CCM_surrogates <- readRDS("./outputs/CCM/detrend_TRUE/mega_list_CCM_surrogates_niter_100.rds")
+list_CCM_total <- readRDS("./outputs/CCM/detrend_TRUE/list_CCM_total_niter_1000.rds")
+mega_list_CCM_surrogates <- readRDS("./outputs/CCM/detrend_TRUE/mega_list_CCM_surrogates_niter_1000.rds")
 
 
 #condensed results
@@ -201,7 +197,7 @@ TOTAL_RHO_SURRO <- rbind(TOTAL_RHO_SURRO, RHO_DATA_SURRO_temp)
 
 TOTAL_RHO_SURRO_SUM <- TOTAL_RHO_SURRO |> 
   dplyr::group_by(enem, lobs, variable)|> 
-  dplyr::summarise(rho = mean(rho), rho_sdev = mean(rho_sdev))
+  dplyr::summarise(rho_median = median(rho, na.rm = T), q5 = quantile(rho, 0.05, na.rm = T), q95 =quantile(rho, 0.95, na.rm = T))
 
 
 #RHO_PLOT_SUR <- plot_rho_CCM(TOTAL_RHO_SURRO_SUM)
@@ -210,6 +206,13 @@ TOTAL_RHO_SURRO_SUM <- TOTAL_RHO_SURRO |>
 write.csv(TOTAL_RHO_SURRO_SUM,  paste0("./outputs/CCM/", "detrend_", detrend_data, "/",  "surrogate_rho.csv"))
 
 ##now i merge them..
+##but I leave only the mean of the real data... 
+
+RHO_DATA$rho_median <- RHO_DATA$rho # we remove this.. 
+RHO_DATA$rho <- NULL
+RHO_DATA$rho_sdev <- NULL # we remove this.. 
+RHO_DATA$q5 <- NA
+RHO_DATA$q95 <- NA
 
 RHO_DATA$cat <- "data"
 TOTAL_RHO_SURRO_SUM$cat <- "random"
