@@ -24,6 +24,33 @@ return(DATA_USED)
 }
 
 
+###now the function to reshuffle the indices 
+
+surrogater_df_twin <- function(data_used) {
+  # For each block, create a twin that has the same 
+  # attractor structure but with broken temporal order
+  
+  surro_df <- data_used |> 
+    dplyr::group_by(block) |> 
+    dplyr::mutate(
+      # Instead of shuffling week, shuffle the entire trajectory
+      # but keep X,Y,R together
+      shuffle_idx = sample(1:dplyr::n(), dplyr::n(), replace = FALSE),
+      
+      # Apply same shuffle to all variables
+      R = R[shuffle_idx],
+      Y = Y[shuffle_idx], 
+      X = X[shuffle_idx]
+    ) |> 
+    dplyr::ungroup()|> 
+    dplyr::select(!shuffle_idx)
+  
+  return(surro_df)
+}
+
+
+
+
 
 
 lv_map_microcosmos <- function(df_used, rpresent, num_seed, num_rep, kernel_chosen){

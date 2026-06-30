@@ -1,13 +1,12 @@
 
+##We first import the raw data
+
 DATA_IGP <- readr::read_csv("data/dataIGP_2025.csv")
 
-#to represent the data
 
 
 #========2.LV MAP======================
-
-#this is nice cause you loop outside
-#names of the folders
+#you define the time of kernel (whatchout if you defined outsse)
 
 #prefedined in the krnel
 #kernel <- "time"
@@ -18,17 +17,28 @@ out_folder <- paste0("./outputs/microcosmos/", kernel, "_kernel/") ### Directory
 fig_folder <- paste0("./figures/microcosmos/", kernel, "_kernel/")
 
 
-v_num_seed <- seq(1:10)
+#now here, v_enemigos just tells which natural enemies. 
+#num_rep is how much you want to gather the data, here I assume is only one repl
+#represent, is not there, iuntil i try the differences
+#v numer seed, is how many times you reshuffle the order of replicates 
+
 v_enemigos <-  unique(DATA_IGP$enem)
 num_rep <- 1
 rpresent <- FALSE
+v_num_seed <- seq(1:10)
+
 
 #to represent the data
 #source("./analyses/2a.data_representation.R")
 
 #import the source 
 #==========================I.B. RUN LV MAP SPATIAL KERNEL on DATA=======================================
+##here you run the loop. 
+##it checks if the file exist already
+
+
 source("./analyses/2b.looper_data_lv_map.R")
+
 
 lv_looper_lists_microcosmos(raw_data = DATA_IGP, v_enemigos = v_enemigos, v_num_seed = v_num_seed, num_rep = num_rep, rpresent = rpresent, kernel_chosen = kernel)
 
@@ -44,6 +54,9 @@ lv_looper_lists_microcosmos(raw_data = DATA_IGP, v_enemigos = v_enemigos, v_num_
 
 source("./analyses/1_2.plot_extract_per_treatment.R")
 source("./analyses/1_2.plotter_LV.R")
+
+
+
 
 plot_per_treatment(out_folder, true_values = FALSE)
 
