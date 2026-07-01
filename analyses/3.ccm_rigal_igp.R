@@ -136,7 +136,7 @@ EMBED_DF <- embed_df_sum(list_CCM = list_CCM_total)
 
 ##plottinh embedding 
 # 
-PLOT_EMB <- embedding_plotter(EMBED_DF)
+PLOT_EMB <- embedding_plotter(EMBED_DF) + ggtitle(paste0("detrend_", used_det_method, "_norm_", used_no_method))
 
 ggsave(
     PLOT_EMB,
@@ -169,7 +169,8 @@ RHO_DATA <- rho_data_sum(list_CCM = list_CCM_total)
 
 write.csv(RHO_DATA,  paste0(fig_path,  "RHO_DATA",  "_it_", iteraciones,". csv"))
 
-RHO_PLOT <- plot_rho_CCM(RHO_DATA)
+RHO_PLOT <- plot_rho_CCM(RHO_DATA)+ ggtitle(paste0("detrend_", used_det_method, "_norm_", used_no_method))
+
 
 ggsave(
     RHO_PLOT,
@@ -185,7 +186,8 @@ ggsave(
 ###now the predictive steps
 
 PRED_STEPS_DATA <- rho_preSteps(list_CCM = list_CCM_total)
-RHO_STEPS_PLOT <- rho_pred_plotter(predSteps_DF = PRED_STEPS_DATA)
+RHO_STEPS_PLOT <- rho_pred_plotter(predSteps_DF = PRED_STEPS_DATA)+ ggtitle(paste0("detrend_", used_det_method, "_norm_", used_no_method))
+
 
 ggsave(
     RHO_STEPS_PLOT,
@@ -235,7 +237,8 @@ TOTAL_RHO_SURRO_SUM$cat <- "random"
 RHO_DATA_SURRO <- rbind(RHO_DATA, TOTAL_RHO_SURRO_SUM)
 
 
-PLOT_RHO_DATA_SURRO <- plot_rho_data_surro_CCM(rho_data_surro = RHO_DATA_SURRO, ccm_test = CCM_TEST)
+PLOT_RHO_DATA_SURRO <- plot_rho_data_surro_CCM(rho_data_surro = RHO_DATA_SURRO, ccm_test = CCM_TEST)+ ggtitle(paste0("detrend_", used_det_method, "_norm_", used_no_method))
+
 
 
 
