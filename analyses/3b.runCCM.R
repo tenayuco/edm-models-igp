@@ -12,7 +12,7 @@ for (enemy in unique(data_prep$enem)) {
  
   data_enem <- data_prep |> 
   dplyr::filter(enem == enemy)
-  print(enemy)
+ # print(enemy)
 
 
   ##if surrogate ==TRUE, uses the surrogate 
@@ -75,7 +75,7 @@ for (enemy in unique(data_surro$enem)) {
  
   data_enem <- data_surro |> 
   dplyr::filter(enem == enemy)
-  print(enemy)
+ # print(enemy)
 
 
 E_A_used <-  list_data[[enemy]]$list_embed$E_A

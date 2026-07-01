@@ -14,7 +14,10 @@ embedding_ccm <- function(x, min_per= 0.8){
     dplyr::group_by(block) |> 
     dplyr::summarise(m = sum(contador))
 
-  maxE <- (min(x_count$m)/2)  #following weak whitney theorem 
+  #this is the restricytion 
+  #  if(tau*(E+1)>lengthacceptablelib) with tau =1. So our maximum lenght is the mininal length (acceptable lib) minus 2 to cover this
+
+  maxE <- (min(x_count$m))-2  #following weak whitney theorem 
   #maxE <- 4
   print(paste0("maxE", maxE))
   
@@ -315,13 +318,13 @@ rho_data_sum <- function(list_CCM){
 RHO_DATA <- data.frame()
 
 for (enemies in names(list_CCM)){
-  print(enemies)
+  #print(enemies)
   
   if(is.na(list_CCM[[enemies]]$list_ccm$CCM_boot_A)[[1]]){
     rho_X <- 0
     rho_X_sdev <- 0
     lobsX <- 0
-    print("case1")
+    #print("case1")
   } else {
     rho_X <- list_CCM[[enemies]]$list_ccm$CCM_boot_A$rho
     rho_X_sdev <- list_CCM[[enemies]]$list_ccm$CCM_boot_A$sdevrho
@@ -332,7 +335,7 @@ for (enemies in names(list_CCM)){
     rho_Y <- 0
     rho_Y_sdev <- 0
     lobsY <- 0
-    print("case2")
+    #print("case2")
   } else {
     rho_Y <- list_CCM[[enemies]]$list_ccm$CCM_boot_B$rho
     rho_Y_sdev <- list_CCM[[enemies]]$list_ccm$CCM_boot_B$sdevrho
@@ -383,7 +386,7 @@ multisp_CCM_old_igp <- function(x, niter, force_embedding = FALSE, E_A_real, E_B
 
   maxE <- (min(x_count$m)/2)  #following weak whitney theorem 
   #maxE <- 4
-  print(paste0("maxE", maxE))
+  #print(paste0("maxE", maxE))
   
 
 

@@ -19,10 +19,18 @@ DATA_PRED <-  DATA_PRED |> dplyr::filter(enem!="ec+am")|> dplyr::filter(enem!="e
 
 #plot_ts <- data_ts_CCM(DATA_PRED)
 
-detrend_data = T
+#check if you defined them outside or inside the scritp
+#det_method = "firstDiff"
+#no_method = "zscore"
+
+##creates the general conection for the output
+
+dir.create(paste0("./outputs/CCM/", "detrend_", det_method,  "/", "norm_", no_method, "/"), recursive = T)
 
 
-DATA <-  norm_detrend_data(data_pred = DATA_PRED, de_trend = detrend_data)
+#the methods are..
+DATA <-  norm_detrend_data(data_pred = DATA_PRED, detrend_method = det_method,  
+                             norm_method = no_method)
 
 
 ###examples ofthe surro
@@ -39,16 +47,18 @@ DATA <-  norm_detrend_data(data_pred = DATA_PRED, de_trend = detrend_data)
 
 
 ##2run tests 
-iteraciones <- 1000  # estas son las iteraciones de clark, en realidad lo que me importa es el final L
+
+#check if the iteraction are defined outside or inside 
+#iteraciones <- 10  # estas son las iteraciones de clark, en realidad lo que me importa es el final L
 
 ###this is with the data 
 tic()
-list_CCM_total <- run_ccm_per_enem(data_prep = DATA, niter= iteraciones, min_per = 0.8)
+list_CCM_total <- run_ccm_per_enem(data_prep = DATA, niter= iteraciones, min_per = 1)  #el min per es paraver cual escoger de  E
 toc()
 
 ##this we save 
 
-saveRDS(list_CCM_total, file  = paste0("./outputs/CCM/", "detrend_", detrend_data,  "/", 
+saveRDS(list_CCM_total, file  = paste0("./outputs/CCM/", "detrend_", det_method,  "/", "norm_", no_method, "/", 
 "list_CCM_total_", "niter_", iteraciones, ".rds"))
 
 
@@ -58,8 +68,8 @@ saveRDS(list_CCM_total, file  = paste0("./outputs/CCM/", "detrend_", detrend_dat
   
 #  if(use_surrogate ==TRUE){
  # data_enem <-  surrogater_df(data_enem)}
-
-numSurro =100 ##esto es relevante 
+#check if it is defined outsie 
+#numSurro =50 ##esto es relevante 
 
 
 
@@ -72,15 +82,14 @@ mega_list_CCM_surrogates <- list()
 for (i in (1:numSurro)){
 
   DATA_PRED_SURRO <- surrogater_df_twin(DATA_PRED)
-  DATA_SURRO <-  norm_detrend_data(data_pred = DATA_PRED_SURRO, de_trend = detrend_data)
-  #print(data_ts_CCM(DATA_SURRO))
+  DATA_SURRO <-  norm_detrend_data(data_pred = DATA_PRED_SURRO, detrend_method = det_method,  
+                             norm_method = no_method)
 #plot_ts_prep <-  data_ts_CCM(DATA)
-#print(paste0("surro_", i))
+
 list_CCM_surro <- run_ccm_per_enem_surro(data_surro = DATA_SURRO, niter= iteraciones, list_data = list_CCM_total)
  
 RHO_SURRO <- rho_data_sum(list_CCM = list_CCM_surro)
 
-#print(plot_rho_CCM(RHO_SURRO)) 
   
 # Create a nested list with enemy name and results
   mega_list_CCM_surrogates[[as.character(i)]] <- list(
@@ -92,8 +101,8 @@ RHO_SURRO <- rho_data_sum(list_CCM = list_CCM_surro)
 toc()
 
 
-saveRDS(mega_list_CCM_surrogates, file  = paste0("./outputs/CCM/", "detrend_", detrend_data,  "/", 
-"mega_list_CCM_surrogates_", "surro_", numSurro, "niter_", iteraciones, ".rds"))
+saveRDS(mega_list_CCM_surrogates, file  = paste0("./outputs/CCM/", "detrend_", det_method,  "/", "norm_", no_method, "/", 
+"mega_list_CCM_", "surro_", numSurro, "_niter_", iteraciones, ".rds"))
 
 
 
@@ -102,16 +111,22 @@ saveRDS(mega_list_CCM_surrogates, file  = paste0("./outputs/CCM/", "detrend_", d
 
 
 
-#list_CCM_total <- run_ccm_per_enem(data_prep = DATA, niter= 10, min_per = 0.8, use_surrogate = F)
-
-
-
 ### let start with data
+##so here you take the method of detrend and norm that you want. 
+## and also check how many iterations you want
+used_det_method = det_method
+used_no_method = no_method
+
+##if you want to choose different
+#used_det_method = "firstDiff"
+#used_no_method = "zscore"
+
+used_path= paste0("./outputs/CCM/", "detrend_", used_det_method,  "/", "norm_", used_no_method, "/")
+fig_path= paste0("./figures/CCM/", "detrend_", used_det_method,  "/", "norm_", used_no_method, "/")
 
 
-
-list_CCM_total <- readRDS("./outputs/CCM/detrend_TRUE/list_CCM_total_niter_1000.rds")
-mega_list_CCM_surrogates <- readRDS("./outputs/CCM/detrend_TRUE/mega_list_CCM_surrogates_niter_1000.rds")
+list_CCM_total <- readRDS(paste0(used_path, "list_CCM_total_niter_", iteraciones, ".rds"))
+mega_list_CCM_surrogates <- readRDS(paste0(used_path, "mega_list_CCM_surro_", numSurro, "_niter_", iteraciones,".rds"))
 
 
 #condensed results
@@ -125,9 +140,9 @@ PLOT_EMB <- embedding_plotter(EMBED_DF)
 
 ggsave(
     PLOT_EMB,
-    filename = paste0("./outputs/CCM/", "detrend_", detrend_data, "/", "rho_embedding_plot.png"),
+    filename = paste0(fig_path, "rho_embedding_plot", "_it_", iteraciones, ".png"),
     height = 10,
-    width = 10,
+    width = 20,
     create.dir = T
   )
 
@@ -141,8 +156,7 @@ ggsave(
 CCM_TEST <- ccm_sp_test(list_CCM = list_CCM_total)
 
 
-dir.create(paste0("./outputs/CCM/", detrend_data)) 
-write.csv(CCM_TEST, paste0("./outputs/CCM/", "detrend_", detrend_data, "/", "ccm_sp_igp.csv"))
+write.csv(CCM_TEST, paste0(used_path, "ccm_sp_igp",  "_it_", iteraciones,".csv"))
 ############now lets plot the embedding dimension and the rho
 
 ##first the pho
@@ -153,17 +167,17 @@ write.csv(CCM_TEST, paste0("./outputs/CCM/", "detrend_", detrend_data, "/", "ccm
 
 RHO_DATA <- rho_data_sum(list_CCM = list_CCM_total)
 
-write.csv(RHO_DATA,  paste0("./outputs/CCM/", "detrend_", detrend_data, "/",  "RHO_DATA.csv"))
+write.csv(RHO_DATA,  paste0(fig_path,  "RHO_DATA",  "_it_", iteraciones,". csv"))
 
 RHO_PLOT <- plot_rho_CCM(RHO_DATA)
 
-#ggsave(
- #   RHO_PLOT,
-  #  filename = paste0("./outputs/CCM/", "detrend_", detrend_data, "/", "rho_plot.png"),
-   # height = 10,
-   # width = 10,
-    #create.dir = T
- # )
+ggsave(
+    RHO_PLOT,
+    filename = paste0(fig_path, "rho_plot",  "_it_", iteraciones,".png"),
+    height = 10,
+    width = 15,
+    create.dir = T
+  )
 
 
 
@@ -175,9 +189,9 @@ RHO_STEPS_PLOT <- rho_pred_plotter(predSteps_DF = PRED_STEPS_DATA)
 
 ggsave(
     RHO_STEPS_PLOT,
-    filename = paste0("./outputs/CCM/", "detrend_", detrend_data, "/", "rho_steps_plot.png"),
+    filename = paste0(fig_path, "rho_steps_plot",  "_it_", iteraciones,".png"),
     height = 10,
-    width = 10,
+    width = 15,
     create.dir = T
   )
 
@@ -204,7 +218,7 @@ TOTAL_RHO_SURRO_SUM <- TOTAL_RHO_SURRO |>
 #RHO_PLOT_SUR <- plot_rho_CCM(TOTAL_RHO_SURRO_SUM)
 
 
-write.csv(TOTAL_RHO_SURRO_SUM,  paste0("./outputs/CCM/", "detrend_", detrend_data, "/",  "surrogate_rho.csv"))
+write.csv(TOTAL_RHO_SURRO_SUM,  paste0(used_path,  "surrogate_rho",  "_it_", iteraciones,".csv"))
 
 ##now i merge them..
 ##but I leave only the mean of the real data... 
@@ -227,7 +241,7 @@ PLOT_RHO_DATA_SURRO <- plot_rho_data_surro_CCM(rho_data_surro = RHO_DATA_SURRO, 
 
 ggsave(
     PLOT_RHO_DATA_SURRO,
-    filename = paste0("./outputs/CCM/", "detrend_", detrend_data, "/", "rho_data_surro.png"),
+    filename = paste0(fig_path, "rho_data_surro",  "_it_", iteraciones,".png"),
     height = 10,
     width = 14,
     create.dir = T

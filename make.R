@@ -44,3 +44,26 @@ source("./analyses/2.data_LVmap_full.R")
 toc()
   
 }
+
+
+
+
+
+
+
+#--------------------------------------CCM LOOP for different norm and detrending methods-------------------------------------------------
+
+
+tic()
+for (metodo_det in c("firstDiff", "none")){  ##linear detren
+  for(metodo_norm in c("zscore", "minmax")){  #none
+    det_method = metodo_det
+    no_method = metodo_norm
+    iteraciones = 1000
+    numSurro = 50
+    print(paste0("metodo_det_", metodo_det))
+    print(paste0("no_det_", metodo_norm))
+    source("./analyses/3.ccm_rigal_igp.R")
+  }
+}
+toc()

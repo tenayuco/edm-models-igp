@@ -9,7 +9,86 @@ DATA_PRED <-  pred_formatter(DATA_LONG)
 
 
 
-norm_detrend_data <- function(data_pred, detrend_method = "firstDiff", de_trend = T){
+norm_detrend_data <- function(data_pred, 
+                             detrend_method = "firstDiff", 
+                             de_trend = TRUE,
+                             norm_method = "zscore") {
+  
+  # Create a copy of the data
+  data_mod <- data_pred
+  
+  # Detrending options
+  if (de_trend == TRUE) {
+    
+    if (detrend_method == "firstDiff") {
+      # First differences
+      data_mod <- data_mod |> 
+        dplyr::group_by(block, enem) |> 
+        dplyr::mutate(
+          X = c(NA, diff(X)), 
+          Y = c(NA, diff(Y)), 
+          R = c(NA, diff(R))
+        ) |> 
+        tidyr::drop_na()
+      
+    } else if (detrend_method == "linearDetrend") {
+      # Linear detrending (remove linear trend)
+      data_mod <- data_mod |> 
+        dplyr::group_by(block, enem) |> 
+        dplyr::mutate(
+          time = dplyr::row_number(),
+          X = residuals(lm(X ~ time)),
+          Y = residuals(lm(Y ~ time)),
+          R = residuals(lm(R ~ time))
+        ) |> 
+        dplyr::select(-time) |> 
+        tidyr::drop_na()
+      
+    } else if (detrend_method == "none") {
+      # No detrending, just pass through
+      data_mod <- data_mod
+      
+    } else {
+      stop("Invalid detrend_method. Choose from: 'firstDiff', 'linearDetrend', or 'none'")
+    }
+  }
+  
+  # Normalization options
+  if (norm_method == "zscore") {
+    # Z-score normalization
+    data_mod <- data_mod |> 
+      dplyr::group_by(enem) |> 
+      dplyr::mutate(
+        R = (R - mean(R, na.rm = TRUE)) / sd(R, na.rm = TRUE), 
+        X = (X - mean(X, na.rm = TRUE)) / sd(X, na.rm = TRUE), 
+        Y = (Y - mean(Y, na.rm = TRUE)) / sd(Y, na.rm = TRUE)
+      )
+    
+  } else if (norm_method == "minmax") {
+    # Min-max normalization
+    data_mod <- data_mod |> 
+      dplyr::group_by(enem) |> 
+      dplyr::mutate(
+        R = R / max(R, na.rm = TRUE), 
+        X = X / max(X, na.rm = TRUE), 
+        Y = Y / max(Y, na.rm = TRUE)
+      )
+    
+  } else if (norm_method == "none") {
+    # No normalization
+    data_mod <- data_mod
+    
+  } else {
+    stop("Invalid norm_method. Choose from: 'zscore', 'minmax', or 'none'")
+  }
+  
+  return(data_mod)
+}
+
+
+
+
+norm_detrend_data_old <- function(data_pred, detrend_method = "firstDiff", de_trend = T){
 
 ##here we use 2 formats of data
 
