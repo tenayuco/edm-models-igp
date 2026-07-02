@@ -62,8 +62,8 @@ for (metodo_det in c("none")){  ##linear detren firstDiff", "none"
     det_method = metodo_det
     no_method = metodo_norm
     type_data = "simulated.data"  #real.data
-    iteraciones = 10  ##1000
-    numSurro = 50 #50
+    iteraciones = 1000  ##1000
+    numSurro = 10 #50
     print(paste0("metodo_det_", metodo_det))
     print(paste0("no_det_", metodo_norm))
     source("./analyses/3.ccm_rigal_igp.R")
