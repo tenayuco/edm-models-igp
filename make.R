@@ -55,12 +55,12 @@ toc()
 
 
 tic()
-for (metodo_det in c("firstDiff", "none")){  ##linear detren
-  for(metodo_norm in c("zscore", "minmax")){  #none
+for (metodo_det in c("firstDiff")){  ##linear detren firstDiff", "none"
+  for(metodo_norm in c("none")){  #none zscore", "minmax
     det_method = metodo_det
     no_method = metodo_norm
-    iteraciones = 1000
-    numSurro = 50
+    iteraciones = 1000  ##1000
+    numSurro = 50 #50
     print(paste0("metodo_det_", metodo_det))
     print(paste0("no_det_", metodo_norm))
     source("./analyses/3.ccm_rigal_igp.R")

@@ -38,8 +38,7 @@ DATA <-  norm_detrend_data(data_pred = DATA_PRED, detrend_method = det_method,
 #DATA_SURRO <-  norm_detrend_data(data_pred = DATA_PRED_SURRO, de_trend = detrend_data)
 
 #some plots to show
-#plot_ts_pred <-  data_ts_CCM(DATA_PRED)
-#plot_ts_data <-  data_ts_CCM(DATA)
+
 #plot_ts_pred_surro <-  data_ts_CCM(DATA_PRED_SURRO)
 #plot_ts_surro <-  data_ts_CCM(DATA_SURRO)
 
@@ -125,8 +124,34 @@ used_path= paste0("./outputs/CCM/", "detrend_", used_det_method,  "/", "norm_", 
 fig_path= paste0("./figures/CCM/", "detrend_", used_det_method,  "/", "norm_", used_no_method, "/")
 
 
+##his chunk only works if you did thedata plot before..
+
+PLOT_TS_PRED <-  data_ts_CCM(DATA_PRED, plotted_var = c("X", "Y")) 
+PLOT_TS_DATA <-  data_ts_CCM(DATA, plotted_var = c("X", "Y")) + ggtitle(paste0("detrend_", used_det_method, "_norm_", used_no_method))
+
+
+
+ggsave(
+    PLOT_TS_PRED,
+    filename = paste0(fig_path, "pred_ts", "_it_", ".png"),
+    height = 10,
+    width = 20,
+    create.dir = T
+  )
+
+
+ggsave(
+    PLOT_TS_DATA,
+    filename = paste0(fig_path, "data_ts", ".png"),
+    height = 10,
+    width = 20,
+    create.dir = T
+  )
+
+
 list_CCM_total <- readRDS(paste0(used_path, "list_CCM_total_niter_", iteraciones, ".rds"))
 mega_list_CCM_surrogates <- readRDS(paste0(used_path, "mega_list_CCM_surro_", numSurro, "_niter_", iteraciones,".rds"))
+
 
 
 #condensed results

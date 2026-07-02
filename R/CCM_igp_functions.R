@@ -17,7 +17,7 @@ embedding_ccm <- function(x, min_per= 0.8){
   #this is the restricytion 
   #  if(tau*(E+1)>lengthacceptablelib) with tau =1. So our maximum lenght is the mininal length (acceptable lib) minus 2 to cover this
 
-  maxE <- (min(x_count$m))-2  #following weak whitney theorem 
+  maxE <- (min(x_count$m))-2  #t
   #maxE <- 4
   print(paste0("maxE", maxE))
   
@@ -510,10 +510,11 @@ return(list_CCM)
 
 
 
-data_ts_CCM <-  function(data_pred){
+data_ts_CCM <-  function(data_pred, plotted_var = c(X, Y, R)){
 
 TIME_SERIES_ALL <- data_pred |>
   tidyr::pivot_longer(cols=c(X, Y, R), names_to = "variable", values_to = "individuals")|>
+  dplyr::filter(variable %in% plotted_var)|>
   ggplot(aes(x = week, y = individuals)) +
     geom_line(
       aes(color= as.factor(variable), group = as.factor(interaction(block, variable))),
