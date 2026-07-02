@@ -8,7 +8,7 @@ set.seed(3)
 diff_len <- FALSE
 num_block <- 10  #how many block (time series)
 reso <- 1
-noise_chosen <- 0.1
+noise_chosen <- 0.01
 #len_chosen <- 20, this does not work with replicates.. 
 len_chosen <- 20
 
