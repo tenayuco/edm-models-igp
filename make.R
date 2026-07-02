@@ -53,15 +53,17 @@ toc()
 
 #--------------------------------------CCM LOOP for different norm and detrending methods-------------------------------------------------
 
+##simulate the data before!! cc
+source("./analyses/3c_simulatedData_CCM.R")
 
 tic()
-for (metodo_det in c("firstDiff", "none")){  ##linear detren firstDiff", "none"
+for (metodo_det in c("none")){  ##linear detren firstDiff", "none"
   for(metodo_norm in c("none", "zscore", "minmax")){  #none zscore", "minmax
     det_method = metodo_det
     no_method = metodo_norm
     type_data = "simulated.data"  #real.data
-    iteraciones = 1000  ##1000
-    numSurro = 10 #50
+    iteraciones = 10  ##1000
+    numSurro = 50 #50
     print(paste0("metodo_det_", metodo_det))
     print(paste0("no_det_", metodo_norm))
     source("./analyses/3.ccm_rigal_igp.R")

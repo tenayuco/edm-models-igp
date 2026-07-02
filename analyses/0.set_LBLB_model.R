@@ -23,7 +23,7 @@ LBLB_LV_parms <- c(
   mun = 1.1,
   mup = 0.33, ## to compare with hin, they have mun = 1 (Tp) + 0.3,  and mup = 0.3 (maintenance) + 0.03 death rate
  #here is dfi
-  S = 0.5
+  S = 0.1  #S =0.5
 ) #here the Sr different
 
 
