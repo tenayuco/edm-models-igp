@@ -17,7 +17,7 @@ embedding_ccm <- function(x, min_per= 0.8){
   #this is the restricytion 
   #  if(tau*(E+1)>lengthacceptablelib) with tau =1. So our maximum lenght is the mininal length (acceptable lib) minus 2 to cover this
 
-  maxE <- (min(x_count$m))-2  #t
+  maxE <- (min(x_count$m))-3  #t ##i put minus 5 cause there is no enough records to test E=18. So, i think 2 is the real min
   #maxE <- 4
   print(paste0("maxE", maxE))
   
@@ -625,5 +625,69 @@ plot_ts_emb_step_rho_per_enem <- function(rho_data_surro, ccm_test, data_ts, pre
 
 
 
+
+}
+
+
+
+# -------------------------PART 1 - run the stochastic IGP model ----------------------------------------
+# Set up folders for saving figures - specifies where output plots will be saved
+#fig_folder <- "./figures/simulation/demoStoc_lvmap/" ### Directory path for the main figure folder
+#fig_subfolder <- paste0("len_", len_chosen,"/", "noise_", noise_chosen, "/", "numrep_", num_rep, "/", "R_", rpresent, "/") ## Creates a subfolder name based on time length and noise level chosen
+
+stochastic_generator_CCM <- function(model_used, disc_or_cont, noise_chosen){
+
+DF_DISC_LV <-  data.frame()  # Initialize empty data frame to store all simulation results
+
+
+# Loop through each replicate simulation
+for (i in seq(1:num_block)){
+
+
+d_t <- 0.01  # Time step for numerical integration
+par_ms = model_used[["parms"]]  
+par_ms[["s_d"]] = noise_chosen 
+
+# Run the differential equation solver using Euler method (iteration)
+DF_temp<- deSolve::ode(
+  y = model_used[["init"]],
+  times = seq(from = 1, to = 500, by = d_t), ##check the step is 0.01 for euler method
+  func = model_used[[paste0("model_", disc_or_cont)]],
+  parms =par_ms,
+  method = "iteration",
+  dt = d_t) |> 
+  as.data.frame() 
+
+###import data frame and convert it to a matrix
+### Select a subset of the time series data
+tmin = 200
+len_rep = len_chosen  
+tmax = tmin+len_chosen*reso
+  
+# If diff_len is TRUE, randomly vary the time series length by up to 20%
+if (diff_len ==TRUE){tmax = tmin + round(tmin+len_chosen*d_t*abs(rnorm(1,mean=0,sd=0.2)), 2)}  ##is beacuse d_t is 0.01  
+
+  # Filter the data to only include the selected time window
+DF_temp<- DF_temp |>  
+       dplyr::filter(time %in%  seq(tmin, tmax, reso))
+
+DF_temp$block <- i
+DF_DISC_LV <- rbind(DF_DISC_LV, DF_temp) 
+}  
+
+DF_DISC_LV <-  DF_DISC_LV |> 
+  dplyr::rename(X=N, Y=P)|>
+  dplyr::mutate(week = time-200)|>
+  dplyr::filter(week>0)
+
+DF_DISC_LV$time <- NULL
+DF_DISC_LV$enem <- "xx+yy"
+
+  
+  
+dir.create(out_folder, recursive = TRUE)
+
+utils::write.csv(DF_DISC_LV, file= paste0(out_folder, "DF_DISC_LV.csv"), row.names= FALSE)
+# ------------------------------------------------------------------------------------------
 
 }

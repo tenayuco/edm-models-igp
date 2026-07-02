@@ -55,11 +55,12 @@ toc()
 
 
 tic()
-for (metodo_det in c("firstDiff")){  ##linear detren firstDiff", "none"
-  for(metodo_norm in c("none")){  #none zscore", "minmax
+for (metodo_det in c("firstDiff", "none")){  ##linear detren firstDiff", "none"
+  for(metodo_norm in c("none", "zscore", "minmax")){  #none zscore", "minmax
     det_method = metodo_det
     no_method = metodo_norm
-    iteraciones = 1000  ##1000
+    type_data = "simulated.data"  #real.data
+    iteraciones = 100  ##1000
     numSurro = 50 #50
     print(paste0("metodo_det_", metodo_det))
     print(paste0("no_det_", metodo_norm))

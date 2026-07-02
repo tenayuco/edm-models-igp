@@ -8,7 +8,10 @@ source("./analyses/3b.runCCM.R")
 
 
 ##1. DATA preparation  (all enemies together)
+out_path= paste0("./outputs/CCM/", type_data,  "/")
 
+
+if(type_data == "real.data"){
 
 DATA_IGP <- readr::read_csv("data/dataIGP_2025.csv")
 DATA_PRED <- prep_data(raw_data_igp = DATA_IGP)
@@ -25,24 +28,23 @@ DATA_PRED <-  DATA_PRED |> dplyr::filter(enem!="ec+am")|> dplyr::filter(enem!="e
 
 ##creates the general conection for the output
 
-dir.create(paste0("./outputs/CCM/", "detrend_", det_method,  "/", "norm_", no_method, "/"), recursive = T)
+
+
+}
+
+if(type_data == "simulated.data"){
+
+  DATA_PRED <- read.csv("outputs/CCM/DF_DISC_LV.csv")
+}
+
+
+dir.create(paste0(out_path, "detrend_", det_method,  "/", "norm_", no_method, "/"), recursive = T)
 
 
 #the methods are..
 DATA <-  norm_detrend_data(data_pred = DATA_PRED, detrend_method = det_method,  
                              norm_method = no_method)
 
-
-###examples ofthe surro
-#DATA_PRED_SURRO <- surrogater_df(DATA_PRED)
-#DATA_SURRO <-  norm_detrend_data(data_pred = DATA_PRED_SURRO, de_trend = detrend_data)
-
-#some plots to show
-
-#plot_ts_pred_surro <-  data_ts_CCM(DATA_PRED_SURRO)
-#plot_ts_surro <-  data_ts_CCM(DATA_SURRO)
-
-#hist_data(DATA)  #too see the length of replicates.. 
 
 
 ##2run tests 
@@ -57,7 +59,7 @@ toc()
 
 ##this we save 
 
-saveRDS(list_CCM_total, file  = paste0("./outputs/CCM/", "detrend_", det_method,  "/", "norm_", no_method, "/", 
+saveRDS(list_CCM_total, file  = paste0(out_path, "detrend_", det_method,  "/", "norm_", no_method, "/", 
 "list_CCM_total_", "niter_", iteraciones, ".rds"))
 
 
@@ -100,7 +102,7 @@ RHO_SURRO <- rho_data_sum(list_CCM = list_CCM_surro)
 toc()
 
 
-saveRDS(mega_list_CCM_surrogates, file  = paste0("./outputs/CCM/", "detrend_", det_method,  "/", "norm_", no_method, "/", 
+saveRDS(mega_list_CCM_surrogates, file  = paste0(out_path, "detrend_", det_method,  "/", "norm_", no_method, "/", 
 "mega_list_CCM_", "surro_", numSurro, "_niter_", iteraciones, ".rds"))
 
 
@@ -120,8 +122,11 @@ used_no_method = no_method
 #used_det_method = "firstDiff"
 #used_no_method = "zscore"
 
-used_path= paste0("./outputs/CCM/", "detrend_", used_det_method,  "/", "norm_", used_no_method, "/")
-fig_path= paste0("./figures/CCM/", "detrend_", used_det_method,  "/", "norm_", used_no_method, "/")
+used_path= paste0(out_path, "detrend_", used_det_method,  "/", "norm_", used_no_method, "/")
+
+fig_path= paste0("./figures/CCM/", type_data,  "/", "detrend_", used_det_method,  "/", "norm_", used_no_method, "/")
+
+
 
 
 ##his chunk only works if you did thedata plot before..
