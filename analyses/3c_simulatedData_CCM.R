@@ -8,7 +8,7 @@ set.seed(3)
 diff_len <- FALSE
 num_block <- 10  #how many block (time series)
 reso <- 1
-noise_chosen <- 0.01
+#noise_chosen <- 0 #0.05
 #len_chosen <- 20, this does not work with replicates.. 
 #len_chosen <- 20
 # s_chosen externally!!
@@ -21,7 +21,16 @@ out_folder <- paste0("./outputs/CCM/")
 #First set the conditions for the LBLB model
 source("./analyses/0.set_LBLB_model.R")
 
+
 LBLB_LV_list$parms[["S"]] <- s_chosen
+
+##estas las tengo que silenciar porque al chile no sirven mucho 
+
+
+LBLB_LV_list$parms[["frn"]] <-  frn_chosen
+LBLB_LV_list$parms[["K"]] <-  K_chosen
+
+
 
 # the diff_len tell tyo if you want to randomly cut some time series
 

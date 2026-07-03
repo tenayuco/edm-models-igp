@@ -8,7 +8,7 @@ source("./analyses/3b.runCCM.R")
 
 
 ##1. DATA preparation  (all enemies together)
-out_path= paste0("./outputs/CCM/", type_data,  "/")
+out_path= paste0("./outputs/CCM/", type_data,  "/", "s_", s_chosen, "/")
 
 
 if(type_data == "real.data"){
@@ -124,7 +124,7 @@ used_no_method = no_method
 
 used_path= paste0(out_path, "detrend_", used_det_method,  "/", "norm_", used_no_method, "/")
 
-fig_path= paste0("./figures/CCM/", type_data,  "/", "detrend_", used_det_method,  "/", "norm_", used_no_method, "/")
+fig_path= paste0("./figures/CCM/", type_data,  "/", "s_", s_chosen, "/",  "detrend_", used_det_method,  "/", "norm_", used_no_method, "/")
 
 
 
