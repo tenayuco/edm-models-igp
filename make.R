@@ -54,7 +54,13 @@ toc()
 #--------------------------------------CCM LOOP for different norm and detrending methods-------------------------------------------------
 
 ##simulate the data before!! cc
+len_chosen <- 20
+s_chosen = 0.1
 source("./analyses/3c_simulatedData_CCM.R")
+
+#then pick the simulated data
+sim_data = paste0("DF_DISC_LV_S_", s_chosen, "_len_", len_chosen, ".csv")
+
 
 tic()
 for (metodo_det in c("none")){  ##linear detren firstDiff", "none"
@@ -62,7 +68,7 @@ for (metodo_det in c("none")){  ##linear detren firstDiff", "none"
     det_method = metodo_det
     no_method = metodo_norm
     type_data = "simulated.data"  #real.data
-    iteraciones = 1000  ##1000
+    iteraciones = 10  ##1000
     numSurro = 10 #50
     print(paste0("metodo_det_", metodo_det))
     print(paste0("no_det_", metodo_norm))

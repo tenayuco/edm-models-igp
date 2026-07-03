@@ -10,8 +10,8 @@ num_block <- 10  #how many block (time series)
 reso <- 1
 noise_chosen <- 0.01
 #len_chosen <- 20, this does not work with replicates.. 
-len_chosen <- 20
-
+#len_chosen <- 20
+# s_chosen externally!!
 
 #names of the folders
 out_folder <- paste0("./outputs/CCM/") 
@@ -20,6 +20,8 @@ out_folder <- paste0("./outputs/CCM/")
 #====================I. A. RUN SIMULATION DATA===============================================
 #First set the conditions for the LBLB model
 source("./analyses/0.set_LBLB_model.R")
+
+LBLB_LV_list$parms[["S"]] <- s_chosen
 
 # the diff_len tell tyo if you want to randomly cut some time series
 

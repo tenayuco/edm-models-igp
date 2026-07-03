@@ -660,7 +660,7 @@ DF_temp<- deSolve::ode(
 
 ###import data frame and convert it to a matrix
 ### Select a subset of the time series data
-tmin = 200
+tmin = 300
 len_rep = len_chosen  
 tmax = tmin+len_chosen*reso
   
@@ -678,17 +678,20 @@ DF_DISC_LV <- rbind(DF_DISC_LV, DF_temp)
   
  ##extract the original plot, from which you take the data..  
  
+s_used <- par_ms[["S"]]  
   
-TS_PLOT <- ts_plotter(outDF = DF_DISC_LV, plotted_var = c("R", "N", "P"))
+  
+TS_PLOT <- ts_plotter(outDF = DF_DISC_LV, plotted_var = c("R", "N", "P"))  + ggtitle("S= ", s_used)  
 PHASE_PLOT_PN <- phase_plotter(outDF = DF_DISC_LV, var1 = "N", var2 = "P")
 PHASE_PLOT_PR <- phase_plotter(outDF = DF_DISC_LV, var1 = "R", var2 = "P")
 PHASE_PLOT_NR <- phase_plotter(outDF = DF_DISC_LV, var1 = "R", var2 = "N")
 
 FULL_PLOT <-  TS_PLOT + (PHASE_PLOT_PN/PHASE_PLOT_PR/PHASE_PLOT_NR)
 
-
+  
+  
 ggsave(FULL_PLOT, filename = paste0(out_folder, 
-   "fullPlot", "_reso_",reso, "_grow_", grow_function, "_noise_", noise_chosen, "_len_", len_chosen, ".png"),
+   "fullPlot", "_reso_",reso, "_grow_", grow_function, "_noise_", noise_chosen, "_len_", len_chosen, "_s_", s_used,  ".png"),
    height = 10,
     width = 12,
     create.dir = T
@@ -699,7 +702,7 @@ ggsave(FULL_PLOT, filename = paste0(out_folder,
   
 DF_DISC_LV <-  DF_DISC_LV |> 
   dplyr::rename(X=N, Y=P)|>
-  dplyr::mutate(week = time-200)|>
+  dplyr::mutate(week = time-tmin)|>
   dplyr::filter(week>0)
 
 DF_DISC_LV$time <- NULL
@@ -709,7 +712,9 @@ DF_DISC_LV$enem <- "xx+yy"
   
 dir.create(out_folder, recursive = TRUE)
 
-utils::write.csv(DF_DISC_LV, file= paste0(out_folder, "DF_DISC_LV.csv"), row.names= FALSE)
+
+
+utils::write.csv(DF_DISC_LV, file= paste0(out_folder, "DF_DISC_LV_S_", s_used, "_len_", len_chosen, ".csv"), row.names= FALSE)
   
   
   

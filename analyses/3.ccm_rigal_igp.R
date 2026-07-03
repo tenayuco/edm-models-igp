@@ -34,7 +34,7 @@ DATA_PRED <-  DATA_PRED |> dplyr::filter(enem!="ec+am")|> dplyr::filter(enem!="e
 
 if(type_data == "simulated.data"){
 
-  DATA_PRED <- read.csv("outputs/CCM/DF_DISC_LV.csv")
+  DATA_PRED <- read.csv(paste0("outputs/CCM/", sim_data))
 }
 
 
