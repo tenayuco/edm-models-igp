@@ -17,6 +17,7 @@ devtools::install_deps(upgrade = "never")
 # Load packages under Depends and in R
 devtools::load_all()
 
+#===================================================================================
 
 #########################################333
 #=simulation
@@ -50,17 +51,17 @@ toc()
 
 
 
-
+#===========================================================
 #--------------------------------------CCM LOOP for different norm and detrending methods-------------------------------------------------
 ## loop for real data
 
 tic()
 for (metodo_det in c("none")){  ##linear detren firstDiff", "none"
-  for(metodo_norm in c("none", "zscore", "minmax")){  #none zscore", "minmax
+  for(metodo_norm in c("minmax")){  #none zscore", "minmax
     det_method = metodo_det
     no_method = metodo_norm
     type_data =  "real.data"
-    iteraciones = 10  ##1000
+    iteraciones = 100  ##1000
     numSurro = 50 #50
     print(paste0("metodo_det_", metodo_det))
     print(paste0("no_det_", metodo_norm))
@@ -107,7 +108,7 @@ for (metodo_det in c("none")){  ##linear detren firstDiff", "none"
     no_method = metodo_norm
     type_data = "simulated.data"  #real.data
     iteraciones = 100  ##1000
-    numSurro = 50 #50
+    numSurro = 10 #50
     print(paste0("metodo_det_", metodo_det))
     print(paste0("no_det_", metodo_norm))
     source("./analyses/3.ccm_rigal_igp.R")

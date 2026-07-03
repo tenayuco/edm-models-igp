@@ -8,10 +8,12 @@ source("./analyses/3b.runCCM.R")
 
 
 ##1. DATA preparation  (all enemies together)
-out_path= paste0("./outputs/CCM/", type_data,  "/", "s_", s_chosen, "/")
 
 
 if(type_data == "real.data"){
+
+
+out_path= paste0("./outputs/CCM/", type_data,  "/")
 
 DATA_IGP <- readr::read_csv("data/dataIGP_2025.csv")
 DATA_PRED <- prep_data(raw_data_igp = DATA_IGP)
@@ -33,6 +35,8 @@ DATA_PRED <-  DATA_PRED |> dplyr::filter(enem!="ec+am")|> dplyr::filter(enem!="e
 }
 
 if(type_data == "simulated.data"){
+  out_path= paste0("./outputs/CCM/", type_data,  "/", "s_", s_chosen, "/")
+
 
   DATA_PRED <- read.csv(paste0("outputs/CCM/", sim_data))
 }
@@ -124,8 +128,14 @@ used_no_method = no_method
 
 used_path= paste0(out_path, "detrend_", used_det_method,  "/", "norm_", used_no_method, "/")
 
-fig_path= paste0("./figures/CCM/", type_data,  "/", "s_", s_chosen, "/",  "detrend_", used_det_method,  "/", "norm_", used_no_method, "/")
 
+if(type_data == "real.data"){
+fig_path= paste0("./figures/CCM/", type_data,  "/",  "detrend_", used_det_method,  "/", "norm_", used_no_method, "/")
+}
+#i change tis only to add external parame
+if(type_data == "simulated.data"){
+fig_path= paste0("./figures/CCM/", type_data,  "/", "s_", s_chosen, "/",  "detrend_", used_det_method,  "/", "norm_", used_no_method, "/")
+}
 
 
 
