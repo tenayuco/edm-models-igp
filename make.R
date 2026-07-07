@@ -57,11 +57,11 @@ toc()
 
 tic()
 for (metodo_det in c("none")){  ##linear detren firstDiff", "none"
-  for(metodo_norm in c("minmax")){  #none zscore", "minmax
+  for(metodo_norm in c("minmax", "zscore", "none")){  #none zscore", "minmax
     det_method = metodo_det
     no_method = metodo_norm
     type_data =  "real.data"
-    iteraciones = 100  ##1000
+    iteraciones = 1000  ##1000
     numSurro = 50 #50
     print(paste0("metodo_det_", metodo_det))
     print(paste0("no_det_", metodo_norm))
@@ -88,10 +88,10 @@ source("./analyses/3c_simulatedData_CCM.R")
 #loop for simulated data
 
 
-for(sloop in c(0)){  #0.1, 0.5, 0.9
+for(sloop in c(0.1)){  #0.1, 0.5, 0.9
 len_chosen <- 20  #we pick from the 200 stage, 20 points
 noise_chosen <- 0.5
- frn_chosen <- 0.4 ## esto es solo para prueba  #normal value is 6
+ frn_chosen <- 6 ## 0.4 esto es solo para prueba  #normal value is 6
 K_chosen <- 10 ##esto es solo para pruebas  #normal value is 5
 s_chosen <- sloop
 
@@ -103,12 +103,12 @@ sim_data = paste0("DF_DISC_LV_S_", s_chosen, "_len_", len_chosen, ".csv")
 
 tic()
 for (metodo_det in c("none")){  ##linear detren firstDiff", "none"
-  for(metodo_norm in c("minmax")){  #none zscore", "minmax
+  for(metodo_norm in c("minmax","zscore")){  #none zscore", "minmax
     det_method = metodo_det
     no_method = metodo_norm
     type_data = "simulated.data"  #real.data
-    iteraciones = 100  ##1000
-    numSurro = 10 #50
+    iteraciones = 1000  ##1000
+    numSurro = 50 #50
     print(paste0("metodo_det_", metodo_det))
     print(paste0("no_det_", metodo_norm))
     source("./analyses/3.ccm_rigal_igp.R")
