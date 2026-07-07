@@ -14,23 +14,22 @@ reso <- 1
 # s_chosen externally!!
 
 #names of the folders
-out_folder <- paste0("./outputs/CCM/") 
+data_folder <- paste0("./data/simulated.data/") 
 
 
 #====================I. A. RUN SIMULATION DATA===============================================
 #First set the conditions for the LBLB model
+#this will do with the chosen scenario 
 source("./analyses/0.set_LBLB_model.R")
 
 
-LBLB_LV_list$parms[["S"]] <- s_chosen
+#LBLB_LV_list$parms[["S"]] <- s_chosen
 
 ##estas las tengo que silenciar porque al chile no sirven mucho 
 
 
-LBLB_LV_list$parms[["frn"]] <-  frn_chosen
-LBLB_LV_list$parms[["K"]] <-  K_chosen
-
-
+#LBLB_LV_list$parms[["frn"]] <-  frn_chosen
+#LBLB_LV_list$parms[["K"]] <-  K_chosen
 
 # the diff_len tell tyo if you want to randomly cut some time series
 
@@ -38,5 +37,5 @@ LBLB_LV_list$parms[["K"]] <-  K_chosen
 model_used <- LBLB_LV_list 
 disc_or_cont <- "disc_stoc"  #
 grow_function <- "semichemostat"   ## Selected growth function type (can be "logistic", "exponential", or "semichemostat")
-stochastic_generator_CCM(model_used = model_used, disc_or_cont = disc_or_cont, noise_chosen = noise_chosen)
+stochastic_generator_GENERAL(model_used = model_used, disc_or_cont = disc_or_cont, noise_chosen = noise_chosen)
 

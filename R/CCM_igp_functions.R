@@ -635,7 +635,7 @@ plot_ts_emb_step_rho_per_enem <- function(rho_data_surro, ccm_test, data_ts, pre
 #fig_folder <- "./figures/simulation/demoStoc_lvmap/" ### Directory path for the main figure folder
 #fig_subfolder <- paste0("len_", len_chosen,"/", "noise_", noise_chosen, "/", "numrep_", num_rep, "/", "R_", rpresent, "/") ## Creates a subfolder name based on time length and noise level chosen
 
-stochastic_generator_CCM <- function(model_used, disc_or_cont, noise_chosen){
+stochastic_generator_GENERAL <- function(model_used, disc_or_cont, noise_chosen){
 
 DF_DISC_LV <-  data.frame()  # Initialize empty data frame to store all simulation results
 
@@ -678,10 +678,10 @@ DF_DISC_LV <- rbind(DF_DISC_LV, DF_temp)
   
  ##extract the original plot, from which you take the data..  
  
-s_used <- par_ms[["S"]]  
+#s_used <- par_ms[["S"]]  
   
   
-TS_PLOT <- ts_plotter(outDF = DF_DISC_LV, plotted_var = c("R", "N", "P"))  + ggtitle("S= ", s_used)  
+TS_PLOT <- ts_plotter(outDF = DF_DISC_LV, plotted_var = c("R", "N", "P"))  + ggtitle("scenario= ", chosen_scenario)  
 PHASE_PLOT_PN <- phase_plotter(outDF = DF_DISC_LV, var1 = "N", var2 = "P")
 PHASE_PLOT_PR <- phase_plotter(outDF = DF_DISC_LV, var1 = "R", var2 = "P")
 PHASE_PLOT_NR <- phase_plotter(outDF = DF_DISC_LV, var1 = "R", var2 = "N")
@@ -690,8 +690,8 @@ FULL_PLOT <-  TS_PLOT + (PHASE_PLOT_PN/PHASE_PLOT_PR/PHASE_PLOT_NR)
 
   
   
-ggsave(FULL_PLOT, filename = paste0(out_folder, 
-   "fullPlot", "_reso_",reso, "_grow_", grow_function, "_noise_", noise_chosen, "_len_", len_chosen, "_s_", s_used,  ".png"),
+ggsave(FULL_PLOT, filename = paste0(data_folder, chosen_scenario, "/", 
+   "fullPlot", "_reso_",reso, "_grow_", grow_function, "_noise_", noise_chosen, "_len_", len_chosen,  ".png"),
    height = 10,
     width = 12,
     create.dir = T
@@ -710,12 +710,13 @@ DF_DISC_LV$enem <- "xx+yy"
 
   
   
-dir.create(out_folder, recursive = TRUE)
+dir.create(data_folder, chosen_scenario, recursive = TRUE)
 
 
 
-utils::write.csv(DF_DISC_LV, file= paste0(out_folder, "DF_DISC_LV_S_", s_used, "_len_", len_chosen, ".csv"), row.names= FALSE)
-  
+utils::write.csv(DF_DISC_LV, file= paste0(data_folder, chosen_scenario, "/", "DF_DISC_LV.csv"), row.names= FALSE)
+
+saveRDS(par_ms, paste0(data_folder, chosen_scenario, "/", "parameters_used.rds"))
   
   
 # ------------------------------------------------------------------------------------------

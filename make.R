@@ -71,16 +71,39 @@ for (metodo_det in c("none")){  ##linear detren firstDiff", "none"
 toc()
 
 #----------------simulated data--------------------
+
+##conditions tested (set this manually)
+
+#Here I run general scenaiors, that can be used by any model, changing the lenght 
+
+scenarios <- c("lblb_model_none", "lblb_model_NonP", "lblb_model_PonN", "lblb_model_NonP_PonN")
+
+for (i in scenarios){
+
+chosen_scenario <- i
 #just to see the data
 ##simulate the data before!! cc
 len_chosen <- 300
 s_chosen = 0
 noise_chosen <- 0.5
-frn_chosen <- 0.4 ## esto es solo para prueba
-K_chosen <- 10 ##esto es solo para pruebas 
-#then pick the simulated data
-#sim_data = paste0("DF_DISC_LV_S_", s_chosen, "_len_", len_chosen, ".csv")
+
 source("./analyses/3c_simulatedData_CCM.R")
+}
+
+
+chosen_scenario <- "lblb_model_NonP"
+#just to see the data
+##simulate the data before!! cc
+len_chosen <- 300
+s_chosen = 0
+noise_chosen <- 0.5
+
+source("./analyses/3c_simulatedData_CCM.R")
+
+
+
+
+
 
 #------------------------
 
