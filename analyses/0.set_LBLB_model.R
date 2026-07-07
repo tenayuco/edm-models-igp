@@ -17,7 +17,7 @@
 
 #scenario1. 
 
-if (chosen_scenario == "lblb_model_NonP"){
+if (chosen_scenario == "lblb_model_1"){
 
 LBLB_LV_parms <- c(
   rho = 1,
@@ -37,27 +37,27 @@ LBLB_LV_parms <- c(
 
 
 
-if (chosen_scenario == "lblb_model_NonP_PonN"){
+if (chosen_scenario == "lblb_model_2"){
 
 LBLB_LV_parms <- c(
   rho = 1,
-  K = 10,  ##here is the change
+  K = 5,  ##here is the change
   En = 0.5,
   Ep = 0.5,
   frp = 0.6,   
   fnp = 0.6,
   frn = 0.4, ## here is the change   
-  mun = 1.1,
+  mun = 0.0033,
   mup = 0.33,
  #here is dfi
-  S = 0.1  #S =0.5  #fullfill polis and holt
+  S = 0.9  #S =0.5  #fullfill polis and holt
 ) 
 
 }
 
 
 
-if (chosen_scenario == "lblb_model_none"){
+if (chosen_scenario == "lblb_model_3"){
 
 LBLB_LV_parms <- c(
   rho = 1,
@@ -76,7 +76,7 @@ LBLB_LV_parms <- c(
 }
 
 
-if (chosen_scenario == "lblb_model_PonN"){
+if (chosen_scenario == "lblb_model_4"){
 
 LBLB_LV_parms <- c(
   rho = 1,

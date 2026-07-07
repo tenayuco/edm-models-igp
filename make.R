@@ -76,62 +76,61 @@ toc()
 
 #Here I run general scenaiors, that can be used by any model, changing the lenght 
 
-scenarios <- c("lblb_model_none", "lblb_model_NonP", "lblb_model_PonN", "lblb_model_NonP_PonN")
+#scenarios <- c("lblb_model_1", "lblb_model_2", "lblb_model_3", "lblb_model_4")
+scenarios <- c("lblb_model_2")
 
+
+
+#long scenarios for reference
 for (i in scenarios){
 
 chosen_scenario <- i
 #just to see the data
 ##simulate the data before!! cc
 len_chosen <- 300
-s_chosen = 0
+noise_chosen <- 0.5
+
+source("./analyses/3c_simulatedData_CCM.R")
+}
+
+#short scenarios for use in the CCM and LV
+
+
+for (i in scenarios){
+
+chosen_scenario <- i
+#just to see the data
+##simulate the data before!! cc
+len_chosen <- 20
 noise_chosen <- 0.5
 
 source("./analyses/3c_simulatedData_CCM.R")
 }
 
 
-chosen_scenario <- "lblb_model_NonP"
-#just to see the data
-##simulate the data before!! cc
-len_chosen <- 300
-s_chosen = 0
-noise_chosen <- 0.5
-
-source("./analyses/3c_simulatedData_CCM.R")
-
-
-
-
 
 
 #------------------------
+##------------nnow the loop to apply the ccm in the simulated data
+
 
 
 #loop for simulated data
+scenarios <- c("lblb_model_1", "lblb_model_2", "lblb_model_3", "lblb_model_4")
 
+simulated_data <-  "DF_DISC_LV_20.csv"
+for (i in scenarios){
 
-for(sloop in c(0.1)){  #0.1, 0.5, 0.9
-len_chosen <- 20  #we pick from the 200 stage, 20 points
-noise_chosen <- 0.5
- frn_chosen <- 6 ## 0.4 esto es solo para prueba  #normal value is 6
-K_chosen <- 10 ##esto es solo para pruebas  #normal value is 5
-s_chosen <- sloop
-
-  #here you redoo the simulated data just in case 
-source("./analyses/3c_simulatedData_CCM.R")
+chosen_scenario <- i
   
-sim_data = paste0("DF_DISC_LV_S_", s_chosen, "_len_", len_chosen, ".csv")
-
-
 tic()
 for (metodo_det in c("none")){  ##linear detren firstDiff", "none"
   for(metodo_norm in c("minmax","zscore")){  #none zscore", "minmax
     det_method = metodo_det
     no_method = metodo_norm
     type_data = "simulated.data"  #real.data
-    iteraciones = 1000  ##1000
-    numSurro = 50 #50
+    iteraciones = 100  ##1000
+    numSurro = 10 #50
     print(paste0("metodo_det_", metodo_det))
     print(paste0("no_det_", metodo_norm))
     source("./analyses/3.ccm_rigal_igp.R")

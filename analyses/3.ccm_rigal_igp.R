@@ -35,10 +35,10 @@ DATA_PRED <-  DATA_PRED |> dplyr::filter(enem!="ec+am")|> dplyr::filter(enem!="e
 }
 
 if(type_data == "simulated.data"){
-  out_path= paste0("./outputs/CCM/", type_data,  "/", "s_", s_chosen, "/")
+  out_path= paste0("./outputs/CCM/", type_data,  "/", chosen_scenario, "/")
 
 
-  DATA_PRED <- read.csv(paste0("outputs/CCM/", sim_data))
+  DATA_PRED <- read.csv(paste0("data/", type_data,  "/", chosen_scenario, "/",  simulated_data)) #have to provide 
 }
 
 
@@ -134,7 +134,7 @@ fig_path= paste0("./figures/CCM/", type_data,  "/",  "detrend_", used_det_method
 }
 #i change tis only to add external parame
 if(type_data == "simulated.data"){
-fig_path= paste0("./figures/CCM/", type_data,  "/", "s_", s_chosen, "/",  "detrend_", used_det_method,  "/", "norm_", used_no_method, "/")
+fig_path= paste0("./figures/CCM/", type_data,  "/", chosen_scenario, "/",  "detrend_", used_det_method,  "/", "norm_", used_no_method, "/")
 }
 
 

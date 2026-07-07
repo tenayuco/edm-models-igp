@@ -714,7 +714,7 @@ dir.create(data_folder, chosen_scenario, recursive = TRUE)
 
 
 
-utils::write.csv(DF_DISC_LV, file= paste0(data_folder, chosen_scenario, "/", "DF_DISC_LV.csv"), row.names= FALSE)
+utils::write.csv(DF_DISC_LV, file= paste0(data_folder, chosen_scenario, "/", "DF_DISC_LV_", len_chosen, ".csv"), row.names= FALSE)
 
 saveRDS(par_ms, paste0(data_folder, chosen_scenario, "/", "parameters_used.rds"))
   
