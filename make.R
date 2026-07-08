@@ -19,6 +19,10 @@ devtools::load_all()
 
 #===================================================================================
 
+
+
+#================================LV MAP==============================================
+
 #########################################333
 #=simulation
 #either enter source("./analyses/2.data_representation.R")
@@ -70,74 +74,39 @@ for (metodo_det in c("none")){  ##linear detren firstDiff", "none"
 }
 toc()
 
-#----------------simulated data--------------------
-
-##conditions tested (set this manually)
-
-#Here I run general scenaiors, that can be used by any model, changing the lenght 
-
-#check the model
-
-#chosen_MODEL <- LBLB_LV_list 
-
-#scenarios <- c("lblb_model_1", "lblb_model_2", "lblb_model_3", "lblb_model_4")
-#scenarios <- c("lblb_model_2")
-#scenarios <- c("lblb_model_2", "lblb_model_3")
-#scenarios <- c("lblb_model_3")
+#===============================simulated data=====================================
 
 
-
+#1. First here I run the time series of 7 different sceanrios, 4 for the LBLB model and 3 for the PBPB model as examples of determinations. 
+# it saves all the produced time series in data with the name of the scenario 
 
 
 #scenarios <- c("pbpb_model_1", "pbpb_model_2", "pbpb_model_3")
 
+## check if it does not exists already 
 
-scenarios <- c("pbpb_model_1")
+scenarios_lblb <- c("lblb_model_0", "lblb_model_1", "lblb_model_2", "lblb_model_3", "lblb_model_4")
+scenarios_pbpb <- c("pbpb_model_1", "pbpb_model_2", "pbpb_model_3")
 
-
-
-
+#chose your scenarios
+scenarios <- c(scenarios_lblb, scenarios_pbpb)
 #long scenarios for reference
 for (i in scenarios){
-
+  for (len in c(300, 20)){  #we have a 300 to see the whole dynamic,s and a 20 that it the one we are using, with 10 replicates
 chosen_scenario <- i
-#just to see the data
-##simulate the data before!! cc
-len_chosen <- 300
-noise_chosen <- 0.5
+len_chosen <- len
+noise_chosen <- 0.5  #importand amout of noise to see the signal 
 
-#this will set the correct parameters per model
+#this will set the correct parameters per model and create the list of models
 source("./analyses/0.set_LBLB_model.R")
   
+if (i %in% scenarios_lblb){chosen_MODEL <- LBLB_LV_list }
+if (i %in% scenarios_pbpb){chosen_MODEL <- PBPB_LV_list }
 
-chosen_MODEL <- PBPB_LV_list  #t
-
-
+#then it will run the analysis
 source("./analyses/3c_simulatedData_CCM.R")
 }
-
-#short scenarios for use in the CCM and LV
-
-
-for (i in scenarios){
-
-chosen_scenario <- i
-#just to see the data
-##simulate the data before!! cc
-len_chosen <- 20
-noise_chosen <- 0.5
-  
-
-#this will set the correct parameters per model
-source("./analyses/0.set_LBLB_model.R")
-  
-  
-chosen_MODEL <- PBPB_LV_list  #t
-
-
-source("./analyses/3c_simulatedData_CCM.R")
 }
-
 
 
 
@@ -161,7 +130,7 @@ for (metodo_det in c("none")){  ##linear detren firstDiff", "none"
     det_method = metodo_det
     no_method = metodo_norm
     type_data = "simulated.data"  #real.data
-    iteraciones = 100  ##1000
+    iteraciones = 10  ##1000
     numSurro = 10 #50
     print(paste0("metodo_det_", metodo_det))
     print(paste0("no_det_", metodo_norm))

@@ -277,14 +277,14 @@ TOTAL_RHO_SURRO_SUM$cat <- "random"
 RHO_DATA_SURRO <- rbind(RHO_DATA, TOTAL_RHO_SURRO_SUM)
 
 
-PLOT_RHO_DATA_SURRO <- plot_rho_data_surro_CCM(rho_data_surro = RHO_DATA_SURRO, ccm_test = CCM_TEST)+ ggtitle(paste0("detrend_", used_det_method, "_norm_", used_no_method))
+PLOT_RHO_DATA_SURRO <- plot_rho_data_surro_CCM(rho_data_surro = RHO_DATA_SURRO, ccm_test = CCM_TEST)+ ggtitle(paste0('scenario_', chosen_scenario, "_detrend_", used_det_method, "_norm_", used_no_method))
 
 
 
 
 ggsave(
     PLOT_RHO_DATA_SURRO,
-    filename = paste0(fig_path, "rho_data_surro",  "_it_", iteraciones,".png"),
+    filename = paste0(fig_path, "rho_data_surro_", numSurro,   "_it_", iteraciones,".png"),
     height = 10,
     width = 14,
     create.dir = T
