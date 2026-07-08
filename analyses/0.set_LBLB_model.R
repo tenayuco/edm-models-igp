@@ -53,6 +53,23 @@ PBPB_LV_parms <- c(
 
 ) #here the Sr different
 
+if (chosen_scenario == "lblb_model_0"){
+
+LBLB_LV_parms <- c(
+  rho = 1,
+  K = 5,
+  En = 0.5,
+  Ep = 0.5,
+  frp = 0.6,   ### if wwe suppose both r and n to be biomass, we extract that when n=r=1/2 hn (to reach the linear assumtoption), then frp should be cp/4
+  fnp = 0.6,
+  frn = 5, ## hrtr is cn/2
+  mun = 1.1,
+  mup = 0.33, ## to compare with hin, they have mun = 1 (Tp) + 0.3,  and mup = 0.3 (maintenance) + 0.03 death rate
+ #here is dfi
+  S = 0.5  #S =0.5
+) #here the Sr different
+
+}
 
 
 
@@ -160,18 +177,18 @@ PBPB_LV_parms <- c(
   mun = 1.1,
   mup = 0.33, ## to compare with hin, they have mun = 1 (Tp) + 0.3,  and mup = 0.3 (maintenance) + 0.03 death rate
  #here is dfi
-  S = 0.1,   #S =0.5
-  Ip= 0.1, 
-  In= 4,
-  phiN= 0.5,
-  phiP=0.5
+  S = 0.5,   #S =0.5  #con 0.9 funcionaaa (obvios..)
+  Ip= 0.5, 
+  In= 2,
+  phiN= 0.6,
+  phiP=0.6
 
 ) #here the Sr different
 
 }
 
 
-if (chosen_scenario == "pbpb_model_2"){
+if (chosen_scenario == "pbpb_model_2"){  ##este funcionaa asi como se quita el efecto sobre xcuasey
 
 PBPB_LV_parms <- c(
   rho = 1,
@@ -184,8 +201,8 @@ PBPB_LV_parms <- c(
   mun = 1.1,
   mup = 0.33, ## to compare with hin, they have mun = 1 (Tp) + 0.3,  and mup = 0.3 (maintenance) + 0.03 death rate
  #here is dfi
-  S = 0.1,   #S =0.5
-  Ip= 0.1, 
+  S = 0.5,   #S =0.5
+  Ip= 1, 
   In= 4,
   phiN= 0,
   phiP=0.5
@@ -196,7 +213,7 @@ PBPB_LV_parms <- c(
 
 
 if (chosen_scenario == "pbpb_model_3"){
-
+  #funciona tambien 
 PBPB_LV_parms <- c(
   rho = 1,
   K = 5,
@@ -208,8 +225,8 @@ PBPB_LV_parms <- c(
   mun = 1.1,
   mup = 0.33, ## to compare with hin, they have mun = 1 (Tp) + 0.3,  and mup = 0.3 (maintenance) + 0.03 death rate
  #here is dfi
-  S = 0.1,   #S =0.5
-  Ip= 0.1, 
+  S = 0.5,   #S =0.5
+  Ip= 1, 
   In= 4,
   phiN= 0.5,
   phiP=0

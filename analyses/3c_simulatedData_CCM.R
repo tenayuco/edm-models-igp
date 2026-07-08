@@ -20,7 +20,6 @@ data_folder <- paste0("./data/simulated.data/")
 #====================I. A. RUN SIMULATION DATA===============================================
 #First set the conditions for the LBLB model
 #this will do with the chosen scenario 
-source("./analyses/0.set_LBLB_model.R")
 
 
 #LBLB_LV_list$parms[["S"]] <- s_chosen
@@ -36,7 +35,8 @@ source("./analyses/0.set_LBLB_model.R")
 #model used
 
 
-model_used <- LBLB_LV_list 
+
+model_used <- chosen_MODEL 
 disc_or_cont <- "disc_stoc"  #
 grow_function <- "semichemostat"   ## Selected growth function type (can be "logistic", "exponential", or "semichemostat")
 stochastic_generator_GENERAL(model_used = model_used, disc_or_cont = disc_or_cont, noise_chosen = noise_chosen)

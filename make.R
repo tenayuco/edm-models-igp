@@ -76,10 +76,24 @@ toc()
 
 #Here I run general scenaiors, that can be used by any model, changing the lenght 
 
+#check the model
+
+#chosen_MODEL <- LBLB_LV_list 
+
 #scenarios <- c("lblb_model_1", "lblb_model_2", "lblb_model_3", "lblb_model_4")
-scenarios <- c("lblb_model_2")
+#scenarios <- c("lblb_model_2")
 #scenarios <- c("lblb_model_2", "lblb_model_3")
 #scenarios <- c("lblb_model_3")
+
+
+
+
+
+#scenarios <- c("pbpb_model_1", "pbpb_model_2", "pbpb_model_3")
+
+
+scenarios <- c("pbpb_model_1")
+
 
 
 
@@ -91,6 +105,13 @@ chosen_scenario <- i
 ##simulate the data before!! cc
 len_chosen <- 300
 noise_chosen <- 0.5
+
+#this will set the correct parameters per model
+source("./analyses/0.set_LBLB_model.R")
+  
+
+chosen_MODEL <- PBPB_LV_list  #t
+
 
 source("./analyses/3c_simulatedData_CCM.R")
 }
@@ -105,6 +126,14 @@ chosen_scenario <- i
 ##simulate the data before!! cc
 len_chosen <- 20
 noise_chosen <- 0.5
+  
+
+#this will set the correct parameters per model
+source("./analyses/0.set_LBLB_model.R")
+  
+  
+chosen_MODEL <- PBPB_LV_list  #t
+
 
 source("./analyses/3c_simulatedData_CCM.R")
 }
