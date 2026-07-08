@@ -660,7 +660,7 @@ DF_temp<- deSolve::ode(
 
 ###import data frame and convert it to a matrix
 ### Select a subset of the time series data
-tmin = 200 ##this burns the inital lag, but then you see better the trend
+tmin = 300 ##this burns the inital lag, but then you see better the trend
 len_rep = len_chosen  
 tmax = tmin+len_chosen*reso
   

@@ -37,20 +37,20 @@ LBLB_LV_parms <- c(
 
 
 
-if (chosen_scenario == "lblb_model_2"){
+if (chosen_scenario == "lblb_model_2"){ #VEry cherry pocking btw
 
 LBLB_LV_parms <- c(
   rho = 1,
-  K = 5,  ##here is the change
+  K = 1,  ##here is the change
   En = 0.5,
   Ep = 0.5,
-  frp = 0.6,   
-  fnp = 0.6,
+  frp = 2,   
+  fnp = 0.4,
   frn = 0.4, ## here is the change   
-  mun = 0.0033,
-  mup = 0.33,
+  mun = 0.03,
+  mup = 0.8,
  #here is dfi
-  S = 0.9  #S =0.5  #fullfill polis and holt
+  S = 0.5  #S =0.5  #fullfill polis and holt
 ) 
 
 }
@@ -104,4 +104,5 @@ LBLB_LV_list = list(
     model_disc_stoc = LBLB_LV_disc_stoc_model, 
     init = c(R = 1e-01, N = 1e-01, P = 1e-01))
 
-  
+
+

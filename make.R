@@ -112,20 +112,21 @@ source("./analyses/3c_simulatedData_CCM.R")
 
 #------------------------
 ##------------nnow the loop to apply the ccm in the simulated data
+#scenarios <- c("lblb_model_1", "lblb_model_2", "lblb_model_3", "lblb_model_4")
 
 
 
 #loop for simulated data
-scenarios <- c("lblb_model_1", "lblb_model_2", "lblb_model_3", "lblb_model_4")
 
 simulated_data <-  "DF_DISC_LV_20.csv"
+
 for (i in scenarios){
 
 chosen_scenario <- i
   
 tic()
 for (metodo_det in c("none")){  ##linear detren firstDiff", "none"
-  for(metodo_norm in c("minmax","zscore")){  #none zscore", "minmax
+  for(metodo_norm in c("zscore")){  #none zscore", "minmax
     det_method = metodo_det
     no_method = metodo_norm
     type_data = "simulated.data"  #real.data
