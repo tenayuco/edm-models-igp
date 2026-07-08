@@ -15,7 +15,7 @@ LBLB_LV_cont_model <- function (t, state, parms) {##includes PB, LB as predators
     #these are the equations 
     dPdt <- Ep*((frp*S*R + fnp*N*(1-S))*P)- mup*P
     dNdt <- En*(frn*R*N)- fnp*P*N-mun*N 
-    dRdt <- rho*(K-R)- (frn*N- frp*P) * R
+    dRdt <- rho*(K-R)- (frn*N+ frp*P) * R
     
     # z[R, Nl, Na, P] is the order of the vector
     return(list(c(dRdt, dNdt,  dPdt)))        
@@ -31,7 +31,7 @@ LBLB_LV_disc_model <- function(t, state, parms, dt = 0.1) {
     #these are the equations 
     dPdt <- Ep*((frp*S*R + fnp*N*(1-S))*P)- mup*P
     dNdt <- En*(frn*R*N)- fnp*P*N-mun*N 
-    dRdt <- rho*(K-R)- (frn*N- frp*P) * R
+    dRdt <- rho*(K-R)- (frn*N+ frp*P) * R
     
     
     # Euler update for discrete time step
@@ -66,7 +66,7 @@ LBLB_LV_disc_stoc_model <- function(t, state, parms, dt = 0.1){
     if(grow_function == "exponential"){grow_R = rho_s*R}
     if(grow_function == "logistic"){grow_R = rho_s*R*(1-R/K)}
 
-    dRdt <-  grow_R- (frn*N- frp*S*P) * R  ## chemos
+    dRdt <-  grow_R- (frn*N + frp*S*P) * R  ## chemos
   
     # Euler update for discrete time step
     R_new  <- R  + dRdt * dt
@@ -84,7 +84,7 @@ LBLB_LV_disc_stoc_model <- function(t, state, parms, dt = 0.1){
 ## stochastic LV 
 
 
-LBLB_LV_disc_stoc_model <- function(t, state, parms, dt = 0.1){
+PBPB_LV_disc_stoc_model <- function(t, state, parms, dt = 0.1){
   with(as.list(c(state, parms)), {
     
 
@@ -94,14 +94,15 @@ LBLB_LV_disc_stoc_model <- function(t, state, parms, dt = 0.1){
 
 
     #these are the equations 
-    dPdt <- Ep*((frp*S*R + fnp*N*(1-S))*P)- mup_s*P
-    dNdt <- En*(frn*R*N)- fnp*(1-S)*P*N-mun_s*N   #now i have to put them there... the S
+    dPdt <- Ep*((1-phiP)*(frp*S*R +fnp*N*(1-S))*P + phiP*Ip*P)- mup_s*P
+    dNdt <- En*((1-phiN)*frn*R*N+ phiN*In*N)- (1-phiP)*fnp*(1-S)*P*N-mun_s*N   #now i have to put them there... the S
+
     
     if(grow_function == "semichemostat"){grow_R = rho_s*(K-R)}
     if(grow_function == "exponential"){grow_R = rho_s*R}
     if(grow_function == "logistic"){grow_R = rho_s*R*(1-R/K)}
 
-    dRdt <-  grow_R- (frn*N- frp*S*P) * R  ## chemos
+    dRdt <-  grow_R- ((1-phiN)*frn*N + (1-phiP)*frp*S*P) * R  ## chemos
   
     # Euler update for discrete time step
     R_new  <- R  + dRdt * dt

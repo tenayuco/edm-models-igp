@@ -34,6 +34,8 @@ source("./analyses/0.set_LBLB_model.R")
 # the diff_len tell tyo if you want to randomly cut some time series
 
 #model used
+
+
 model_used <- LBLB_LV_list 
 disc_or_cont <- "disc_stoc"  #
 grow_function <- "semichemostat"   ## Selected growth function type (can be "logistic", "exponential", or "semichemostat")
