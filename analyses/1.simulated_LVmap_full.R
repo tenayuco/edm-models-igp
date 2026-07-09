@@ -30,21 +30,26 @@ dir.create(paste0(out_path), recursive = T)
 ## here is what the looper needs (it uses the same folder)
 v_num_rep = c(1)  #we keep it this like this (as 20 0 40 time series LV are too short for the replicates )
 v_rpresent = c(TRUE, FALSE)
-v_num_seed = seq(1:2) ###A lot of reshuflle 
+v_num_seed = seq(1:10) ###A lot of reshuflle 
 kernel_chosen <- "state"
 dif_cond <-  FALSE
 
 ################NEW ALERNATIVE CODE TO WORK WITH DIFFERENCS######################3
 
 
-if (dif_cond ==TRUE){
-out_folder <- paste0(out_folder, "differences/") 
-fig_folder <- paste0(fig_folder, "differences/") 
+if (dif_cond == TRUE){
+  out_folder <- paste0(out_folder, "differences/") 
+  fig_folder <- paste0(fig_folder, "differences/") 
 
-data_used <- data_used |> 
-  dplyr::group_by(block) |> 
-  dplyr::mutate(R= c(NA, diff(R)+10), N= c(NA, diff(N)+10), P= c(NA, diff(P)+10))|> 
-  tidyr::drop_na()  
+  DATA_PRED<- DATA_PRED |> 
+    dplyr::group_by(block, enem) |>  # Group by both replicate AND enemy
+    dplyr::mutate(
+      R = c(NA, diff(R)),  # A2 - (A1 + 300)
+      N = c(NA, diff(N)),        # Just the difference
+      P = c(NA, diff(P))         # Just the difference
+    ) |> 
+    tidyr::drop_na() |> 
+    dplyr::ungroup()  # Optional: remove grouping after
 }
 
 
@@ -74,17 +79,17 @@ for (enemigo in unique(DATA_PRED$enem)){
 #SO AT THIS POINT WE HAVE DONE THE HEAVY ANALYSIS 
 #NOW THE MORE GENERAL PLOTTINGS
 
-fig_folder <- paste0("./figures/LV_MAP/", type_data,  "/", chosen_scenario, "/")
+#fig_folder <- paste0("./figures/LV_MAP/", type_data,  "/", chosen_scenario, "/")
 
 #========================I.C PLOT LV SIMULATIONS ============================
-source("./analyses/1_2.plot_extract_per_treatment.R")
-source("./analyses/1_2.plotter_LV.R")
-plot_per_treatment(out_folder, true_values = FALSE) #we dont want the true values of the eq
+#source("./analyses/1_2.plot_extract_per_treatment.R")
+#source("./analyses/1_2.plotter_LV.R")
+#plot_per_treatment(out_folder, true_values = FALSE) #we dont want the true values of the eq
 
 
-full_df <- extract_par_all_treatment(out_folder, coex_cal = FALSE) ##generates the file
+#full_df <- extract_par_all_treatment(out_folder, coex_cal = FALSE) ##generates the file
 
-plotter_full_parameters(df_full = full_df, fig_folder = fig_folder)
+#plotter_full_parameters(df_full = full_df, fig_folder = fig_folder)
 
 ##========================================================================================
 

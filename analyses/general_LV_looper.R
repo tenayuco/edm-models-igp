@@ -5,7 +5,10 @@ lv_looper_lists_general <- function(data_used, v_num_rep, v_rpresent, v_num_seed
   
      num_rep <- num_rep
       rpresent <- rpresent
-      out_subfolder <- paste0("numrep_", num_rep, "/", "R_", rpresent, "/") ## Cn
+
+      out_subfolder <- paste0("enem_", enemigo, "/", "numrep_", num_rep, "/", "R_", rpresent, "/") ## Creates a subfolder name based on time length and noise level chosen
+
+     # out_subfolder <- paste0("numrep_", num_rep, "/", "R_", rpresent, "/") ## Cn
       fig_subfolder <- out_subfolder
   
   
@@ -20,7 +23,9 @@ lv_looper_lists_general <- function(data_used, v_num_rep, v_rpresent, v_num_seed
         
         tryCatch(
           {
+
             
+
             list_treatment <- lv_map_general(df_used= data_used, rpresent, num_seed, num_rep, kernel_chosen)
 
             list_treatment$treatment["enem"] <- enemigo

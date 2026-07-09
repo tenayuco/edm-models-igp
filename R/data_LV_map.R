@@ -1,26 +1,23 @@
 
 
+df_modifier_lv <- function(raw_data){
 
-df_modifier_lv <- function(raw_data, chosen_enemies){
+  ##here we use 2 formats of data
+  DATA_LONG <-  long_formatter(raw_data)
 
-##here we use 2 formats of data
-DATA_LONG <-  long_formatter(raw_data)
+  ##here we remove the 0 
+  DATA_PRED <-  pred_formatter(DATA_LONG) 
 
-##here we remove the 0 
-
-
-DATA_PRED <-  pred_formatter(DATA_LONG) 
-
-
-DATA_USED <- DATA_PRED |> 
-  dplyr::filter(enem == chosen_enemies)|> 
-  dplyr::select(block, R, X, Y, week)
-
-#I add a normalization That we did had.. 
-DATA_USED <- DATA_USED |> 
-  dplyr::mutate(R = R/max(R, na.rm = TRUE), X = X/max(X, na.rm = TRUE), Y = Y/max(Y, na.rm = TRUE) )
+  # Keep all enemies, but normalize WITHIN each enemy group
+  DATA_USED <- DATA_PRED |> 
+    dplyr::select(block, R, X, Y, week, enem) |>  # Keep enem column
+    dplyr::group_by(enem) |>  # Group by enemy
+    dplyr::mutate(R = R/max(R, na.rm = TRUE), 
+                  X = X/max(X, na.rm = TRUE), 
+                  Y = Y/max(Y, na.rm = TRUE)) |> 
+    dplyr::ungroup()  # Remove grouping
   
-return(DATA_USED)  
+  return(DATA_USED)  
 }
 
 

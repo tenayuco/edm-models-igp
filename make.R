@@ -66,8 +66,9 @@ source("./analyses/0.simulatedData.R")
 
 #
 #or source if you wanto to have the full analisis 
-for (kernel in c("state", "time")){
-dif_cond = TRUE
+for (kernel in c("state")){
+kernel_chosen = kernel
+  dif_cond = FALSE
   tic()
 source("./analyses/1.simulated_LVmap_full.R")
 toc()
@@ -79,7 +80,8 @@ toc()
 
 #here you can add a loop to have the time or spatial kernel kernel_v= c("state", "time")
 
-for (kernel in c("state", "time")){
+for (kernel in c("state")){
+kernel_chosen = kernel
 
 tic()
 source("./analyses/2.data_LVmap_full.R")
