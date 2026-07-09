@@ -30,6 +30,8 @@ rpresent <- FALSE
 #==========================I.B. RUN LV MAP SPATIAL KERNEL on DATA=======================================
 source("./analyses/2b.looper_data_lv_map.R")
 
+
+
 lv_looper_lists_microcosmos(raw_data = DATA_IGP, v_enemigos = v_enemigos, v_num_seed = v_num_seed, num_rep = num_rep, rpresent = rpresent, kernel_chosen = kernel)
 
 

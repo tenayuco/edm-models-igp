@@ -6,12 +6,15 @@
 
 ##now we take that data base and we create the matrix and apply the cross validation across scenarios
 
-source("./analyses/0.set_LBLB_model.R")
 
+
+#here is the source of data 
 
 type_data= "simulated.data"
 simulated_data <-  "DF_DISC_LV_20.csv"
 chosen_scenario <- "lblb_model_0"
+
+source("./analyses/0.set_LBLB_model.R")
 
 
 if(type_data == "simulated.data"){
@@ -25,10 +28,11 @@ dir.create(paste0(out_path), recursive = T)
 
 
 ## here is what the looper needs (it uses the same folder)
-v_num_rep = c(1, 10)
+v_num_rep = c(1)  #we keep it this like this (as 20 0 40 time series LV are too short for the replicates )
 v_rpresent = c(TRUE, FALSE)
-v_num_seed = seq(1:5) ###A lot of reshuflle 
-
+v_num_seed = seq(1:2) ###A lot of reshuflle 
+kernel_chosen <- "state"
+dif_cond <-  FALSE
 
 ################NEW ALERNATIVE CODE TO WORK WITH DIFFERENCS######################3
 
@@ -48,11 +52,19 @@ data_used <- data_used |>
 
 
 
-source("./analyses/1b.looper_LV_map.R")
+source("./analyses/general_LV_looper.R")
 #protocool for the loop it run the functions of lv map, for each treatment. 
 #this has to be changed
 out_folder <- out_path
-lv_looper_lists(data_used = DATA_PRED, v_num_rep, v_rpresent, v_num_seed, model_used)
+
+###here I need a prefilter of enemies
+
+for (enemigo in unique(DATA_PRED$enem)){
+  DATA_PRED <- DATA_PRED |> dplyr::filter(enem== enemigo)
+  lv_looper_lists_general(data_used = DATA_PRED, v_num_rep, v_rpresent, v_num_seed, enemigo = enemigo)
+
+}
+
 
 
 

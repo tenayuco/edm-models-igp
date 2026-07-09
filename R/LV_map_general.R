@@ -157,9 +157,9 @@ list_treatment$alpha_se_list <- alpha_se_list
 log_Omega_mean_list <- array(NA, dim = num_rep)
 eta1_mean_list <- array(NA, dim = num_rep)
 eta2_mean_list <- array(NA, dim = num_rep)
-log_Omega_cimean_list <- array(NA, dim = c(num_rep, S))
-eta1_cimean_list <- array(NA, dim = c(num_rep, S))
-eta2_cimean_list <- array(NA, dim = c(num_rep, S))
+log_Omega_cimean_list <- array(NA, dim = c(num_rep, 2))  ##two coindifende interval 
+eta1_cimean_list <- array(NA, dim = c(num_rep, 2))
+eta2_cimean_list <- array(NA, dim = c(num_rep, 2))
 
 
 tic()
