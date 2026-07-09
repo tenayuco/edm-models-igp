@@ -27,7 +27,7 @@ return(DATA_USED)
 
 
 
-lv_map_microcosmos <- function(df_used, rpresent, num_seed, num_rep, kernel_chosen){
+lv_map_general <- function(df_used, rpresent, num_seed, num_rep, kernel_chosen){
 
 list_treatment<- list()
 

@@ -1,42 +1,4 @@
 
-#====================================================================================
-
-#====================I. STOCASTIC SIMULATIONS========================================
-#==============Define the characteritic of the data frame=============================
-set.seed(3)
-#random_seed <- rnorm(1)
-diff_len <- FALSE
-num_block <- 10  #how many block (time series)
-reso <- 1
-noise_chosen <- 0.1
-#len_chosen <- 20, this does not work with replicates.. 
-len_chosen <- 100
-
-#names of the folders
-out_folder <- paste0("./outputs/simulation/demoStoc_lvmap/","len_",len_chosen,"/") 
-fig_folder <- paste0("./figures/simulation/demoStoc_lvmap/","len_",len_chosen,"/") 
-
-
-#====================I. A. RUN SIMULATION DATA===============================================
-#First set the conditions for the LBLB model
-source("./analyses/0.set_LBLB_model.R")
-
-# the diff_len tell tyo if you want to randomly cut some time series
-
-#this will give the whole data series named DF_DISC_LV
-source("./analyses/1a.stochastic_simulations.R")
-
-#model used
-model_used <- LBLB_LV_list 
-disc_or_cont <- "disc_stoc"  #
-grow_function <- "semichemostat"   ## Selected growth function type (can be "logistic", "exponential", or "semichemostat")
-stochastic_generator(model_used = model_used, disc_or_cont = disc_or_cont, noise_chosen = noise_chosen)
-
-
-#this will generate the time series, and the plot in the respective fig folder and out folder
-#=============================================================================================
-
-
 
 #==========================I.B. RUN LV MAP SPATIAL KERNEL=======================================
 
