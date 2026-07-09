@@ -155,27 +155,39 @@ plotter_full_parameters <- function(df_full, fig_folder){
 
 FULL_DF_PARAMETERS_M <- df_full|> 
   dplyr::select(!replicate)|>
-  dplyr::select(!enem)|> 
-  dplyr::group_by(varName, type, numSeed, rpresent, numRep)|> 
+  dplyr::group_by(varName, type, numSeed, rpresent, numRep, enem)|> 
   dplyr::summarise_all(mean)
+  
+## with R present
+  
+  
+for(i in c(TRUE, FALSE)){
+  for(j in unique(FULL_DF_PARAMETERS_M$numRep)){
 
-PLOT_PAR_SIM_RT <-  parameter_seed_sim_plotter(df_full = FULL_DF_PARAMETERS_M, par_type = "r")
-PLOT_PAR_SIM_ALPHA <-  parameter_seed_sim_plotter(df_full = FULL_DF_PARAMETERS_M, par_type = "a")
+FULL_DF <-  FULL_DF_PARAMETERS_M |> 
+  dplyr::filter(rpresent == i)
+  
+## without R
+
+PLOT_PAR_SIM_RT <-  parameter_r_alpha_plotter(df_full = FULL_DF, par_type = "r")
+PLOT_PAR_SIM_ALPHA <-  parameter_r_alpha_plotter(df_full = FULL_DF, par_type = "a")
 
 
-ggsave(PLOT_PAR_SIM_RT, filename = paste0(fig_folder, "rt_allrep_allr_allseed_", ".png"),
+ggsave(PLOT_PAR_SIM_RT, filename = paste0(fig_folder, "/", "numrep_", j, "/", "R_" , i, "/" ,    "rt_allrep_allr_allseed_", ".png"),
    height = 10,
     width = 13,
     create.dir = T
   )
 
 
-ggsave(PLOT_PAR_SIM_ALPHA, filename = paste0(fig_folder, "alpha_allrep_allr_allseed_", ".png"),
+ggsave(PLOT_PAR_SIM_ALPHA, filename = paste0(fig_folder, "/", "numrep_", j, "/", "R_" , i, "/" ,  "alpha_allrep_allr_allseed_", ".png"),
    height = 10,
     width = 13,
     create.dir = T
   )
 
+}
+}
 }
 
 
@@ -258,3 +270,4 @@ ggsave(PLOT_PAR_THETA, filename = paste0(fig_folder, "omega_allrep_allr_allseed_
 }
 
 
+  

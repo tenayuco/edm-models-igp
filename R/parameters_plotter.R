@@ -156,16 +156,11 @@ parameter_seed_plotter <- function(df_full = FULL_DF_PARAMETERS, par_type = "r")
     geom_point(aes(color= as.factor(numSeed)), position=position_dodge(0.3))+
 
     xlab("Replicate and variable") +
-    ggtitle(paste0("kernel ", kernel)) +
-
-   # geom_segment(data= df_par_se_long,  aes(x = min_x-0.5, y = 0, xend = max_x+0.5, yend = 0), color= "black", linetype= "dashed")+
+    ggtitle(paste0("kernel_chosen ", kernel_chosen)) +
 
     facet_wrap(~enem, scales = "free", ncol= 3)+
     geom_hline(yintercept = 0, color= "black", linetype= "dashed")+
      scale_color_viridis_d() +
-
-
-    #facet_grid(varName~replicate, scales = "free")+
 
     theme_bw()
 
@@ -197,13 +192,41 @@ parameter_seed_sim_plotter <- function(df_full = FULL_DF_PARAMETERS, par_type = 
 
     geom_hline(yintercept = 0, color= "black", linetype= "dashed")+
      scale_color_viridis_d() +
-    ggtitle(paste0("kernel ", kernel)) +
+    ggtitle(paste0("kernel_chosen ", kernel_chosen)) +
 
     theme_bw()
 
   return(par_plot)
 }
 
+
+
+
+parameter_r_alpha_plotter <- function(df_full = FULL_DF_PARAMETERS, par_type = "r"){
+
+  var_order <- c("Y.Y", "X.X", "X.Y", "Y.X", "R.R", "R.Y", "Y.R", "R.X", "X.R", "Y", "X", "R")
+
+  par_plot <- df_full |> 
+    dplyr::filter(type == par_type) |> 
+    dplyr::mutate(varName = factor(varName, levels = var_order)) |>
+
+    ggplot(aes(x= varName, y= mvalue.mean)) +
+    geom_errorbar(aes(ymin=mvalue.mean- 1.96*mvalue.sd,  ymax=mvalue.mean+ 1.96*mvalue.sd, color= as.factor(numSeed)), width=.2,
+                 position=position_dodge(0.3))+
+    geom_point(aes(color= as.factor(numSeed)), position=position_dodge(0.3))+
+
+    xlab("Replicate and variable") +
+    ggtitle(paste0("kernel_chosen ", kernel_chosen)) +
+
+    facet_wrap(~enem, scales = "free", ncol= 3)+
+    
+    geom_hline(yintercept = 0, color= "black", linetype= "dashed")+
+     scale_color_viridis_d() +
+
+    theme_bw()
+
+  return(par_plot)
+}
 
 
 
@@ -219,7 +242,7 @@ parameter_omega_plotter <- function(df_full = FULL_DF_PARAMETERS){
     geom_point(aes(color= as.factor(numSeed)), position=position_dodge(0.3))+
 
     xlab("Replicate") +
-    ggtitle(paste0("kernel ", kernel)) +
+    ggtitle(paste0("kernel_chosen ", kernel_chosen)) +
 
    # geom_segment(data= df_par_se_long,  aes(x = min_x-0.5, y = 0, xend = max_x+0.5, yend = 0), color= "black", linetype= "dashed")+
 
