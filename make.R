@@ -80,17 +80,13 @@ toc()
 
 #here you can add a loop to have the time or spatial kernel kernel_v= c("state", "time")
 
-dif_cond <-  FALSE  ##This is so see if work with abs data or differ
-
-
-for (kernel in c("state")){
-kernel_chosen = kernel
+kernel_chosen <- "state"
+dif_cond <- FALSE
 
 tic()
 source("./analyses/2.data_LVmap_full.R")
 toc()
   
-}
 
 
 

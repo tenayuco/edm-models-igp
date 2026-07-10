@@ -1,8 +1,6 @@
 
-
+##import DATA
 type_data= "real.data"
-
-
 DATA_IGP <- readr::read_csv("data/dataIGP_2025.csv")
 
 #to represent the data
@@ -14,78 +12,55 @@ DATA_IGP <- DATA_IGP |>
 
 #========2.LV MAP======================
 
-#this is nice cause you loop outside
-#names of the folders
-
-#prefedined in the krnel
-#kernel <- "time"
-#kernel <- "state"
-
-
-
-
 if(type_data == "real.data"){
   out_path= paste0("./outputs/LV_MAP/", type_data, "/")
 }
 
-
-
 out_folder <- out_path
 
 
-
-
-#import the source 
-#==========================I.B. RUN LV MAP SPATIAL KERNEL on DATA=======================================
-source("./analyses/general_LV_looper.R")
+#=============================================DATA PREPARATION=====================================================
+#have to define value for norm and dif_cond
 
 
 DATA_PRED <- df_modifier_lv(raw_data = DATA_IGP)
 
+##remove the 0 from the data 
 
-###now the normalization is external
+DATA_PRED <- zero_remover_raw(DATA_PRED)
+
 ts_plot_normal <- ts_plotter_data(DATA_PRED, plotted_var = c("R", "X", "Y"))
-
-
-
-
-
-###plot time series before transformation
 
 
 
 ###
 ##here if you wqnt yto work with differences (to try now)
 
-
 if (dif_cond == TRUE){
   out_folder <- paste0(out_folder, "differences/") 
+   DATA_PRED <- df_differencer_lv(DATA_PRED)
+  ts_plot_inputR <- ts_plotter_data(DATA_PRED, plotted_var = c("R", "X", "Y"))
 
-  DATA_PRED<- DATA_PRED |> 
-    dplyr::group_by(block, enem) |>  # Group by both replicate AND enemy
-    dplyr::mutate(
-      R = c(NA, diff(R) - 300),  # A2 - (A1 + 300)  #the 1000 is to avoid negative values, that the lv map can not use beacuse of the log trnas
-      X = c(NA, diff(X)),        # Just the difference
-      Y = c(NA, diff(Y))         # Just the difference
-    ) |> 
-    tidyr::drop_na() |> 
-    dplyr::ungroup()  # Optional: remove grouping after
+ 
 }else{
   out_folder <- paste0(out_folder, "absolute/") 
 }
 
-DATA_PRED <-  min_max_normalization(DATA_PRED)  
-#DATA_PRED <-  max_normalization(DATA_PRED) #this was the old normalization 
 
-##modified data
-ts_plot_inputR <- ts_plotter_data(DATA_PRED, plotted_var = c("R", "X", "Y"))
+#see if normalize (min max ta gives 0s)
 
-##
-##normalization, put it ina function
-# Keep all enemies, but normalize WITHIN each enemy group
+# DATA_PRED <-  min_max_normalization(DATA_PRED)  
+
+ts_plot_norm <- ts_plotter_data(DATA_PRED, plotted_var = c("R", "X", "Y"))
+
+#===========================================================================================
 
 
-#ts_diff_norm
+#===================================LV MAP LOOP=============================================
+##select the columns you want
+
+DATA_PRED <-  DATA_PRED |> 
+     dplyr::select(block, R, X, Y, week, enem)
 
 
 dir.create(paste0(out_folder), recursive = T)

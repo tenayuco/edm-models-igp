@@ -1,3 +1,5 @@
+##here Im gonna put all the functions related to the LV map with data 
+
 
 
 df_modifier_lv <- function(raw_data){
@@ -8,11 +10,25 @@ df_modifier_lv <- function(raw_data){
   ##here we remove the 0 
   DATA_PRED <-  pred_formatter(DATA_LONG) 
 
+
   
   return(DATA_PRED)  
 }
 
 
+df_differencer_lv <- function(data_pred){
+   data_dif<- data_pred |> 
+    dplyr::group_by(block, enem) |>  # Group by both replicate AND enemy
+    dplyr::mutate(
+      R = c(NA, diff(R) - 300),  # A2 - (A1 + 300)  #the 1000 is to avoid negative values, that the lv map can not use beacuse of the log trnas
+      X = c(NA, diff(X)),        # Just the difference
+      Y = c(NA, diff(Y))         # Just the difference
+    ) |> 
+    tidyr::drop_na() |> 
+    dplyr::ungroup()  # Optional: remove grouping after
+
+  return(data_dif)
+}
 
 
 lv_map_microcosmos <- function(df_used, rpresent, num_seed, num_rep, kernel_chosen){
@@ -35,13 +51,15 @@ DATA_USED$block <-  NULL
 
 #here it just to remove the 0 values.. 
 
-for (i in seq(1, dim(DATA_USED)[1])){
+#for (i in seq(1, dim(DATA_USED)[1])){
 
-if(DATA_USED[i,]$R ==0){DATA_USED[i,]$R  <- max(DATA_USED$R)/100 * abs(rnorm(1,0,0.5))}
-if(DATA_USED[i,]$X ==0){DATA_USED[i,]$X  <- max(DATA_USED$X)/100 * abs(rnorm(1,0,0.5))} 
-if(DATA_USED[i,]$Y ==0){DATA_USED[i,]$Y  <- max(DATA_USED$Y)/100 * abs(rnorm(1,0,0.5))} 
+#if(DATA_USED[i,]$R ==0){DATA_USED[i,]$R  <- max(DATA_USED$R)/100 * abs(rnorm(1,0,0.5))}
+#if(DATA_USED[i,]$X ==0){DATA_USED[i,]$X  <- max(DATA_USED$X)/100 * abs(rnorm(1,0,0.5))} 
+#if(DATA_USED[i,]$Y ==0){DATA_USED[i,]$Y  <- max(DATA_USED$Y)/100 * abs(rnorm(1,0,0.5))} 
 
-}
+#}
+  
+
 
 
 
@@ -184,8 +202,7 @@ return(list_treatment)
 
 min_max_normalization <- function(data_pred){
 
-  data_norm <- data_pred |> 
-     dplyr::select(block, R, X, Y, week, enem) |>  # Keep enem column
+  data_norm <- data_pred |>  # Keep enem column
 
     dplyr::group_by(enem) |> 
     dplyr::mutate(
@@ -194,6 +211,14 @@ min_max_normalization <- function(data_pred){
       X= (X - min(X)) / (max(X) - min(X)),
       Y = (Y - min(Y)) / (max(Y) - min(Y))
     )
+  
+  
+  data_norm$R[data_norm$R==0] <-  0.01
+  data_norm$X[data_norm$X==0] <- 0.01
+  data_norm$Y[data_norm$Y==0] <- 0.01
+  
+  
+  
   return(data_norm)
 }
 
@@ -211,7 +236,13 @@ data_norm <- data_pred |>
 }
 
 
+zero_remover_raw <- function(data_pred){
+    ##here we remove the 0 
 
-
+ data_pred$R[data_pred$R==0] <-  1
+  data_pred$X[data_pred$X==0] <- 1
+data_pred$Y[data_pred$Y==0] <- 1
+return(data_pred)
+}
 
 
