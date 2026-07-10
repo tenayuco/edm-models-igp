@@ -280,3 +280,26 @@ COEX_PLOT <- data_coex |>
 
 
 
+ts_plotter_data <- function(data_pred, plotted_var = c("R", "X", "Y")){
+
+  outLong <-  data_pred  |> 
+    tidyr::pivot_longer(cols= plotted_var, names_to = "varName", values_to = "value") |> 
+    dplyr::filter(varName %in% plotted_var)
+    
+  
+  RNP_ts <- outLong |> 
+    ggplot(aes(x=week, y=value)) +
+    geom_line(aes(color= varName, group = as.factor(interaction(block, varName))), linewidth=1) + 
+    geom_point(aes(color= varName, group = as.factor(interaction(block, varName)))) + 
+    xlab("Time") +
+    facet_wrap(~enem, scales = "free_y") +
+    scale_color_viridis_d() +
+    
+    # scale_color_manual(
+     # values = speciesCol_trop
+    #) +
+    theme_minimal()
+ 
+  return(RNP_ts)
+}
+

@@ -28,15 +28,12 @@ if(type_data == "real.data"){
   out_path= paste0("./outputs/LV_MAP/", type_data, "/")
 }
 
-dir.create(paste0(out_path), recursive = T)
 
 
 out_folder <- out_path
 
 
-v_num_rep = c(1)
-v_rpresent = c(FALSE)
-v_num_seed = seq(1:4)
+
 
 #import the source 
 #==========================I.B. RUN LV MAP SPATIAL KERNEL on DATA=======================================
@@ -46,36 +43,60 @@ source("./analyses/general_LV_looper.R")
 DATA_PRED <- df_modifier_lv(raw_data = DATA_IGP)
 
 
-v_enemigos <-  unique(DATA_PRED$enem)
+###now the normalization is external
+ts_plot_normal <- ts_plotter_data(DATA_PRED, plotted_var = c("R", "X", "Y"))
+
+
+
+
 
 ###plot time series before transformation
+
 
 
 ###
 ##here if you wqnt yto work with differences (to try now)
 
-dif_cond <-  FALSE
 
 if (dif_cond == TRUE){
   out_folder <- paste0(out_folder, "differences/") 
-  fig_folder <- paste0(fig_folder, "differences/") 
 
   DATA_PRED<- DATA_PRED |> 
     dplyr::group_by(block, enem) |>  # Group by both replicate AND enemy
     dplyr::mutate(
-      R = c(NA, diff(R) - 300),  # A2 - (A1 + 300)
-      N = c(NA, diff(N)),        # Just the difference
-      P = c(NA, diff(P))         # Just the difference
+      R = c(NA, diff(R) - 300),  # A2 - (A1 + 300)  #the 1000 is to avoid negative values, that the lv map can not use beacuse of the log trnas
+      X = c(NA, diff(X)),        # Just the difference
+      Y = c(NA, diff(Y))         # Just the difference
     ) |> 
     tidyr::drop_na() |> 
     dplyr::ungroup()  # Optional: remove grouping after
+}else{
+  out_folder <- paste0(out_folder, "absolute/") 
 }
 
+DATA_PRED <-  min_max_normalization(DATA_PRED)  
+#DATA_PRED <-  max_normalization(DATA_PRED) #this was the old normalization 
+
+##modified data
+ts_plot_inputR <- ts_plotter_data(DATA_PRED, plotted_var = c("R", "X", "Y"))
+
+##
+##normalization, put it ina function
+# Keep all enemies, but normalize WITHIN each enemy group
+
+
+#ts_diff_norm
+
+
+dir.create(paste0(out_folder), recursive = T)
 
 ###here to see the plotss of your new modified data
 
 ######
-
+v_num_rep = c(1)
+v_rpresent = c(FALSE, TRUE)
+v_num_seed = seq(1:2)
+v_enemigos <-  unique(DATA_PRED$enem)
 
 kernel_chosen = "state"
 
@@ -110,7 +131,12 @@ toc()
 #fives the list per treamtne 
 
 fig_folder <- paste0("./figures/LV_MAP/", type_data, "/")
-
+  
+if (dif_cond == TRUE){
+fig_folder <- paste0(fig_folder, "differences/") 
+}else{
+  fig_folder <- paste0(fig_folder, "absolute/") 
+}
 
 source("./analyses/1_2.plot_extract_per_treatment.R")
 source("./analyses/1_2.plotter_LV.R")

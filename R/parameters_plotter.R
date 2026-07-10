@@ -54,7 +54,7 @@ par_mean_sd_plotter <- function(df_par_se_long, trueParameters = FALSE, df_par_e
   par_mean_sd <- df_par_se_long |> 
     ggplot(aes(x= replicate, y= mvalue.mean)) +
     geom_point()+
-    geom_errorbar(aes(ymin=mvalue.mean- 1.96*mvalue.sd,  ymax=mvalue.mean+ 1.96*mvalue.sd), width=.2,
+    geom_errorbar(aes(ymin=mvalue.mean- 1*mvalue.sd,  ymax=mvalue.mean+ 1*mvalue.sd), width=.2,
                  position=position_dodge(0.05))+
     xlab("Replicate") +
 
@@ -92,7 +92,7 @@ av_comp_plotter <- function(df_par_se_long, df_par_eq){
   par_rep_av <- DF_average |> 
     ggplot(aes(x= varName, y= mvalue.mean)) +
     geom_point()+
-    geom_errorbar(aes(ymin=mvalue.mean- 1.96*mvalue.sd,  ymax=mvalue.mean+ 1.96*mvalue.sd), width=.2,
+    geom_errorbar(aes(ymin=mvalue.mean- 1*mvalue.sd,  ymax=mvalue.mean+ 1*mvalue.sd), width=.2,
                  position=position_dodge(0.05)) +
     geom_point(aes(x = varName, y= par_eq), color= "blue", size=3, shape=17)+
     theme_bw()
@@ -120,7 +120,7 @@ shapes_used <- c(21, 22, 23, 24, 21, 22, 23, 24, 21, 22, 23, 24)
 
   par_rep_av <- DF_average |> 
     ggplot(aes(x= par_eq, y=mvalue.mean)) +
-    geom_errorbar(aes(ymin=mvalue.mean- 1.96*mvalue.sd,  ymax=mvalue.mean+ 1.96*mvalue.sd), color= "black", width=0.01,
+    geom_errorbar(aes(ymin=mvalue.mean- 1*mvalue.sd,  ymax=mvalue.mean+ 1*mvalue.sd), color= "black", width=0.01,
                  position=position_dodge(0.05)) +
     geom_point(aes(fill= varName, shape=varName), size=4)+
   
@@ -151,7 +151,7 @@ parameter_seed_plotter <- function(df_full = FULL_DF_PARAMETERS, par_type = "r")
   par_plot <- df_full |> 
     dplyr::filter(type == par_type) |> 
     ggplot(aes(x= varName, y= mvalue.mean)) +
-    geom_errorbar(aes(ymin=mvalue.mean- 1.96*mvalue.sd,  ymax=mvalue.mean+ 1.96*mvalue.sd, color= as.factor(numSeed)), width=.2,
+    geom_errorbar(aes(ymin=mvalue.mean- 1*mvalue.sd,  ymax=mvalue.mean+ 1*mvalue.sd, color= as.factor(numSeed)), width=.2,
                  position=position_dodge(0.3))+
     geom_point(aes(color= as.factor(numSeed)), position=position_dodge(0.3))+
 
@@ -179,7 +179,7 @@ parameter_seed_sim_plotter <- function(df_full = FULL_DF_PARAMETERS, par_type = 
     dplyr::filter(type == par_type) |> 
     dplyr::mutate(varName = factor(varName, levels = var_order)) |>
     ggplot(aes(x= varName, y= mvalue.mean)) +
-    geom_errorbar(aes(ymin=mvalue.mean- 1.96*mvalue.sd,  ymax=mvalue.mean+ 1.96*mvalue.sd, color= as.factor(numSeed)), width=.2,
+    geom_errorbar(aes(ymin=mvalue.mean- 1*mvalue.sd,  ymax=mvalue.mean+ 1*mvalue.sd, color= as.factor(numSeed)), width=.2,
                  position=position_dodge(0.3))+
     geom_point(aes(color= as.factor(numSeed)), position=position_dodge(0.3))+
 
@@ -211,7 +211,7 @@ parameter_r_alpha_plotter <- function(df_full = FULL_DF_PARAMETERS, par_type = "
     dplyr::mutate(varName = factor(varName, levels = var_order)) |>
 
     ggplot(aes(x= varName, y= mvalue.mean)) +
-    geom_errorbar(aes(ymin=mvalue.mean- 1.96*mvalue.sd,  ymax=mvalue.mean+ 1.96*mvalue.sd, color= as.factor(numSeed)), width=.2,
+    geom_errorbar(aes(ymin=mvalue.mean- 1*mvalue.sd,  ymax=mvalue.mean+ 1*mvalue.sd, color= as.factor(numSeed)), width=.2,
                  position=position_dodge(0.3))+
     geom_point(aes(color= as.factor(numSeed)), position=position_dodge(0.3))+
 

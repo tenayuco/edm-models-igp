@@ -8,16 +8,8 @@ df_modifier_lv <- function(raw_data){
   ##here we remove the 0 
   DATA_PRED <-  pred_formatter(DATA_LONG) 
 
-  # Keep all enemies, but normalize WITHIN each enemy group
-  DATA_USED <- DATA_PRED |> 
-    dplyr::select(block, R, X, Y, week, enem) |>  # Keep enem column
-    dplyr::group_by(enem) |>  # Group by enemy
-    dplyr::mutate(R = R/max(R, na.rm = TRUE), 
-                  X = X/max(X, na.rm = TRUE), 
-                  Y = Y/max(Y, na.rm = TRUE)) |> 
-    dplyr::ungroup()  # Remove grouping
   
-  return(DATA_USED)  
+  return(DATA_PRED)  
 }
 
 
@@ -190,7 +182,33 @@ return(list_treatment)
 }
 
 
+min_max_normalization <- function(data_pred){
 
+  data_norm <- data_pred |> 
+     dplyr::select(block, R, X, Y, week, enem) |>  # Keep enem column
+
+    dplyr::group_by(enem) |> 
+    dplyr::mutate(
+      # Scale to [0,1] range
+      R= (R - min(R)) / (max(R) - min(R)),
+      X= (X - min(X)) / (max(X) - min(X)),
+      Y = (Y - min(Y)) / (max(Y) - min(Y))
+    )
+  return(data_norm)
+}
+
+max_normalization <- function(data_pred){
+
+data_norm <- data_pred |> 
+    dplyr::select(block, R, X, Y, week, enem) |>  # Keep enem column
+    dplyr::group_by(enem) |>  # Group by enemy
+    dplyr::mutate(R = R/max(R, na.rm = TRUE), 
+                  X = X/max(X, na.rm = TRUE), 
+                  Y = Y/max(Y, na.rm = TRUE)) |> 
+    dplyr::ungroup()  # Remove grouping
+  return(data_norm)
+
+}
 
 
 
