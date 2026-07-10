@@ -7,6 +7,10 @@ DATA_IGP <- readr::read_csv("data/dataIGP_2025.csv")
 
 #to represent the data
 
+#we remove the treatments that dont make sene
+DATA_IGP <- DATA_IGP |> 
+  dplyr::filter(!(enem == "ec+sr"))|> 
+  dplyr::filter(!(enem == "ec+am"))
 
 #========2.LV MAP======================
 
@@ -32,7 +36,7 @@ out_folder <- out_path
 
 v_num_rep = c(1)
 v_rpresent = c(FALSE)
-v_num_seed = seq(1:10)
+v_num_seed = seq(1:4)
 
 #import the source 
 #==========================I.B. RUN LV MAP SPATIAL KERNEL on DATA=======================================
@@ -41,13 +45,13 @@ source("./analyses/general_LV_looper.R")
 
 DATA_PRED <- df_modifier_lv(raw_data = DATA_IGP)
 
-DATA_PRED <- DATA_PRED |> 
-  dplyr::filter(!(enem == "ec+sr"))|> 
-  dplyr::filter(!(enem == "ec+am"))
 
 v_enemigos <-  unique(DATA_PRED$enem)
 
+###plot time series before transformation
 
+
+###
 ##here if you wqnt yto work with differences (to try now)
 
 dif_cond <-  FALSE
@@ -68,17 +72,21 @@ if (dif_cond == TRUE){
 }
 
 
+###here to see the plotss of your new modified data
 
+######
 
 
 kernel_chosen = "state"
 
 #looop around 
 tic()
-for (enem in v_enemigos){
-  DATA_PRED <- DATA_PRED |> 
-    dplyr::filter(enem ==enem)
-lv_looper_lists_general(data_used = DATA_PRED, v_num_rep, v_rpresent, v_num_seed, enemigo= enem)
+for (e in v_enemigos){
+  DATA_PRED_EN <- DATA_PRED |> 
+  dplyr::filter(enem ==e)
+  
+print(head(DATA_PRED_EN))
+lv_looper_lists_general(data_used = DATA_PRED_EN, v_num_rep, v_rpresent, v_num_seed, enemigo= e)
 }
 toc()
 
@@ -101,20 +109,19 @@ toc()
 
 #fives the list per treamtne 
 
-#fig_folder <- paste0("./figures/LV_MAP/", type_data, "/")
+fig_folder <- paste0("./figures/LV_MAP/", type_data, "/")
 
 
-#source("./analyses/1_2.plot_extract_per_treatment.R")
-#source("./analyses/1_2.plotter_LV.R")
+source("./analyses/1_2.plot_extract_per_treatment.R")
+source("./analyses/1_2.plotter_LV.R")
 
 
+plot_per_treatment(out_folder, true_values = FALSE)
 
-#plot_per_treatment(out_folder, true_values = FALSE)
-
-#full_df <- extract_par_all_treatment(out_folder) ##generates the file
+full_df <- extract_par_all_treatment(out_folder) ##generates the file
 
 
-#plotter_full_parameters_microcosmos(df_full = full_df, fig_folder = fig_folder)
+plotter_full_parameters_microcosmos(df_full = full_df, fig_folder = fig_folder)
 
 ## coexistence valuess. 
 #plotter_theta_microcosmos(df_full = full_df, fig_folder = fig_folder)

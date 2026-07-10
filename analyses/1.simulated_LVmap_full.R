@@ -79,17 +79,17 @@ for (enemigo in unique(DATA_PRED$enem)){
 #SO AT THIS POINT WE HAVE DONE THE HEAVY ANALYSIS 
 #NOW THE MORE GENERAL PLOTTINGS
 
-#fig_folder <- paste0("./figures/LV_MAP/", type_data,  "/", chosen_scenario, "/")
+fig_folder <- paste0("./figures/LV_MAP/", type_data,  "/", chosen_scenario, "/")
 
 #========================I.C PLOT LV SIMULATIONS ============================
-#source("./analyses/1_2.plot_extract_per_treatment.R")
-#source("./analyses/1_2.plotter_LV.R")
-#plot_per_treatment(out_folder, true_values = FALSE) #we dont want the true values of the eq
+source("./analyses/1_2.plot_extract_per_treatment.R")
+source("./analyses/1_2.plotter_LV.R")
+plot_per_treatment(out_folder, true_values = FALSE) #we dont want the true values of the eq
 
 
-#full_df <- extract_par_all_treatment(out_folder, coex_cal = FALSE) ##generates the file
+full_df <- extract_par_all_treatment(out_folder, coex_cal = FALSE) ##generates the file
 
-#plotter_full_parameters(df_full = full_df, fig_folder = fig_folder)
+plotter_full_parameters(df_full = full_df, fig_folder = fig_folder)
 
 ##========================================================================================
 
