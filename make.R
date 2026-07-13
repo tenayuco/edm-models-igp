@@ -60,7 +60,7 @@ source("./analyses/0.simulatedData.R")
 
 
 
-#================================LV MAP==============================================
+#================================LV MAP FOR SIMULA==============================================
 
 #########################################333
 #=simulation
@@ -69,10 +69,10 @@ source("./analyses/0.simulatedData.R")
 #
 #norm_data <-  FALSE
 
-#
+tic()
 #or source if you wanto to have the full analisis 
   for(norm_data in c(FALSE, TRUE)){
-    for (chosen_scenario in c("lblb_model_0", "lblb_model_1")){
+    for (chosen_scenario in scenarios_lblb){
  tic()
   print(paste0("norm_data", norm_data, 'chosensce', chosen_scenario))
  source("./analyses/1.simulated_LVmap_full.R")
@@ -80,7 +80,8 @@ source("./analyses/0.simulatedData.R")
 
     }
   }
- 
+print("totalTIME")
+ toc()
 
 ################################################3
 
