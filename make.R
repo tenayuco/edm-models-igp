@@ -30,6 +30,8 @@ scenarios_pbpb <- c("pbpb_model_1", "pbpb_model_2", "pbpb_model_3")
 #chose your scenarios
 scenarios <- c(scenarios_lblb, scenarios_pbpb)
 
+#========================================================================
+
 #or for short example:
 #scenarios <- c("lblb_model_0")
 
@@ -63,16 +65,23 @@ source("./analyses/0.simulatedData.R")
 #########################################333
 #=simulation
 #either enter source("./analyses/2.data_representation.R")
+#chosen_scenario <- "lblb_model_0"  ##scenario chosen, to now from where take the data
+#
+#norm_data <-  FALSE
 
 #
 #or source if you wanto to have the full analisis 
-for (kernel in c("state")){
-kernel_chosen = kernel
-  dif_cond = FALSE
-  tic()
-source("./analyses/1.simulated_LVmap_full.R")
-toc()
-}
+  for(norm_data in c(FALSE, TRUE)){
+    for (chosen_scenario in c("lblb_model_0", "lblb_model_1")){
+ tic()
+  print(paste0("norm_data", norm_data, 'chosensce', chosen_scenario))
+ source("./analyses/1.simulated_LVmap_full.R")
+ toc()
+
+    }
+  }
+ 
+
 ################################################3
 
 

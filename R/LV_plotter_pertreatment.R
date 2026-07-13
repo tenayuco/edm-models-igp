@@ -159,7 +159,9 @@ FULL_DF_PARAMETERS_M <- df_full|>
   dplyr::summarise_all(mean)
   
 ## with R present
+
   
+enemy <-  unique(FULL_DF_PARAMETERS_M$enem)
   
 for(i in c(TRUE, FALSE)){
   for(j in unique(FULL_DF_PARAMETERS_M$numRep)){
@@ -173,14 +175,14 @@ PLOT_PAR_SIM_RT <-  parameter_r_alpha_plotter(df_full = FULL_DF, par_type = "r")
 PLOT_PAR_SIM_ALPHA <-  parameter_r_alpha_plotter(df_full = FULL_DF, par_type = "a")
 
 
-ggsave(PLOT_PAR_SIM_RT, filename = paste0(fig_folder, "/", "numrep_", j, "/", "R_" , i, "/" ,    "rt_allrep_allr_allseed_", ".png"),
+ggsave(PLOT_PAR_SIM_RT, filename = paste0(fig_folder, "/", "enem_", enemy, "/", "rt_allseed_",  "_numrep_", j, "_R_" , i , ".png"),
    height = 10,
     width = 13,
     create.dir = T
   )
 
 
-ggsave(PLOT_PAR_SIM_ALPHA, filename = paste0(fig_folder, "/", "numrep_", j, "/", "R_" , i, "/" ,  "alpha_allrep_allr_allseed_", ".png"),
+ggsave(PLOT_PAR_SIM_ALPHA, filename = paste0(fig_folder, "/", "enem_", enemy, "/", "alpha_allseed_",  "numrep_", j, "_R_" , i  , ".png"),
    height = 10,
     width = 13,
     create.dir = T

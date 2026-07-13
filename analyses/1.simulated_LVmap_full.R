@@ -12,9 +12,9 @@
 
 type_data= "simulated.data"  #important for the map to run the simu mode
 simulated_data <-  "DF_DISC_LV_20.csv"  ## source of data
-chosen_scenario <- "lblb_model_0"  ##scenario chosen, to now from where take the data
+#chosen_scenario <- "lblb_model_0"  ##scenario chosen, to now from where take the data
 dif_cond <-  FALSE
-norm_data <-  FALSE
+#norm_data <-  FALSE
 
 
 # ============================================================================
@@ -130,12 +130,15 @@ tictoc::toc()  # End timing and display elapsed time
 
 
 #========================I.C PLOT LV SIMULATIONS ============================
-source("./analyses/1_2.plot_extract_per_treatment.R")
-source("./analyses/1_2.plotter_LV.R")
+
+
+
+
+
 plot_per_treatment(out_folder, true_values = FALSE) #we dont want the true values of the eq
 
 
-full_df <- extract_par_all_treatment(out_folder, coex_cal = FALSE) ##generates the file
+full_df <- extract_par_all_treatment(out_folder, coex_cal = FALSE) ##generates the file  (that you can download late just to run the full parameters, but chose how many simulaciones!)
 
 plotter_full_parameters(df_full = full_df, fig_folder = fig_folder)
 
