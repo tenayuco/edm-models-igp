@@ -7,6 +7,17 @@
 #' @details The K and S are set, but those ones change within each simulation
 #############################################################################################################
 
+#====================================================================================
+#conditions that can be set here or externally in the make.R
+
+#"lblb_model_0", "lblb_model_1", "lblb_model_2", "lblb_model_3", "lblb_model_4"
+#"pbpb_model_1", "pbpb_model_2", "pbpb_model_3"
+
+#chosen_scenario<- "lblb_model_0"  #importand amout of noise to see the signal 
+
+
+#=================================================================
+
 
 #####################set LBLB_LV charactersitics  --------------------------
 

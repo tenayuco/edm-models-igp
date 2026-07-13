@@ -24,11 +24,6 @@ devtools::load_all()
 #1. First here I run the time series of 7 different sceanrios, 4 for the LBLB model and 3 for the PBPB model as examples of determinations. 
 # it saves all the produced time series in data with the name of the scenario 
 
-
-#scenarios <- c("pbpb_model_1", "pbpb_model_2", "pbpb_model_3")
-
-## check if it does not exists already 
-
 scenarios_lblb <- c("lblb_model_0", "lblb_model_1", "lblb_model_2", "lblb_model_3", "lblb_model_4")
 scenarios_pbpb <- c("pbpb_model_1", "pbpb_model_2", "pbpb_model_3")
 
@@ -38,12 +33,13 @@ scenarios <- c(scenarios_lblb, scenarios_pbpb)
 #or for short example:
 #scenarios <- c("lblb_model_0")
 
-#long scenarios for reference
+#loop to generate multiple scenarios of simulated data 
+#long scenarios for reference, shorts for the analyis
+#we need to have coexistence to catch the signal 
 for (i in scenarios){
   for (len in c(300, 20)){  #we have a 300 to see the whole dynamic,s and a 20 that it the one we are using, with 10 replicates
 chosen_scenario <- i
 len_chosen <- len
-noise_chosen <- 0.5  #importand amout of noise to see the signal 
 
 #this will set the correct parameters per model and create the list of models
 source("./analyses/0.set_LBLB_model.R")
@@ -51,12 +47,16 @@ source("./analyses/0.set_LBLB_model.R")
 if (i %in% scenarios_lblb){chosen_MODEL <- LBLB_LV_list }
 if (i %in% scenarios_pbpb){chosen_MODEL <- PBPB_LV_list }
 
-#then it will run the analysis
+#then it will run the analysis and save the dataframe in DAta
 source("./analyses/0.simulatedData.R")
 }
 }
 
 #===========================================================================================
+
+
+
+
 
 #================================LV MAP==============================================
 

@@ -1,5 +1,12 @@
 
 #====================================================================================
+#conditions that can be set here or externally in the make.R
+
+#chosen_MODEL <- LBLB_LV_list
+#len_chosen <- len
+noise_chosen <- 0.5  #importand amout of noise to see the signal 
+
+#=================================================================
 
 #====================I. STOCASTIC SIMULATIONS========================================
 #==============Define the characteritic of the data frame=============================
