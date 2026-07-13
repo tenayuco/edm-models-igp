@@ -18,25 +18,28 @@ norm_data <-  FALSE
 
 
 # ============================================================================
-# 2. CREATE OUTPUT FOLDER PATH 
+# 2. CREATE OUTPUT FOLDER PATH AND IMPORT DATA
 # ============================================================================
+
+DATA_PRED <- read.csv(paste0("data/", type_data,  "/", chosen_scenario, "/",  simulated_data)) #have to provide 
 
 #here is the source of data 
 
 ##just to have the real parameters if needed
-source("./analyses/0.set_LBLB_model.R")
+source("./analyses/0.set_LBPB_model.R")
 
 
 #here to build the output path
 if(type_data == "simulated.data"){
   out_folder= paste0("./outputs/LV_MAP/", type_data,  "/", chosen_scenario, "/")
-  DATA_PRED <- read.csv(paste0("data/", type_data,  "/", chosen_scenario, "/",  simulated_data)) #have to provide 
+  fig_folder <- paste0("./figures/LV_MAP/", type_data, "/", chosen_scenario, "/")
+
 }
 
 
 
-# ============================================================================
-# 3. DATA TRANSFORMATIONS
+# ===================================== =======================================
+# 3. DATA TRANSFORMATIONS AND OUTPUT FIGRES
 # ============================================================================
 
 # Option 1: Convert to differences (if dif_cond = TRUE)
@@ -47,16 +50,22 @@ if (dif_cond == TRUE) {
   ts_plot_inputR <- ts_plotter_data(DATA_PRED, plotted_var = c("R", "X", "Y"))
 } else {
   out_folder <- paste0(out_folder, "absolute/")
+    fig_folder <- paste0(fig_folder, "absolute/")
+
 }
 
 # Option 2: Normalize data (min-max scaling, if norm_data = TRUE)
 if (norm_data == TRUE) {
   out_folder <- paste0(out_folder, "normalized/")
+      fig_folder <- paste0(fig_folder, "normalized/")
+
   DATA_PRED <- max_normalization(DATA_PRED)
   ts_plot_inputR <- ts_plotter_data(DATA_PRED, plotted_var = c("R", "X", "Y"))
   ts_plot_norm <- ts_plotter_data(DATA_PRED, plotted_var = c("R", "X", "Y"))
 } else {
-  out_folder <- paste0(out_folder, "absolute/")
+  out_folder <- paste0(out_folder, "not_normalized/")
+      fig_folder <- paste0(fig_folder, "not_normalized/")
+
 }
 
 # Create output directory
@@ -92,7 +101,7 @@ for (e in v_enemigos) {
   DATA_PRED <- DATA_PRED |> 
     dplyr::filter(enem == e)
   
-  print(head(DATA_PRED_EN))  # Debug: show first few rows
+  print(head(DATA_PRED))  # Debug: show first few rows
   
   # Run cross-validation for this enemy
   lv_looper_lists_general(
@@ -109,9 +118,9 @@ tictoc::toc()  # End timing and display elapsed time
 #==========================================================================
 
 
+#Part II. PLOTTING 
 
-
-
+#
 
 
 #===========================================================================================
@@ -119,7 +128,6 @@ tictoc::toc()  # End timing and display elapsed time
 #SO AT THIS POINT WE HAVE DONE THE HEAVY ANALYSIS 
 #NOW THE MORE GENERAL PLOTTINGS
 
-fig_folder <- paste0("./figures/LV_MAP/", type_data,  "/", chosen_scenario, "/")
 
 #========================I.C PLOT LV SIMULATIONS ============================
 source("./analyses/1_2.plot_extract_per_treatment.R")

@@ -35,6 +35,8 @@ DATA_IGP <- DATA_IGP |>
 
 if (type_data == "real.data") {
   out_folder <- paste0("./outputs/LV_MAP/", type_data, "/")
+  fig_folder <- paste0("./figures/LV_MAP/", type_data, "/")
+
 }
 
 
@@ -58,28 +60,35 @@ ts_plot_normal <- ts_plotter_data(DATA_PRED, plotted_var = c("R", "X", "Y"))
 
 
 # ============================================================================
-# 5. DATA TRANSFORMATIONS
+# 5. DATA TRANSFORMATIONS AND OUTPUT FIGURES PATH
 # ============================================================================
 
 # Option 1: Convert to differences (if dif_cond = TRUE)
 # This transforms the data from absolute values to changes between time points
 if (dif_cond == TRUE) {
   out_folder <- paste0(out_folder, "differences/")
+  fig_folder <- paste0(fig_folder, "differences/") 
   DATA_PRED <- df_differencer_lv(DATA_PRED)
   ts_plot_inputR <- ts_plotter_data(DATA_PRED, plotted_var = c("R", "X", "Y"))
 } else {
   out_folder <- paste0(out_folder, "absolute/")
+    fig_folder <- paste0(fig_folder, "absolute/") 
+
 }
 
 # Option 2: Normalize data using min-max scaling (if norm_data = TRUE)
 # This scales all variables to range [0,1]
 if (norm_data == TRUE) {
-  out_folder <- paste0(out_folder, "Normalized/")
+  out_folder <- paste0(out_folder, "normalized/")
+  fig_folder <- paste0(fig_folder, "normalized/") 
+
   DATA_PRED <- max_normalization(DATA_PRED)
   ts_plot_inputR <- ts_plotter_data(DATA_PRED, plotted_var = c("R", "X", "Y"))
   ts_plot_norm <- ts_plotter_data(DATA_PRED, plotted_var = c("R", "X", "Y"))
 } else {
-  out_folder <- paste0(out_folder, "notNormalized/")
+  out_folder <- paste0(out_folder, "not_normalized/")
+    fig_folder <- paste0(fig_folder, "not_normalized/") 
+
 }
 
 # ============================================================================
@@ -130,17 +139,7 @@ for (e in v_enemigos) {
 tictoc::toc()  # End timing and display elapsed time
 
 
-#==========================================================================
-
-
-#aparentelyn it is working.. now for the plooting 
-
-
-##here is the big change 
-##old
-#lv_looper_lists_microcosmos(raw_data = DATA_IGP, v_enemigos = v_enemigos, v_num_seed = v_num_seed, num_rep = num_rep, rpresent = rpresent, kernel_chosen = kernel)
-#source("./analyses/2b.looper_data_lv_map.R")
-
+#=========================================================================
 
 #===========================================================================================
 
@@ -149,15 +148,6 @@ tictoc::toc()  # End timing and display elapsed time
 
 #========================I.C PLOT LV <MICRSO ============================
 
-#fives the list per treamtne 
-
-fig_folder <- paste0("./figures/LV_MAP/", type_data, "/")
-  
-if (dif_cond == TRUE){
-fig_folder <- paste0(fig_folder, "differences/") 
-}else{
-  fig_folder <- paste0(fig_folder, "absolute/") 
-}
 
 source("./analyses/1_2.plot_extract_per_treatment.R")
 source("./analyses/1_2.plotter_LV.R")
