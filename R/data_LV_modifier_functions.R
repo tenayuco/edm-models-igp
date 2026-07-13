@@ -78,8 +78,7 @@ min_max_normalization <- function(data_pred){
 
 max_normalization <- function(data_pred){
 
-data_norm <- data_pred |> 
-    dplyr::select(block, R, X, Y, week, enem) |>  # Keep enem column
+data_norm <- data_pred |> #normally already selected the columns 
     dplyr::group_by(enem) |>  # Group by enemy
     dplyr::mutate(R = R/max(R, na.rm = TRUE), 
                   X = X/max(X, na.rm = TRUE), 
