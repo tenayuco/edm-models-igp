@@ -140,7 +140,7 @@ S <-  dim(N_list_sim[[1]])[2]
 # Cross validation
 # ================
 cv_list_sim <- vector(mode = "list", length = num_rep)
-tic()
+tictoc::tic()
 for (i in 1:num_rep) {
 
   if(kernel_chosen == "state") {
@@ -153,8 +153,10 @@ if(kernel_chosen == "time") {
 
   cv_list_sim[[i]] <- out_cv
 }
-toc()
-
+print("crossvalidationtime")
+tictoc::toc()
+  
+  
 list_treatment$cv_list_sim <- cv_list_sim
 
 
@@ -176,7 +178,10 @@ for (i in 1:num_rep) {
   alpha_hat_list[[i]] <- out_list[[i]]$alpha_hat
   alpha_se_list[[i]] <- out_list[[i]]$alpha_se
 }
+print("LVMAP_time")
+
 toc()
+
 
 list_treatment$out_list <- out_list
 list_treatment$r_hat_list <- r_hat_list
@@ -208,6 +213,8 @@ for (i in 1:num_rep) {
   eta1_cimean_list[i, ] <- colMeans(o_coexistence$eta_ci[, 1, ])
   eta2_cimean_list[i, ] <- colMeans(o_coexistence$eta_ci[, 2, ])
 }
+print("LVMAP_time")
+
 toc()
 
 
