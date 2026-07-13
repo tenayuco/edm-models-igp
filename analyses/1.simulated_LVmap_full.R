@@ -1,22 +1,25 @@
-#==========================I.B. RUN LV MAP SPATIAL KERNEL=======================================
+# ============================================================================
+# LV MAP SPATIAL KERNEL - Cross Validation Analysis
+# ============================================================================
+# Purpose: Run cross-validation for LV (Lotka-Volterra) spatial kernel models
+#          across different scenarios and parameter combinations
+# ============================================================================
 
-###########2 cross validation. now we put it in the LV MAP. And here we can loop like crazy
-
-##now we take that data base and we create the matrix and apply the cross validation across scenarios
-
-#====================================================================================
-#conditions to know wich data to take that can be set here or externally in the make.R
-
+# ============================================================================
+# 1. DATA SOURCE CONFIGURATION
+# ============================================================================
+#these can be looped in the make.R
 
 type_data= "simulated.data"  #important for the map to run the simu mode
-simulated_data <-  "DF_DISC_LV_20.csv"  ## spurce of data
+simulated_data <-  "DF_DISC_LV_20.csv"  ## source of data
 chosen_scenario <- "lblb_model_0"  ##scenario chosen, to now from where take the data
 dif_cond <-  FALSE
 norm_data <-  FALSE
 
 
-#=================================================================
-
+# ============================================================================
+# 2. CREATE OUTPUT FOLDER PATH 
+# ============================================================================
 
 #here is the source of data 
 
@@ -31,71 +34,76 @@ if(type_data == "simulated.data"){
 }
 
 
-#===========================change to differences================================
 
-if (dif_cond == TRUE){
-  out_folder <- paste0(out_folder, "differences/") 
-    fig_folder <- paste0(fig_folder, "differences/") 
+# ============================================================================
+# 3. DATA TRANSFORMATIONS
+# ============================================================================
 
-   DATA_PRED <- df_differencer_lv(DATA_PRED)
+# Option 1: Convert to differences (if dif_cond = TRUE)
+if (dif_cond == TRUE) {
+  out_folder <- paste0(out_folder, "differences/")
+  fig_folder <- paste0(fig_folder, "differences/")
+  DATA_PRED <- df_differencer_lv(DATA_PRED)
   ts_plot_inputR <- ts_plotter_data(DATA_PRED, plotted_var = c("R", "X", "Y"))
-}else{
-  out_folder <- paste0(out_folder, "absolute/") 
+} else {
+  out_folder <- paste0(out_folder, "absolute/")
 }
 
-#===============================================================
-
-#==============normalize
-
-#see if normalize (min max ta gives 0s that we have to remove)
-if (norm_data == TRUE){
-  out_folder <- paste0(out_folder, "normalized/") 
-  DATA_PRED <-  max_normalization(DATA_PRED)    ts_plot_inputR <- ts_plotter_data(DATA_PRED, plotted_var = c("R", "X", "Y"))
-ts_plot_norm <- ts_plotter_data(DATA_PRED, plotted_var = c("R", "X", "Y"))
-
- 
-}else{
-  out_folder <- paste0(out_folder, "absolute/") 
+# Option 2: Normalize data (min-max scaling, if norm_data = TRUE)
+if (norm_data == TRUE) {
+  out_folder <- paste0(out_folder, "normalized/")
+  DATA_PRED <- max_normalization(DATA_PRED)
+  ts_plot_inputR <- ts_plotter_data(DATA_PRED, plotted_var = c("R", "X", "Y"))
+  ts_plot_norm <- ts_plotter_data(DATA_PRED, plotted_var = c("R", "X", "Y"))
+} else {
+  out_folder <- paste0(out_folder, "absolute/")
 }
 
+# Create output directory
+dir.create(paste0(out_folder), recursive = TRUE)
 
 #============================
 
-dir.create(paste0(out_folder), recursive = T)
 
-#========================the LOOP=========================
+
+# ============================================================================
+# 4. CROSS-VALIDATION LOOP CONFIGURATION
+# ============================================================================
 
 #====================================================================================
 #conditions to tun the LV map to take that can be set here or externally in the make.R
 
-## here is what the looper needs (it uses the same folder)
-v_num_rep = c(1)  #we keep it this like this (as 20 0 40 time series LV are too short for the replicates )
-v_rpresent = c(FALSE, TRUE)
-v_num_seed = seq(1:2) ###A lot of reshuflle 
-v_enemigos <-  unique(DATA_PRED$enem)
-kernel_chosen <- "state"
-
-#=================================================================
+# Parameters for the LV map cross-validation loop
+v_num_rep <- c(1)                     # Number of replicates (fixed at 1 due to short time series)
+v_rpresent <- c(FALSE, TRUE)          # Whether to include R (resource) in the model
+v_num_seed <- seq(1:2)                # Random seeds for data shuffling/re-sampling
+v_enemigos <- unique(DATA_PRED$enem)  # List of enemy species/treatments to analyze
+kernel_chosen <- "state"              # Kernel type to use
 
 
+# ============================================================================
+# 5. RUN CROSS-VALIDATION
+# ============================================================================
 
-
-source("./analyses/general_LV_looper.R")
-#protocool for the loop it run the functions of lv map, for each treatment. 
-#this has to be changed
-
-
-##so here the general looper (works within enemies)
-tic()
-for (e in v_enemigos){
+# Run the LV map cross-validation for each enemy
+tictoc::tic()  # Start timing
+for (e in v_enemigos) {
+  # Filter data for current enemy
   DATA_PRED <- DATA_PRED |> 
-  dplyr::filter(enem== e)
-  print(head(DATA_PRED_EN))
-  lv_looper_lists_general(data_used = DATA_PRED, v_num_rep, v_rpresent, v_num_seed, enemigo = e)
-
+    dplyr::filter(enem == e)
+  
+  print(head(DATA_PRED_EN))  # Debug: show first few rows
+  
+  # Run cross-validation for this enemy
+  lv_looper_lists_general(
+    data_used = DATA_PRED, 
+    v_num_rep = v_num_rep, 
+    v_rpresent = v_rpresent, 
+    v_num_seed = v_num_seed, 
+    enemigo = e
+  )
 }
-toc()
-
+tictoc::toc()  # End timing and display elapsed time
 
 
 #==========================================================================
