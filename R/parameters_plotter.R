@@ -259,3 +259,44 @@ parameter_omega_plotter <- function(df_full = FULL_DF_PARAMETERS){
 }
 
 
+###all conditions plotter 
+
+##histogram of all parameters, just to see the distribution before choosing a way of summarizing
+
+summarizer_with_variance <- function(df_full){
+full_df_sum <- df_full |> 
+  dplyr::ungroup()|> 
+  dplyr::select(!replicate)|> 
+  dplyr::select(!dif_cond)|> 
+  dplyr::select(!norm)|> 
+  dplyr::group_by(varName, type, numRep, rpresent, enem)|> 
+  dplyr::summarise(grand_mean = mean(mvalue.mean), var_between = var(mvalue.mean), var_within= mean(mvalue.sd**2)) |> 
+  dplyr::mutate(total_sd =sqrt(var_between+var_within))
+
+  return(full_df_sum)
+}
+
+
+plot_par_allconditions <- function(df_sum){
+  var_order <- c("Y.Y", "X.X", "X.Y", "Y.X", "R.R", "R.Y", "Y.R", "R.X", "X.R", "Y", "X", "R")
+  par_plot <- df_sum |> 
+   # dplyr::filter(type == par_type) |> 
+    dplyr::mutate(varName = factor(varName, levels = var_order)) |>
+    ggplot(aes(x= varName, y= grand_mean)) +
+    geom_errorbar(aes(ymin=grand_mean- 1*total_sd,  ymax=grand_mean+ 1*total_sd, color= as.factor(rpresent)), width=.2,
+                 position=position_dodge(0.3))+
+    geom_point(aes(color= as.factor(rpresent)), position=position_dodge(0.3))+
+
+    xlab("Replicate and variable") +
+    ggtitle(paste0("kernel_chosen ", kernel_chosen)) +
+
+    facet_wrap(~enem, scales = "free", ncol= 3)+
+    
+    geom_hline(yintercept = 0, color= "black", linetype= "dashed")+
+     scale_color_viridis_d() +
+
+    theme_bw()
+
+  return(par_plot)
+
+}

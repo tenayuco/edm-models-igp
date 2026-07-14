@@ -236,47 +236,6 @@ ggsave(PLOT_PAR_ALPHA, filename = paste0(fig_folder, "alpha_allrep_allr_allseed_
 }
 
 
-plotter_resume_all_conditions <- function(df_full, fig_folder){
-
-
-FULL_DF_PARAMETERS_M <- df_full|> 
-  dplyr::select(!replicate)|>
-  dplyr::group_by(varName, type, numSeed, rpresent, numRep, enem)|> 
-  dplyr::summarise_all(mean)
-  
-## with R present
-
-  
-enemy <-  unique(FULL_DF_PARAMETERS_M$enem)
-  
-for(i in c(TRUE, FALSE)){
-  for(j in unique(FULL_DF_PARAMETERS_M$numRep)){
-
-FULL_DF <-  FULL_DF_PARAMETERS_M |> 
-  dplyr::filter(rpresent == i)
-  
-## without R
-
-PLOT_PAR_SIM_RT <-  parameter_r_alpha_plotter(df_full = FULL_DF, par_type = "r")
-PLOT_PAR_SIM_ALPHA <-  parameter_r_alpha_plotter(df_full = FULL_DF, par_type = "a")
-
-
-ggsave(PLOT_PAR_SIM_RT, filename = paste0(fig_folder, "/", "enem_", enemy, "/", "rt_allseed_",  "_numrep_", j, "_R_" , i , ".png"),
-   height = 10,
-    width = 13,
-    create.dir = T
-  )
-
-
-ggsave(PLOT_PAR_SIM_ALPHA, filename = paste0(fig_folder, "/", "enem_", enemy, "/", "alpha_allseed_",  "numrep_", j, "_R_" , i  , ".png"),
-   height = 10,
-    width = 13,
-    create.dir = T
-  )
-
-}
-}
-}
 
 
 
