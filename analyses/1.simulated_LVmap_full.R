@@ -42,34 +42,35 @@ if(type_data == "simulated.data"){
 # 3. DATA TRANSFORMATIONS AND OUTPUT FIGRES
 # ============================================================================
 
+
 # Option 1: Convert to differences (if dif_cond = TRUE)
 if (dif_cond == TRUE) {
-  out_folder <- paste0(out_folder, "differences/")
-  fig_folder <- paste0(fig_folder, "differences/")
+  out_subfolder <- paste0(out_folder, "differences/")
+  fig_subfolder <- paste0(fig_folder, "differences/")
   DATA_PRED <- df_differencer_lv(DATA_PRED)
   ts_plot_inputR <- ts_plotter_data(DATA_PRED, plotted_var = c("R", "X", "Y"))
 } else {
-  out_folder <- paste0(out_folder, "absolute/")
-    fig_folder <- paste0(fig_folder, "absolute/")
+  out_subfolder <- paste0(out_folder, "absolute/")
+    fig_subfolder <- paste0(fig_folder, "absolute/")
 
 }
 
 # Option 2: Normalize data (min-max scaling, if norm_data = TRUE)
 if (norm_data == TRUE) {
-  out_folder <- paste0(out_folder, "normalized/")
-      fig_folder <- paste0(fig_folder, "normalized/")
+  out_subfolder <- paste0(out_subfolder, "normalized/")
+      fig_subfolder <- paste0(fig_subfolder, "normalized/")
 
   DATA_PRED <- max_normalization(DATA_PRED)
   ts_plot_inputR <- ts_plotter_data(DATA_PRED, plotted_var = c("R", "X", "Y"))
   ts_plot_norm <- ts_plotter_data(DATA_PRED, plotted_var = c("R", "X", "Y"))
 } else {
-  out_folder <- paste0(out_folder, "not_normalized/")
-      fig_folder <- paste0(fig_folder, "not_normalized/")
+  out_subfolder <- paste0(out_subfolder, "not_normalized/")
+      fig_subfolder <- paste0(fig_subfolder, "not_normalized/")
 
 }
 
 # Create output directory
-dir.create(paste0(out_folder), recursive = TRUE)
+dir.create(paste0(out_subfolder), recursive = TRUE)
 
 #============================
 
@@ -103,8 +104,8 @@ for (e in v_enemigos) {
   
   print(head(DATA_PRED))  # Debug: show first few rows
   
-  # Run cross-validation for this enemy
-  lv_looper_lists_general(
+  # Run cross-validation for this enemy 
+  lv_looper_lists_general(  #need the outsubfoder.. 
     data_used = DATA_PRED, 
     v_num_rep = v_num_rep, 
     v_rpresent = v_rpresent, 
@@ -145,5 +146,11 @@ plotter_full_parameters(df_full = full_df, fig_folder = fig_folder)
 ##========================================================================================
 
 
+##how to call the full df wo running everything 
+
+#call the fig folder you want
+
+
+full_df <- read.csv()
 #########################################333
 ################################################3

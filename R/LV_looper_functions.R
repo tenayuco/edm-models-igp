@@ -6,16 +6,16 @@ lv_looper_lists_general <- function(data_used, v_num_rep, v_rpresent, v_num_seed
      num_rep <- num_rep
       rpresent <- rpresent
 
-      out_subfolder <- paste0("enem_", enemigo, "/", "numrep_", num_rep, "/", "R_", rpresent, "/") ## Creates a subfolder name based on time length and noise level chosen
+      out_lv <- paste0("enem_", enemigo, "/", "numrep_", num_rep, "/", "R_", rpresent, "/") ## Creates a subfolder name based on time length and noise level chosen
 
      # out_subfolder <- paste0("numrep_", num_rep, "/", "R_", rpresent, "/") ## Cn
-      fig_subfolder <- out_subfolder
+      fig_lv <- out_lv
   
   
-    if (file.exists(paste0(out_folder, out_subfolder))) {
+    if (file.exists(paste0(out_subfolder, out_lv))) {
       print("files exists already. Verifiy before or erase before running any simulation")
     } else {
-      dir.create(paste0(out_folder, out_subfolder), recursive = TRUE)
+      dir.create(paste0(out_subfolder, out_lv), recursive = TRUE)
       
       #htne i loop over the seeds (the reshuffling)
       for (num_seed in v_num_seed) {
@@ -35,8 +35,8 @@ lv_looper_lists_general <- function(data_used, v_num_rep, v_rpresent, v_num_seed
 
             saveRDS(list_treatment,
               paste0(
-                out_folder,
                 out_subfolder,
+                out_lv,
                 "listTreatment_",
                 "enem_",
                 enemigo,
