@@ -69,7 +69,8 @@ LONG_FULL$numSeed <- list_treatment_used$treatment[["num_seed"]]
 LONG_FULL$rpresent <- list_treatment_used$treatment[["rpresent"]]
 LONG_FULL$enem <- list_treatment_used$treatment[["enem"]]
 
-
+LONG_FULL$norm <- norm_data
+LONG_FULL$dif_cond <- dif_cond
 
   
 return(LONG_FULL)

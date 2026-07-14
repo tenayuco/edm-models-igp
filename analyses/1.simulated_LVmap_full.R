@@ -136,12 +136,12 @@ tictoc::toc()  # End timing and display elapsed time
 
 
 
-plot_per_treatment(out_folder, true_values = FALSE) #we dont want the true values of the eq
+plot_per_treatment(out_subfolder= out_subfolder, true_values = FALSE) #we dont want the true values of the eq
 
 
-full_df <- extract_par_all_treatment(out_folder, coex_cal = FALSE) ##generates the file  (that you can download late just to run the full parameters, but chose how many simulaciones!)
+full_df <- extract_par_all_treatment(out_subfolder= out_subfolder, coex_cal = FALSE) ##generates the file  (that you can download late just to run the full parameters, but chose how many simulaciones!)
 
-plotter_full_parameters(df_full = full_df, fig_folder = fig_folder)
+plotter_full_parameters(df_full = full_df, fig_subfolder = fig_subfolder)
 
 ##========================================================================================
 

@@ -1,11 +1,11 @@
 
 ########function to plot per treatment
 
-plot_per_treatment <- function(out_folder, true_values){
+plot_per_treatment <- function(out_subfolder, true_values){
 
 ##new method..
   # One-liner
-all_dirs <- list.dirs(out_folder, recursive = TRUE)[-1]  # -1 removes the first element (root)
+all_dirs <- list.dirs(out_subfolder, recursive = TRUE)[-1]  # -1 removes the first element (root)
 
 vec_treatments <- setdiff(all_dirs, dirname(all_dirs))
 
@@ -13,9 +13,9 @@ for (treatment in vec_treatments){
   for (i in seq(1:length(list.files(treatment,  pattern = ".rds")))){
   num_seed <- i
   print(list.files(treatment,  pattern = ".rds")[i])
-    
+    #fig subdolder is defined externallhy, waht out! 
   list_used <- readRDS(paste0(treatment,"/" , list.files(treatment,  pattern = ".rds")[i]))
-  fig_path <- paste0(fig_folder, stringr::str_remove(treatment, out_folder), "/")
+  fig_path <- paste0(fig_subfolder, stringr::str_remove(treatment, out_subfolder), "/")
   plotter_lv_map_treatment(list_used, fig_path = fig_path, num_seed = num_seed, true_values = true_values)
   }
 }
@@ -25,13 +25,13 @@ for (treatment in vec_treatments){
 #######now a function to stract the general plot of all treatments#####
 
 
-extract_par_all_treatment <- function(out_folder, coex_cal = TRUE){
+extract_par_all_treatment <- function(out_subfolder, coex_cal = TRUE){
 
 full_df<-  data.frame()
   
 ##new method..
   # One-liner
-all_dirs <- list.dirs(out_folder, recursive = TRUE)[-1]  # -1 removes the first element (root)
+all_dirs <- list.dirs(out_subfolder, recursive = TRUE)[-1]  # -1 removes the first element (root)
 
 vec_treatments <- setdiff(all_dirs, dirname(all_dirs))  
 
@@ -48,7 +48,7 @@ for (treatment in vec_treatments){
 
 simulaciones <-  length(unique(full_df$numSeed))
 print(head(full_df))
-write.csv(full_df, file= paste0(out_folder, "FULL_DF_parameters_", "numseed_", simulaciones, ".csv"))
+write.csv(full_df, file= paste0(out_subfolder, "FULL_DF_parameters_", "numseed_", simulaciones, ".csv"))
 
 return(full_df)
 
@@ -62,9 +62,17 @@ return(full_df)
 merger_data_frame_treatment <- function(out_folder, coex_cal = TRUE){
 
 
+all_df_csv <- list.files(out_folder, recursive = TRUE, pattern = ".csv")  #
 
-  
+  general_csv <-  data.frame()
+
+  for (i in all_df_csv){
+    df <- read.csv(i)
+    general_csv <- rbind(general_csv, i)
+    }
 }
+
+
   
 
 
