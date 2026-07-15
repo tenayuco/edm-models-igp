@@ -145,8 +145,9 @@ tictoc::toc()  # End timing and display elapsed time
 
 #========================I.C PLOT LV <MICRSO ============================
 
+##i dont wanna run tis
 
-plot_per_treatment(out_subfolder = out_subfolder, true_values = FALSE) #we dont want the true values of the eq
+#plot_per_treatment(out_subfolder = out_subfolder, true_values = FALSE) #we dont want the true values of the eq
 
 
 ##this is to take the full df that might existe already 

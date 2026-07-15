@@ -252,6 +252,7 @@ full_df_sum <- df_full |>
 
 
 full_df_sum <- full_df_sum |> 
+    dplyr::ungroup()|> 
       dplyr::group_by(type) |>  # Scale separately for each type (interactions a, and r) and acroos all enemies. (but we can check within enemies with group by enem and type)
       dplyr::mutate(
         max_abs = max(abs(grand_mean)),
@@ -271,9 +272,13 @@ plot_par_allconditions <- function(df_sum){
    # dplyr::filter(type == par_type) |> 
     dplyr::mutate(varName = factor(varName, levels = var_order)) |>
     ggplot(aes(x= varName, y= plot_mean)) +
-    geom_errorbar(aes(ymin=plot_mean- 1*plot_sd,  ymax=plot_mean+ 1*plot_sd, color= as.factor(type), linetype = as.factor(rpresent)), width=.2,
-                 position=position_dodge(0.5), linewidth=1.5)+
-    geom_point(aes(color= as.factor(type)), position=position_dodge(0.5), size=3)+
+    geom_errorbar(aes(ymin=plot_mean- 1*plot_sd,  ymax=plot_mean+ 1*plot_sd, group= interaction(type, rpresent),  color= as.factor(type)), width=.2,
+                 position=position_dodge(0.6), linewidth=1)+
+    geom_point(aes(color= as.factor(type), shape=as.factor(rpresent)), fill="white",  position=position_dodge(0.6), size=3)+
+    scale_shape_manual(
+      values = c("FALSE" = 21, "TRUE" = 17),  # 1 = empty circle, 17 = filled triangle
+      name = "rpresent"
+    )+
 
     xlab("Replicate and variable") +
     ggtitle(paste0("kernel_chosen ", kernel_chosen)) +
@@ -281,7 +286,7 @@ plot_par_allconditions <- function(df_sum){
     facet_wrap(enem~type, scales = "free", ncol= 4)+
     
     geom_hline(yintercept = 0, color= "black", linetype= "dashed")+
-     scale_color_viridis_d(begin=0, end= 0.7, option = "A", direction = -1) +
+     scale_color_viridis_d(begin=0, end= 0.7, option = "A", direction = 1) +
 
     theme_bw()
 

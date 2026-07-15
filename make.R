@@ -78,7 +78,8 @@ source("./analyses/0.simulatedData.R")
 #
 #norm_data <-  FALSE
 #lv_scearios <- scenarios_lblb
-lv_scenarios <- ("pbpb_model_3")
+#lv_scenarios <- ("pbpb_model_3")
+lv_scenarios <- scenarios
 
 tic()
 #or source if you wanto to have the full analisis 

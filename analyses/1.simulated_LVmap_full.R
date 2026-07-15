@@ -97,7 +97,7 @@ dir.create(paste0(out_subfolder), recursive = TRUE)
 # Parameters for the LV map cross-validation loop
 v_num_rep <- c(1) # Number of replicates (fixed at 1 due to short time series)
 v_rpresent <- c(FALSE, TRUE) # Whether to include R (resource) in the model
-v_num_seed <- #seq(1:30) # Random seeds for data shuffling/re-sampling
+v_num_seed <- seq(1:30) # Random seeds for data shuffling/re-sampling
 v_enemigos <- unique(DATA_PRED$enem) # List of enemy species/treatments to analyze
 kernel_chosen <- "state" # Kernel type to use
 
@@ -141,8 +141,11 @@ tictoc::toc() # End timing and display elapsed time
 
 #========================I.C PLOT LV SIMULATIONS ============================
 
-plot_per_treatment(out_subfolder = out_subfolder, true_values = FALSE) #we dont want the true values of the eq
 
+#activate this for theplot per treatment 
+
+
+#plot_per_treatment(out_subfolder = out_subfolder, true_values = FALSE) #we dont want the true values of the eq
 
 simulaciones <- length(v_num_seed)
 
@@ -157,7 +160,7 @@ if (
   full_df <- extract_par_all_treatment(out_subfolder = out_subfolder,coex_cal = FALSE
   ) ##generates the file  (that you can download late just to run the full parameters, but chose how many simulaciones!)
   print(head(full_df))
-  
+
   write.csv(full_df,file = paste0(out_subfolder,"FULL_DF_parameters_","numseed_",simulaciones,".csv"
     )
   )
