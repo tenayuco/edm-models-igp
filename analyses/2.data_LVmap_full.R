@@ -13,7 +13,6 @@
 
 type_data= "real.data"  #data from the experiments
 dif_cond <-  FALSE
-norm_data <-  FALSE
 
 # ============================================================================
 # 2. LOAD AND FILTER DATA
@@ -55,7 +54,7 @@ DATA_PRED <- DATA_PRED |>
 DATA_PRED <- zero_remover_raw(DATA_PRED)
 
 # Create time series plots to visualize the raw data
-ts_plot_normal <- ts_plotter_data(DATA_PRED, plotted_var = c("R", "X", "Y"))
+#ts_plot_normal <- ts_plotter_data(DATA_PRED, plotted_var = c("R", "X", "Y"))
 
 
 
@@ -66,36 +65,34 @@ ts_plot_normal <- ts_plotter_data(DATA_PRED, plotted_var = c("R", "X", "Y"))
 # Option 1: Convert to differences (if dif_cond = TRUE)
 # This transforms the data from absolute values to changes between time points
 if (dif_cond == TRUE) {
-  out_folder <- paste0(out_folder, "differences/")
-  fig_folder <- paste0(fig_folder, "differences/") 
+  out_subfolder <- paste0(out_folder, "differences/")
+  fig_subfolder <- paste0(fig_folder, "differences/")
   DATA_PRED <- df_differencer_lv(DATA_PRED)
-  ts_plot_inputR <- ts_plotter_data(DATA_PRED, plotted_var = c("R", "X", "Y"))
+  #ts_plot_inputR <- ts_plotter_data(DATA_PRED, plotted_var = c("R", "X", "Y"))
 } else {
-  out_folder <- paste0(out_folder, "absolute/")
-    fig_folder <- paste0(fig_folder, "absolute/") 
-
+  out_subfolder <- paste0(out_folder, "absolute/")
+  fig_subfolder <- paste0(fig_folder, "absolute/")
 }
 
 # Option 2: Normalize data using min-max scaling (if norm_data = TRUE)
 # This scales all variables to range [0,1]
 if (norm_data == TRUE) {
-  out_folder <- paste0(out_folder, "normalized/")
-  fig_folder <- paste0(fig_folder, "normalized/") 
+  out_subfolder <- paste0(out_subfolder, "normalized/")
+  fig_subfolder <- paste0(fig_subfolder, "normalized/")
 
   DATA_PRED <- max_normalization(DATA_PRED)
-  ts_plot_inputR <- ts_plotter_data(DATA_PRED, plotted_var = c("R", "X", "Y"))
-  ts_plot_norm <- ts_plotter_data(DATA_PRED, plotted_var = c("R", "X", "Y"))
+ # ts_plot_inputR <- ts_plotter_data(DATA_PRED, plotted_var = c("R", "X", "Y"))
+  #ts_plot_norm <- ts_plotter_data(DATA_PRED, plotted_var = c("R", "X", "Y"))
 } else {
-  out_folder <- paste0(out_folder, "not_normalized/")
-    fig_folder <- paste0(fig_folder, "not_normalized/") 
-
+  out_subfolder <- paste0(out_subfolder, "not_normalized/")
+  fig_subfolder <- paste0(fig_subfolder, "not_normalized/")
 }
 
 # ============================================================================
 # 6. CREATE OUTPUT DIRECTORY
 # ============================================================================
 
-dir.create(paste0(out_folder), recursive = TRUE)
+dir.create(paste0(out_subfolder), recursive = TRUE)
 
 
 # ============================================================================
@@ -104,7 +101,7 @@ dir.create(paste0(out_folder), recursive = TRUE)
 
 # Parameters for the LV map cross-validation
 v_num_rep <- c(1)                     # Number of replicates (fixed due to limited time points)
-v_rpresent <- c(FALSE, TRUE)          # Whether to include R (resource) in the model
+v_rpresent <- c(FALSE)  #c(FALSE, TRUE)          # Whether to include R (resource) in the model
 v_num_seed <- seq(1:2)                # Random seeds for data shuffling
 v_enemigos <- unique(DATA_PRED$enem)  # List of enemy species/treatments to analyze
 kernel_chosen <- "state"              # Kernel type for the LV model
@@ -149,16 +146,43 @@ tictoc::toc()  # End timing and display elapsed time
 #========================I.C PLOT LV <MICRSO ============================
 
 
-source("./analyses/1_2.plot_extract_per_treatment.R")
-source("./analyses/1_2.plotter_LV.R")
+plot_per_treatment(out_subfolder = out_subfolder, true_values = FALSE) #we dont want the true values of the eq
 
 
-plot_per_treatment(out_folder, true_values = FALSE)
+##this is to take the full df that might existe already 
+simulaciones <- length(v_num_seed)
 
-full_df <- extract_par_all_treatment(out_folder) ##generates the file
+
+##check this and tun
+if (
+  file.exists(paste0(out_subfolder,"FULL_DF_parameters_","numseed_",simulaciones,".csv"
+  ))) {
+  full_df <-  read.csv(paste0(out_subfolder, "FULL_DF_parameters_","numseed_",simulaciones,".csv"))
+  print("file exist")
+}else{
+  full_df <- extract_par_all_treatment(out_subfolder = out_subfolder,coex_cal = FALSE
+  ) ##generates the file  (that you can download late just to run the full parameters, but chose how many simulaciones!)
+  print(head(full_df))
+  
+  write.csv(full_df,file = paste0(out_subfolder,"FULL_DF_parameters_","numseed_",simulaciones,".csv"
+    )
+  )
+}
+
+plotter_full_parameters(df_full = full_df, fig_subfolder = fig_subfolder)
+
+#plotter_full_parameters_microcosmos(df_full = full_df, fig_folder = fig_folder)
+#full plot
+
+full_sum <- summarizer_with_variance(df_full = full_df)
+
+#plotter_save_conditions(df_sum = full_sum, fig_subfolder = fig_subfolder, abs_norm_values = "norm")
+plotter_save_conditions(df_sum = full_sum, fig_subfolder = fig_subfolder, abs_norm_values = "abs")
 
 
-plotter_full_parameters_microcosmos(df_full = full_df, fig_folder = fig_folder)
+#==========
+
+
 
 ## coexistence valuess. 
 #plotter_theta_microcosmos(df_full = full_df, fig_folder = fig_folder)

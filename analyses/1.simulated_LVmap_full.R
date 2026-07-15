@@ -97,7 +97,7 @@ dir.create(paste0(out_subfolder), recursive = TRUE)
 # Parameters for the LV map cross-validation loop
 v_num_rep <- c(1) # Number of replicates (fixed at 1 due to short time series)
 v_rpresent <- c(FALSE, TRUE) # Whether to include R (resource) in the model
-v_num_seed <- seq(1:30) # Random seeds for data shuffling/re-sampling
+v_num_seed <- #seq(1:30) # Random seeds for data shuffling/re-sampling
 v_enemigos <- unique(DATA_PRED$enem) # List of enemy species/treatments to analyze
 kernel_chosen <- "state" # Kernel type to use
 
@@ -110,15 +110,15 @@ kernel_chosen <- "state" # Kernel type to use
 tictoc::tic() # Start timing
 for (e in v_enemigos) {
   # Filter data for current enemy
-  DATA_PRED <- DATA_PRED |>
+  DATA_PRED_EN <- DATA_PRED |>
     dplyr::filter(enem == e)
 
-  print(head(DATA_PRED)) # Debug: show first few rows
+  print(head(DATA_PRED_EN)) # Debug: show first few rows
 
   # Run cross-validation for this enemy
   lv_looper_lists_general(
     #need the outsubfoder..
-    data_used = DATA_PRED,
+    data_used = DATA_PRED_EN,
     v_num_rep = v_num_rep,
     v_rpresent = v_rpresent,
     v_num_seed = v_num_seed,
@@ -149,32 +149,16 @@ simulaciones <- length(v_num_seed)
 
 ##check this and tun
 if (
-  file.exists(paste0(
-    out_subfolder,
-    "FULL_DF_parameters_",
-    "numseed_",
-    simulaciones,
-    ".csv"
+  file.exists(paste0(out_subfolder,"FULL_DF_parameters_","numseed_",simulaciones,".csv"
   ))) {
-  full_df <-  read.csv(paste0(out_subfolder, "FULL_DF_parameters_",
-    "numseed_",
-    simulaciones,
-    ".csv"))
+  full_df <-  read.csv(paste0(out_subfolder, "FULL_DF_parameters_","numseed_",simulaciones,".csv"))
   print("file exist")
 }else{
-  full_df <- extract_par_all_treatment(
-    out_subfolder = out_subfolder,
-    coex_cal = FALSE
+  full_df <- extract_par_all_treatment(out_subfolder = out_subfolder,coex_cal = FALSE
   ) ##generates the file  (that you can download late just to run the full parameters, but chose how many simulaciones!)
   print(head(full_df))
-  write.csv(
-    full_df,
-    file = paste0(
-      out_subfolder,
-      "FULL_DF_parameters_",
-      "numseed_",
-      simulaciones,
-      ".csv"
+  
+  write.csv(full_df,file = paste0(out_subfolder,"FULL_DF_parameters_","numseed_",simulaciones,".csv"
     )
   )
 }
@@ -187,7 +171,8 @@ plotter_full_parameters(df_full = full_df, fig_subfolder = fig_subfolder)
 
 full_sum <- summarizer_with_variance(df_full = full_df)
 
-plotter_save_conditions(df_sum = full_sum, fig_subfolder = fig_subfolder)
+plotter_save_conditions(df_sum = full_sum, fig_subfolder = fig_subfolder, abs_norm_values = "abs")
+
 
 #==========
 

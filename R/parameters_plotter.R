@@ -145,11 +145,14 @@ shapes_used <- c(21, 22, 23, 24, 21, 22, 23, 24, 21, 22, 23, 24)
 
 
 
-parameter_seed_plotter <- function(df_full = FULL_DF_PARAMETERS, par_type = "r"){
+old_parameter_seed_plotter <- function(df_full = FULL_DF_PARAMETERS, par_type = "r"){
 
+  var_order <- c("Y.Y", "X.X", "X.Y", "Y.X", "R.R", "R.Y", "Y.R", "R.X", "X.R", "Y", "X", "R")
 
   par_plot <- df_full |> 
-    dplyr::filter(type == par_type) |> 
+    dplyr::filter(type == par_type) |>
+    dplyr::mutate(varName = factor(varName, levels = var_order)) |>
+
     ggplot(aes(x= varName, y= mvalue.mean)) +
     geom_errorbar(aes(ymin=mvalue.mean- 1*mvalue.sd,  ymax=mvalue.mean+ 1*mvalue.sd, color= as.factor(numSeed)), width=.2,
                  position=position_dodge(0.3))+
@@ -273,6 +276,17 @@ full_df_sum <- df_full |>
   dplyr::summarise(grand_mean = mean(mvalue.mean), var_between = var(mvalue.mean), var_within= mean(mvalue.sd**2)) |> 
   dplyr::mutate(total_sd =sqrt(var_between+var_within))
 
+
+full_df_sum <- full_df_sum |> 
+      dplyr::group_by(type) |>  # Scale separately for each type (interactions a, and r) and acroos all enemies. (but we can check within enemies with group by enem and type)
+      dplyr::mutate(
+        max_abs = max(abs(grand_mean)),
+        norm_grand_mean = grand_mean / max_abs,
+        norm_total_sd = total_sd / max_abs
+      ) |> 
+      dplyr::select(!max_abs)
+  
+  
   return(full_df_sum)
 }
 
@@ -282,15 +296,15 @@ plot_par_allconditions <- function(df_sum){
   par_plot <- df_sum |> 
    # dplyr::filter(type == par_type) |> 
     dplyr::mutate(varName = factor(varName, levels = var_order)) |>
-    ggplot(aes(x= varName, y= grand_mean)) +
-    geom_errorbar(aes(ymin=grand_mean- 1*total_sd,  ymax=grand_mean+ 1*total_sd, color= as.factor(rpresent)), width=.2,
+    ggplot(aes(x= varName, y= plot_mean)) +
+    geom_errorbar(aes(ymin=plot_mean- 1*plot_sd,  ymax=plot_mean+ 1*plot_sd, color= as.factor(type), linetype = as.factor(rpresent)), width=.2,
                  position=position_dodge(0.5), linewidth=1.5)+
-    geom_point(aes(color= as.factor(rpresent)), position=position_dodge(0.5), size=3)+
+    geom_point(aes(color= as.factor(type)), position=position_dodge(0.5), size=3)+
 
     xlab("Replicate and variable") +
     ggtitle(paste0("kernel_chosen ", kernel_chosen)) +
 
-    facet_wrap(~enem, scales = "free", ncol= 3)+
+    facet_wrap(enem~type, scales = "free", ncol= 4)+
     
     geom_hline(yintercept = 0, color= "black", linetype= "dashed")+
      scale_color_viridis_d(begin=0, end= 0.7, option = "A", direction = -1) +

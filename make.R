@@ -101,13 +101,14 @@ print("totalTIME")
 
 #here you can add a loop to have the time or spatial kernel kernel_v= c("state", "time")
 
-kernel_chosen <- "state"
-dif_cond <- FALSE
+tic()
+#or source if you wanto to have the full analisis 
+  for(norm_data in c(FALSE, TRUE)){
 
 tic()
 source("./analyses/2.data_LVmap_full.R")
 toc()
-  
+  }
 
 
 

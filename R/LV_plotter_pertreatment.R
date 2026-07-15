@@ -163,11 +163,12 @@ FULL_DF_PARAMETERS_M <- df_full|>
   
 enemy <-  unique(FULL_DF_PARAMETERS_M$enem)
   
-for(i in c(TRUE, FALSE)){
+for(i in unique(FULL_DF_PARAMETERS_M$rpresent)){
   for(j in unique(FULL_DF_PARAMETERS_M$numRep)){
 
 FULL_DF <-  FULL_DF_PARAMETERS_M |> 
-  dplyr::filter(rpresent == i)
+  dplyr::filter(rpresent == i)|> 
+  dplyr::filter(numRep == j)
   
 ## without R
 
@@ -194,7 +195,7 @@ ggsave(PLOT_PAR_SIM_ALPHA, filename = paste0(fig_subfolder, "alpha_allseed_",  "
 
 
 
-plotter_full_parameters_microcosmos <- function(df_full, fig_folder){  ##WE HAVE TO CORRECTTHIS
+old_plotter_full_parameters_microcosmos <- function(df_full, fig_folder){  ##WE HAVE TO CORRECTTHIS
 
 #just if you have several treatments 
 FULL_DF_PARAMETERS_M <- df_full|> 
@@ -204,6 +205,7 @@ FULL_DF_PARAMETERS_M <- df_full|>
 
   
 ##now its the full, so i divide it
+enemy <-  unique(FULL_DF_PARAMETERS_M$enem)
 
     
 for(i in c(TRUE, FALSE)){
@@ -297,18 +299,28 @@ ggsave(PLOT_PAR_THETA, filename = paste0(fig_folder, "omega_allrep_allr_allseed_
 
 
 
-plotter_save_conditions <- function(df_sum, fig_subfolder){
+plotter_save_conditions <- function(df_sum, fig_subfolder, abs_norm_values){
+
+
+if (abs_norm_values == "norm"){
+  df_sum <-  df_sum |> 
+    dplyr::rename(plot_mean ="norm_grand_mean" ,
+  plot_sd = "norm_total_sd")
+}
+if(abs_norm_values== "abs"){
+   df_sum <-  df_sum |> 
+    dplyr::rename(plot_mean ="grand_mean" ,
+  plot_sd = "total_sd")
+}
 
 
 PLOT_GENERAL <- plot_par_allconditions(df_sum)
 
 
-ggsave(PLOT_GENERAL, filename = paste0(fig_subfolder, "all_parameters.png"),
+ggsave(PLOT_GENERAL, filename = paste0(fig_subfolder, "all_parameters_", "values_", abs_norm_values,  ".png"),
    height = 10,
     width = 13,
     create.dir = T
   )
-
-
 
 }
