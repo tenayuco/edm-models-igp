@@ -33,24 +33,33 @@ scenarios <- c(scenarios_lblb, scenarios_pbpb)
 #========================================================================
 
 #or for short example:
-#scenarios <- c("lblb_model_0")
+scenarios_chosen <- c("pbpb_model_3")
 
 #loop to generate multiple scenarios of simulated data 
 #long scenarios for reference, shorts for the analyis
 #we need to have coexistence to catch the signal 
-for (i in scenarios){
-  for (len in c(300, 20)){  #we have a 300 to see the whole dynamic,s and a 20 that it the one we are using, with 10 replicates
+data_folder <- paste0("./data/simulated.data/") 
+
+for (i in scenarios_chosen){
+
+#names of the folders
 chosen_scenario <- i
+
+if(dir.exists(paste0(data_folder, chosen_scenario))){print("you already have the data for this sceanrio")
+}else {
+
+for (len in c(300, 20)){  #we have a 300 to see the whole dynamic,s and a 20 that it the one we are using, with 10 replicates
 len_chosen <- len
 
 #this will set the correct parameters per model and create the list of models
-source("./analyses/0.set_LBLB_model.R")
+source("./analyses/0.set_LBPB_model.R")
   
 if (i %in% scenarios_lblb){chosen_MODEL <- LBLB_LV_list }
 if (i %in% scenarios_pbpb){chosen_MODEL <- PBPB_LV_list }
 
 #then it will run the analysis and save the dataframe in DAta
 source("./analyses/0.simulatedData.R")
+}
 }
 }
 
@@ -68,11 +77,13 @@ source("./analyses/0.simulatedData.R")
 #chosen_scenario <- "lblb_model_0"  ##scenario chosen, to now from where take the data
 #
 #norm_data <-  FALSE
+#lv_scearios <- scenarios_lblb
+lv_scenarios <- ("pbpb_model_3")
 
 tic()
 #or source if you wanto to have the full analisis 
   for(norm_data in c(FALSE, TRUE)){
-    for (chosen_scenario in scenarios_lblb){
+    for (chosen_scenario in lv_scenarios){
  tic()
   print(paste0("norm_data", norm_data, 'chosen_sce', chosen_scenario))
  source("./analyses/1.simulated_LVmap_full.R")

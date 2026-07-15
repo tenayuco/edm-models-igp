@@ -221,7 +221,7 @@ PBPB_LV_parms <- c(
   Ep = 0.5,
   frp = 0.6,   ### if wwe suppose both r and n to be biomass, we extract that when n=r=1/2 hn (to reach the linear assumtoption), then frp should be cp/4
   fnp = 0.6,
-  frn = 5, ## hrtr is cn/2
+  frn = 3, ## hrtr is cn/2
   mun = 1.1,
   mup = 0.33, ## to compare with hin, they have mun = 1 (Tp) + 0.3,  and mup = 0.3 (maintenance) + 0.03 death rate
  #here is dfi
