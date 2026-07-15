@@ -195,54 +195,6 @@ ggsave(PLOT_PAR_SIM_ALPHA, filename = paste0(fig_subfolder, "alpha_allseed_",  "
 
 
 
-old_plotter_full_parameters_microcosmos <- function(df_full, fig_folder){  ##WE HAVE TO CORRECTTHIS
-
-#just if you have several treatments 
-FULL_DF_PARAMETERS_M <- df_full|> 
-  dplyr::select(!replicate)|> 
-  dplyr::group_by(varName, type, numSeed, rpresent, numRep, enem)|> 
-  dplyr::summarise_all(mean)
-
-  
-##now its the full, so i divide it
-enemy <-  unique(FULL_DF_PARAMETERS_M$enem)
-
-    
-for(i in c(TRUE, FALSE)){
-  for(j in unique(FULL_DF_PARAMETERS_M$numRep)){
-
-FULL_DF <-  FULL_DF_PARAMETERS_M |> 
-  dplyr::filter(rpresent == i)|> 
-  dplyr::filter(numRep == j)
-  
-
-PLOT_PAR_RT <-  parameter_seed_plotter(df_full = FULL_DF , par_type = "r")
-PLOT_PAR_ALPHA <-  parameter_seed_plotter(df_full = FULL_DF , par_type = "a")
-
-ggsave(PLOT_PAR_RT, filename = paste0(fig_folder, "rt_allrep_allr_allseed_", "numrep_", j, "_R_" , i, ".png"),
-   height = 10,
-    width = 13,
-    create.dir = T
-  )
-
-
-  
-
-ggsave(PLOT_PAR_ALPHA, filename = paste0(fig_folder, "alpha_allrep_allr_allseed_","numrep_", j, "_R_" , i, ".png"),
-   height = 10,
-    width = 13,
-    create.dir = T
-  )
-  }
-}
-}
-
-
-
-
-
-
-
 
 
 
