@@ -74,7 +74,7 @@ tic()
   for(norm_data in c(FALSE, TRUE)){
     for (chosen_scenario in scenarios_lblb){
  tic()
-  print(paste0("norm_data", norm_data, 'chosensce', chosen_scenario))
+  print(paste0("norm_data", norm_data, 'chosen_sce', chosen_scenario))
  source("./analyses/1.simulated_LVmap_full.R")
  toc()
 

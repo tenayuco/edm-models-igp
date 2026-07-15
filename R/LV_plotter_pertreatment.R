@@ -175,14 +175,14 @@ PLOT_PAR_SIM_RT <-  parameter_r_alpha_plotter(df_full = FULL_DF, par_type = "r")
 PLOT_PAR_SIM_ALPHA <-  parameter_r_alpha_plotter(df_full = FULL_DF, par_type = "a")
 
 
-ggsave(PLOT_PAR_SIM_RT, filename = paste0(fig_subfolder, "/", "enem_", enemy, "/", "rt_allseed_",  "_numrep_", j, "_R_" , i , ".png"),
+ggsave(PLOT_PAR_SIM_RT, filename = paste0(fig_subfolder, "rt_allseed_",  "_numrep_", j, "_R_" , i , ".png"),
    height = 10,
     width = 13,
     create.dir = T
   )
 
 
-ggsave(PLOT_PAR_SIM_ALPHA, filename = paste0(fig_subfolder, "/", "enem_", enemy, "/", "alpha_allseed_",  "numrep_", j, "_R_" , i  , ".png"),
+ggsave(PLOT_PAR_SIM_ALPHA, filename = paste0(fig_subfolder, "alpha_allseed_",  "numrep_", j, "_R_" , i  , ".png"),
    height = 10,
     width = 13,
     create.dir = T
@@ -194,7 +194,7 @@ ggsave(PLOT_PAR_SIM_ALPHA, filename = paste0(fig_subfolder, "/", "enem_", enemy,
 
 
 
-plotter_full_parameters_microcosmos <- function(df_full, fig_folder){
+plotter_full_parameters_microcosmos <- function(df_full, fig_folder){  ##WE HAVE TO CORRECTTHIS
 
 #just if you have several treatments 
 FULL_DF_PARAMETERS_M <- df_full|> 
@@ -275,7 +275,7 @@ ggsave(PLOT_PAR_THETA, filename = paste0(fig_folder, "theta_allrep_allr_allseed_
 
 
 
-plotter_omega_microcosmos <- function(df_full, fig_folder){
+plotter_omega_microcosmos <- function(df_sum, fig_folder){
 
 #just if you have several treatments (replicatess)
 FULL_DF_PARAMETERS_M <- df_full|> 
@@ -296,4 +296,19 @@ ggsave(PLOT_PAR_THETA, filename = paste0(fig_folder, "omega_allrep_allr_allseed_
 }
 
 
-  
+
+plotter_save_conditions <- function(df_sum, fig_subfolder){
+
+
+PLOT_GENERAL <- plot_par_allconditions(df_sum)
+
+
+ggsave(PLOT_GENERAL, filename = paste0(fig_subfolder, "all_parameters.png"),
+   height = 10,
+    width = 13,
+    create.dir = T
+  )
+
+
+
+}

@@ -46,9 +46,7 @@ for (treatment in vec_treatments){
   }
 }
 
-simulaciones <-  length(unique(full_df$numSeed))
-print(head(full_df))
-write.csv(full_df, file= paste0(out_subfolder, "FULL_DF_parameters_", "numseed_", simulaciones, ".csv"))
+
 
 return(full_df)
 

@@ -284,8 +284,8 @@ plot_par_allconditions <- function(df_sum){
     dplyr::mutate(varName = factor(varName, levels = var_order)) |>
     ggplot(aes(x= varName, y= grand_mean)) +
     geom_errorbar(aes(ymin=grand_mean- 1*total_sd,  ymax=grand_mean+ 1*total_sd, color= as.factor(rpresent)), width=.2,
-                 position=position_dodge(0.3))+
-    geom_point(aes(color= as.factor(rpresent)), position=position_dodge(0.3))+
+                 position=position_dodge(0.5), linewidth=1.5)+
+    geom_point(aes(color= as.factor(rpresent)), position=position_dodge(0.5), size=3)+
 
     xlab("Replicate and variable") +
     ggtitle(paste0("kernel_chosen ", kernel_chosen)) +
@@ -293,7 +293,7 @@ plot_par_allconditions <- function(df_sum){
     facet_wrap(~enem, scales = "free", ncol= 3)+
     
     geom_hline(yintercept = 0, color= "black", linetype= "dashed")+
-     scale_color_viridis_d() +
+     scale_color_viridis_d(begin=0, end= 0.7, option = "A", direction = -1) +
 
     theme_bw()
 
