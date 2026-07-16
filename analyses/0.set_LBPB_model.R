@@ -162,8 +162,6 @@ LBLB_LV_parms <- c(
 }
 
 
-
-
 if (chosen_scenario == "pbpb_model_1"){
 
 PBPB_LV_parms <- c(
@@ -228,6 +226,55 @@ PBPB_LV_parms <- c(
   S = 0.5,   #S =0.5
   Ip= 1, 
   In= 4,
+  phiN= 0.5,
+  phiP=0
+
+) #here the Sr different
+
+}
+
+
+if (chosen_scenario == "pbpb_model_4"){
+
+PBPB_LV_parms <- c(
+  rho = 1,
+  K = 5,
+  En = 0.5,
+  Ep = 0.5,
+  frp = 0.6,   ### if wwe suppose both r and n to be biomass, we extract that when n=r=1/2 hn (to reach the linear assumtoption), then frp should be cp/4
+  fnp = 0.6,
+  frn = 2, ## hrtr is cn/2
+  mun = 1,
+  mup = 0.33, ## to compare with hin, they have mun = 1 (Tp) + 0.3,  and mup = 0.3 (maintenance) + 0.03 death rate
+ #here is dfi
+  S = 0.9,   #S =0.5  #con 0.9 funcionaaa (obvios..)  #no interaction 
+  Ip= 0.6, 
+  In= 2,
+  phiN= 0.5,
+  phiP=0.5
+
+) #here the Sr different
+
+}
+
+
+if (chosen_scenario == "pbpb_model_5"){
+
+PBPB_LV_parms <- c(
+   rho = 1,
+  K = 5,  
+  En = 0.5,
+  Ep = 0.5,
+  frp = 0.6,   
+  fnp = 0.6,
+  frn = 2, ##le quite aqi
+  mun = 1, 
+  mup = 0.33,
+ #here is dfi
+  S = 1,  #S =0.5ey have mun = 1 (Tp) + 0.3,  and mup = 0.3 (maintenance) + 0.03 death rate
+ #here is dfi
+  Ip= 1, 
+  In= 2,
   phiN= 0.5,
   phiP=0
 

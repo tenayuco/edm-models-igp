@@ -25,7 +25,7 @@ devtools::load_all()
 # it saves all the produced time series in data with the name of the scenario 
 
 scenarios_lblb <- c("lblb_model_0", "lblb_model_1", "lblb_model_2", "lblb_model_3", "lblb_model_4")
-scenarios_pbpb <- c("pbpb_model_1", "pbpb_model_2", "pbpb_model_3")
+scenarios_pbpb <- c("pbpb_model_1", "pbpb_model_2", "pbpb_model_3", "pbpb_model_4", "pbpb_model_5")
 
 #chose your scenarios
 scenarios <- c(scenarios_lblb, scenarios_pbpb)
@@ -33,7 +33,7 @@ scenarios <- c(scenarios_lblb, scenarios_pbpb)
 #========================================================================
 
 #or for short example:
-scenarios_chosen <- c("pbpb_model_3")
+scenarios_chosen <- c("pbpb_model_5", "pbpb_model_4")
 
 #loop to generate multiple scenarios of simulated data 
 #long scenarios for reference, shorts for the analyis
@@ -78,12 +78,12 @@ source("./analyses/0.simulatedData.R")
 #
 #norm_data <-  FALSE
 #lv_scearios <- scenarios_lblb
-#lv_scenarios <- ("pbpb_model_3")
-lv_scenarios <- scenarios
+lv_scenarios <- c("pbpb_model_5", "pbpb_model_4")
+#lv_scenarios <- scenarios
 
 tic()
 #or source if you wanto to have the full analisis 
-  for(norm_data in c(FALSE, TRUE)){
+  for(norm_data in c(FALSE)){ #TRUEFALSE
     for (chosen_scenario in lv_scenarios){
  tic()
   print(paste0("norm_data", norm_data, 'chosen_sce', chosen_scenario))
