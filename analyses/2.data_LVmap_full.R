@@ -102,7 +102,7 @@ dir.create(paste0(out_subfolder), recursive = TRUE)
 # Parameters for the LV map cross-validation
 v_num_rep <- c(1)                     # Number of replicates (fixed due to limited time points)
 v_rpresent <- c(FALSE)  #c(FALSE, TRUE)          # Whether to include R (resource) in the model
-v_num_seed <- seq(1:2)                # Random seeds for data shuffling
+v_num_seed <- seq(1:30)                # Random seeds for data shuffling
 v_enemigos <- unique(DATA_PRED$enem)  # List of enemy species/treatments to analyze
 kernel_chosen <- "state"              # Kernel type for the LV model
 
