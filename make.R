@@ -149,7 +149,10 @@ toc()
 
 simulated_data <-  "DF_DISC_LV_20.csv"
 
-for (i in scenarios){
+#ccm_scenarios <- c("lblb_model_0")
+ccm_scenarios <- scenarios
+
+for (i in ccm_scenarios){
 
 chosen_scenario <- i
   
@@ -160,7 +163,7 @@ for (metodo_det in c("none")){  ##linear detren firstDiff", "none"
     no_method = metodo_norm
     type_data = "simulated.data"  #real.data
     iteraciones = 1000  ##1000
-    numSurro = 30 #50
+    numSurro = 50 #50
     print(paste0("metodo_det_", metodo_det))
     print(paste0("no_det_", metodo_norm))
     source("./analyses/3.ccm_rigal_igp.R")

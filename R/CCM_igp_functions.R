@@ -1,4 +1,46 @@
 ##this function... 
+summarizer_rho_with_variance <- function(total_rho_surro){
+total_rho_surro_sum <- total_rho_surro |> 
+  dplyr::ungroup()|> 
+  dplyr::group_by(enem, lobs, variable)|> 
+  dplyr::summarise(grand_mean = mean(rho), var_between = var(rho), var_within= mean(rho_sdev**2)) |> 
+  dplyr::mutate(total_sd =sqrt(var_between+var_within))
+return(total_rho_surro_sum)
+}
+
+
+summarizer_rho_with_median <- function(total_rho_surro){
+total_rho_surro_sum <- total_rho_surro |> 
+  dplyr::ungroup()|> 
+  dplyr::group_by(enem, lobs, variable)|> 
+  dplyr::group_by(enem, lobs, variable)|> 
+  dplyr::summarise(rho_median = median(rho, na.rm = T), q5 = quantile(rho, 0.05, na.rm = T), q95 =quantile(rho, 0.95, na.rm = T))
+return(total_rho_surro_sum)
+
+}
+
+
+summarizer_rho <- function(total_rho_surro){
+total_rho_surro_sum <- total_rho_surro |> 
+  dplyr::ungroup()|> 
+  dplyr::group_by(enem, lobs, variable)|> 
+  dplyr::summarise(rho_median = median(rho, na.rm = T), 
+  q5 = quantile(rho, 0.05, na.rm = T), 
+  q95 =quantile(rho, 0.95, na.rm = T),
+  grand_mean = mean(rho), 
+  var_between = var(rho), 
+  var_within= mean(rho_sdev**2)) |> 
+  dplyr::mutate(total_sd =sqrt(var_between+var_within))
+
+
+return(total_rho_surro_sum)
+
+}
+
+  
+
+
+
 
 
 embedding_ccm <- function(x, min_per= 0.8){
@@ -549,7 +591,55 @@ RHO_PLOT <- rho_data |>
 
 ########rho plot against surrogates
 
-plot_rho_data_surro_CCM <-  function(rho_data_surro, ccm_test){
+plot_rho_data_surro_var_CCM <-  function(rho_data_surro, ccm_test){
+
+  cols_rho <- c("random" = "black", "data" = "darkred")
+
+ccm_test_mod <- ccm_test |> 
+  tidyr::pivot_longer(cols=c(X_cause_Y, Y_cause_X), names_to = "variable", values_to = "pvalue")
+
+
+full_data <- rho_data_surro |> 
+  dplyr::inner_join(ccm_test_mod, by = c("variable", "enem"))
+
+
+
+  
+RHO_PLOT <- full_data |>
+  ggplot(aes(x = lobs, y = grand_mean)) +
+
+  
+  geom_line(aes(color = as.factor(cat)), size = 0.5) +
+  geom_ribbon(aes(ymin = grand_mean-total_sd, 
+                  ymax = grand_mean+total_sd, 
+                  fill = as.factor(cat)), 
+              alpha = 0.2, color = NA) +
+  
+  geom_text(aes(x = 130, y = 0.8, label = paste("pvalue_clark =",  round(pvalue, digits = 3), sep = "")))+
+  #geom_point(aes(color = as.factor(cat))) +
+  facet_wrap(enem~variable) +
+  theme_minimal()+
+  theme(panel.border = element_rect(color = "black", fill = NA, linewidth = 1),
+        panel.spacing = unit(1, "lines"),
+        # Increase all text sizes
+        text = element_text(size = 14),  # Base text size
+        axis.title = element_text(size = 12),  # Axis titles
+        axis.text = element_text(size = 12),   # Axis tick labels
+        strip.text = element_text(size = 12),  # Facet labels
+        legend.text = element_text(size = 12), # Legend text
+        legend.title = element_text(size = 12)) +# Le
+
+  scale_color_manual(values =  cols_rho)+
+    scale_fill_manual(values =  cols_rho)+
+  labs(color ="Type", fill="Type")
+
+  
+  
+  return(RHO_PLOT)
+}
+
+
+plot_rho_data_surro_median_CCM <-  function(rho_data_surro, ccm_test){
 
   cols_rho <- c("random" = "black", "data" = "darkred")
 
@@ -595,6 +685,8 @@ RHO_PLOT <- full_data |>
   
   return(RHO_PLOT)
 }
+
+
 
 
 

@@ -249,12 +249,14 @@ RHO_DATA_SURRO_temp$surro <- numSurro
 TOTAL_RHO_SURRO <- rbind(TOTAL_RHO_SURRO, RHO_DATA_SURRO_temp)
 }
 
+write.csv(TOTAL_RHO_SURRO,  paste0(used_path,  "all_surrogate_rho",  "_it_", iteraciones,".csv"))
 
 #now we summarize this shit  by the MEAN of this shit 
+#important: according to the histogram, the distribution of rho is fairly normal, the mean and sdev are good then 
 
-TOTAL_RHO_SURRO_SUM <- TOTAL_RHO_SURRO |> 
-  dplyr::group_by(enem, lobs, variable)|> 
-  dplyr::summarise(rho_median = median(rho, na.rm = T), q5 = quantile(rho, 0.05, na.rm = T), q95 =quantile(rho, 0.95, na.rm = T))
+
+TOTAL_RHO_SURRO_SUM <- summarizer_rho(TOTAL_RHO_SURRO)
+
 
 
 #RHO_PLOT_SUR <- plot_rho_CCM(TOTAL_RHO_SURRO_SUM)
@@ -265,11 +267,22 @@ write.csv(TOTAL_RHO_SURRO_SUM,  paste0(used_path,  "surrogate_rho",  "_it_", ite
 ##now i merge them..
 ##but I leave only the mean of the real data... 
 
-RHO_DATA$rho_median <- RHO_DATA$rho # we remove this.. 
-RHO_DATA$rho <- NULL
-RHO_DATA$rho_sdev <- NULL # we remove this.. 
+### now we gonna show tjhe grand mean and the total sd 
+
+## renameing and add extra column of the median
+
+RHO_DATA <-  RHO_DATA |> 
+  dplyr::rename("grand_mean"= rho,
+"var_within"= rho_sdev)
+
+RHO_DATA$total_sd <- RHO_DATA$var_within
+RHO_DATA$var_between <- NA
+RHO_DATA$rho_median <- RHO_DATA$grand_mean  ## this is fake!! but just to plot it 
 RHO_DATA$q5 <- NA
 RHO_DATA$q95 <- NA
+
+
+
 
 RHO_DATA$cat <- "data"
 TOTAL_RHO_SURRO_SUM$cat <- "random"
@@ -277,18 +290,30 @@ TOTAL_RHO_SURRO_SUM$cat <- "random"
 RHO_DATA_SURRO <- rbind(RHO_DATA, TOTAL_RHO_SURRO_SUM)
 
 
-PLOT_RHO_DATA_SURRO <- plot_rho_data_surro_CCM(rho_data_surro = RHO_DATA_SURRO, ccm_test = CCM_TEST)+ ggtitle(paste0('scenario_', chosen_scenario, "_detrend_", used_det_method, "_norm_", used_no_method))
+#PLOT_RHO_DATA_SURRO <- plot_rho_data_surro_CCM(rho_data_surro = RHO_DATA_SURRO, ccm_test = CCM_TEST)+ ggtitle(paste0('scenario_', chosen_scenario, "_detrend_", used_det_method, "_norm_", used_no_method))
 
-
+PLOT_RHO_DATA_SURRO_VAR<- plot_rho_data_surro_var_CCM(rho_data_surro = RHO_DATA_SURRO, ccm_test = CCM_TEST)+ ggtitle(paste0("detrend_", used_det_method, "_norm_", used_no_method))
+PLOT_RHO_DATA_SURRO_MEDIAN<- plot_rho_data_surro_median_CCM(rho_data_surro = RHO_DATA_SURRO, ccm_test = CCM_TEST)+ ggtitle(paste0("detrend_", used_det_method, "_norm_", used_no_method))
 
 
 ggsave(
-    PLOT_RHO_DATA_SURRO,
-    filename = paste0(fig_path, "rho_data_surro_", numSurro,   "_it_", iteraciones,".png"),
+    PLOT_RHO_DATA_SURRO_VAR,
+    filename = paste0(fig_path, "rho_data_surro_var_", numSurro,   "_it_", iteraciones,".png"),
     height = 10,
     width = 14,
     create.dir = T
   )
+
+
+
+ggsave(
+    PLOT_RHO_DATA_SURRO_MEDIAN,
+    filename = paste0(fig_path, "rho_data_surro_median_", numSurro,   "_it_", iteraciones,".png"),
+    height = 10,
+    width = 14,
+    create.dir = T
+  )
+
 
 ############  now the mega plot loop per enemy 
 
