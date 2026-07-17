@@ -75,17 +75,7 @@ toc()
 
 ##------------now plotting the parameters---------------
 
-###intento loco
-process_list <- function(data_list){
-df_total <- data.frame()
-for (i in 1:9){
-  df_rt_temp <- as.data.frame(data_list[[i]])
-  df_rt_temp$replicate <- i
-  df_rt_temp$time <- seq(1, dim(df_rt_temp)[1])
-  df_total <-  rbind(df_total, df_rt_temp)
-}
-return(df_total)
-}
+
 
 #---here I all as data frames
 DF_RT <- process_list(data_list = r_hat_list)
