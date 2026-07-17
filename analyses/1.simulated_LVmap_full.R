@@ -100,7 +100,7 @@ v_rpresent <- c(FALSE, TRUE) # Whether to include R (resource) in the model
 v_num_seed <- seq(1:3) # Random seeds for data shuffling/re-sampling
 v_enemigos <- unique(DATA_PRED$enem) # List of enemy species/treatments to analyze
 kernel_chosen <- "state" # Kernel type to use
-
+forcing_theta <-FALSE #if true the theta is always 0, what makes that the param dont change in time
 
 # ============================================================================
 # 5. RUN CROSS-VALIDATION

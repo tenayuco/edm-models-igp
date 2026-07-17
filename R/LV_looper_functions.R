@@ -139,15 +139,23 @@ S <-  dim(N_list_sim[[1]])[2]
 # ================
 # Cross validation
 # ================
+  
+  if(forcing_theta == TRUE){
+  chosen_theta_v = seq(0,0)
+}else {
+    chosen_theta_v = seq(0, 3, 0.01)
+  }
+  
+  
 cv_list_sim <- vector(mode = "list", length = num_rep)
 tictoc::tic()
 for (i in 1:num_rep) {
 
   if(kernel_chosen == "state") {
-out_cv <- LV_map_state_space_cross_validation(N_list_sim[[i]], theta_v = seq(0, 3, 0.01))
+out_cv <- LV_map_state_space_cross_validation(N_list_sim[[i]], theta_v = chosen_theta_v)
   }
 if(kernel_chosen == "time") {
-  out_cv <- LV_map_time_cross_validation(N_list_sim[[i]], theta_v = seq(0, 3, 0.01))
+  out_cv <- LV_map_time_cross_validation(N_list_sim[[i]], theta_v = chosen_theta_v)
   }
 
 
@@ -160,6 +168,9 @@ tictoc::toc()
 list_treatment$cv_list_sim <- cv_list_sim
 
 
+ ##force the theta optimal to cero to avoid changes
+  # 
+
 # ========================
 # Estimation of parameters
 # ========================
@@ -169,6 +180,9 @@ r_se_list <- vector(mode = "list", length = num_rep)
 alpha_se_list <- vector(mode = "list", length = num_rep)
 out_list <- vector(mode = "list", length = num_rep)
 tic()
+  
+  
+  
 for (i in 1:num_rep) {
 
   
