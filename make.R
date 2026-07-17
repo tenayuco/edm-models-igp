@@ -122,7 +122,7 @@ toc()
 
 tic()
 for (metodo_det in c("none")){  ##linear detren firstDiff", "none"
-  for(metodo_norm in c("minmax", "zscore", "none")){  #none zscore", "minmax
+  for(metodo_norm in c("zscore", "none")){  #none zscore", "minmax
     det_method = metodo_det
     no_method = metodo_norm
     type_data =  "real.data"
