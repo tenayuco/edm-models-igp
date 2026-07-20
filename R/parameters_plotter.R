@@ -181,11 +181,11 @@ old_parameter_seed_sim_plotter <- function(df_full = FULL_DF_PARAMETERS, par_typ
 
 parameter_r_alpha_plotter <- function(df_full = FULL_DF_PARAMETERS, par_type = "r"){
 
-  var_order <- c("Y.Y", "X.X", "X.Y", "Y.X", "R.R", "R.Y", "Y.R", "R.X", "X.R", "Y", "X", "R")
+  #var_order <- c("Y.Y", "X.X", "X.Y", "Y.X", "R.R", "R.Y", "Y.R", "R.X", "X.R", "Y", "X", "R")
 
   par_plot <- df_full |> 
     dplyr::filter(type == par_type) |> 
-    dplyr::mutate(varName = factor(varName, levels = var_order)) |>
+   # dplyr::mutate(varName = factor(varName, levels = var_order)) |>
 
     ggplot(aes(x= varName, y= mvalue.mean)) +
     geom_errorbar(aes(ymin=mvalue.mean- 1*mvalue.sd,  ymax=mvalue.mean+ 1*mvalue.sd, color= as.factor(numSeed)), width=.2,
@@ -267,10 +267,10 @@ full_df_sum <- full_df_sum |>
 
 
 plot_par_allconditions <- function(df_sum){
-  var_order <- c("Y.Y", "X.X", "X.Y", "Y.X", "R.R", "R.Y", "Y.R", "R.X", "X.R", "Y", "X", "R")
+  #var_order <- c("Y.Y", "X.X", "X.Y", "Y.X", "R.R", "R.Y", "Y.R", "R.X", "X.R", "Y", "X", "R")
   par_plot <- df_sum |> 
    # dplyr::filter(type == par_type) |> 
-    dplyr::mutate(varName = factor(varName, levels = var_order)) |>
+    #dplyr::mutate(varName = factor(varName, levels = var_order)) |>
     ggplot(aes(x= varName, y= plot_mean)) +
     geom_errorbar(aes(ymin=plot_mean- 1*plot_sd,  ymax=plot_mean+ 1*plot_sd, group= interaction(type, rpresent),  color= as.factor(type)), width=.2,
                  position=position_dodge(0.6), linewidth=1)+

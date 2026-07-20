@@ -170,6 +170,22 @@ if (
   )
 }
 
+###NEW CODE TO CHANGE THE CREATE A COLUMN OF REAL VALUES 
+#full_df  <- read.csv("./outputs/LV_MAP/real.data/absolute/not_normalized/FULL_DF_parameters_numseed_30.csv")
+
+#this is the original assingmeng
+
+
+
+change_for_real <- TRUE
+
+if(change_for_real == TRUE){
+  full_df <- change_xy_realValues(df_full = full_df)
+}
+
+###############3
+  
+
 plotter_full_parameters(df_full = full_df, fig_subfolder = fig_subfolder)
 
 #plotter_full_parameters_microcosmos(df_full = full_df, fig_folder = fig_folder)
@@ -190,3 +206,4 @@ plotter_save_conditions(df_sum = full_sum, fig_subfolder = fig_subfolder, abs_no
 
 #plotter_omega_microcosmos(df_full = full_df, fig_folder = fig_folder)
 
+  
