@@ -282,7 +282,28 @@ PBPB_LV_parms <- c(
 
 }
 
+if (chosen_scenario == "pbpb_model_6"){  ##este funcionaa asi como se quita el efecto sobre xcuasey
 
+PBPB_LV_parms <- c(
+  rho = 1,
+  K = 5,  
+  En = 0.5,
+  Ep = 0.5,
+  frp = 0.6,   
+  fnp = 0.6,
+  frn = 1, ## here is the change   
+  mun = 0.33, ##we change this to see if we increase the coexistence 
+  mup = 0.33,
+ #here is dfi
+  S = 0.1,  #S =0.5
+  Ip= 0.8, 
+  In= 4,
+  phiN= 0,
+  phiP=0.7
+
+) #here the Sr different
+
+}
 
 LBLB_LV_list = list(
     parms = LBLB_LV_parms,

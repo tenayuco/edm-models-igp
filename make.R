@@ -25,7 +25,7 @@ devtools::load_all()
 # it saves all the produced time series in data with the name of the scenario 
 
 scenarios_lblb <- c("lblb_model_0", "lblb_model_1", "lblb_model_2", "lblb_model_3", "lblb_model_4")
-scenarios_pbpb <- c("pbpb_model_1", "pbpb_model_2", "pbpb_model_3", "pbpb_model_4", "pbpb_model_5")
+scenarios_pbpb <- c("pbpb_model_1", "pbpb_model_2", "pbpb_model_3", "pbpb_model_4", "pbpb_model_5", "pbpb_model_6")
 
 #chose your scenarios
 scenarios <- c(scenarios_lblb, scenarios_pbpb)
@@ -33,7 +33,7 @@ scenarios <- c(scenarios_lblb, scenarios_pbpb)
 #========================================================================
 
 #or for short example:
-scenarios_chosen <- c("pbpb_model_5", "pbpb_model_4")
+scenarios_chosen <- c("pbpb_model_6")
 
 #loop to generate multiple scenarios of simulated data 
 #long scenarios for reference, shorts for the analyis
@@ -78,8 +78,8 @@ source("./analyses/0.simulatedData.R")
 #
 #norm_data <-  FALSE
 #lv_scearios <- scenarios_lblb
-#lv_scenarios <- c("pbpb_model_5", "pbpb_model_4")
-lv_scenarios <- scenarios
+lv_scenarios <- c("pbpb_model_6")
+#lv_scenarios <- scenarios
 
 tic()
 #or source if you wanto to have the full analisis 
@@ -116,7 +116,42 @@ toc()
 
 
 
-#===========================================================
+#====================================CCM=======================
+
+#------------------------
+##------------nnow the loop to apply the ccm in the simulated data
+#scenarios <- c("lblb_model_1", "lblb_model_2", "lblb_model_3", "lblb_model_4")
+
+
+
+#loop for simulated data
+
+simulated_data <-  "DF_DISC_LV_20.csv"
+
+ccm_scenarios <- c("pbpb_model_6")
+#ccm_scenarios <- scenarios
+
+for (i in ccm_scenarios){
+
+chosen_scenario <- i
+  
+tic()
+for (metodo_det in c("none")){  ##linear detren firstDiff", "none"
+  for(metodo_norm in c("zscore")){  #none zscore", "minmax
+    det_method = metodo_det
+    no_method = metodo_norm
+    type_data = "simulated.data"  #real.data
+    iteraciones = 100  ##1000
+    numSurro = 5 #50
+    print(paste0("metodo_det_", metodo_det))
+    print(paste0("no_det_", metodo_norm))
+    source("./analyses/3.ccm_rigal_igp.R")
+  }
+}
+toc()
+}
+
+
 #--------------------------------------CCM LOOP for different norm and detrending methods-------------------------------------------------
 ## loop for real data
 
@@ -139,35 +174,3 @@ toc()
 
 
 
-#------------------------
-##------------nnow the loop to apply the ccm in the simulated data
-#scenarios <- c("lblb_model_1", "lblb_model_2", "lblb_model_3", "lblb_model_4")
-
-
-
-#loop for simulated data
-
-simulated_data <-  "DF_DISC_LV_20.csv"
-
-#ccm_scenarios <- c("lblb_model_0")
-ccm_scenarios <- scenarios
-
-for (i in ccm_scenarios){
-
-chosen_scenario <- i
-  
-tic()
-for (metodo_det in c("none")){  ##linear detren firstDiff", "none"
-  for(metodo_norm in c("zscore")){  #none zscore", "minmax
-    det_method = metodo_det
-    no_method = metodo_norm
-    type_data = "simulated.data"  #real.data
-    iteraciones = 1000  ##1000
-    numSurro = 50 #50
-    print(paste0("metodo_det_", metodo_det))
-    print(paste0("no_det_", metodo_norm))
-    source("./analyses/3.ccm_rigal_igp.R")
-  }
-}
-toc()
-}
