@@ -161,7 +161,7 @@ if (
   full_df <-  read.csv(paste0(out_subfolder, "FULL_DF_parameters_","numseed_",simulaciones,".csv"))
   print("file exist")
 }else{
-  full_df <- extract_par_all_treatment(out_subfolder = out_subfolder,coex_cal = FALSE
+  full_df <- extract_par_all_treatment(out_subfolder = out_subfolder,coex_cal = TRUE
   ) ##generates the file  (that you can download late just to run the full parameters, but chose how many simulaciones!)
   print(head(full_df))
   
@@ -204,6 +204,9 @@ plotter_save_conditions(df_sum = full_sum, fig_subfolder = fig_subfolder, abs_no
 ## coexistence valuess. 
 #plotter_theta_microcosmos(df_full = full_df, fig_folder = fig_folder)
 
-#plotter_omega_microcosmos(df_full = full_df, fig_folder = fig_folder)
+plotter_omega_microcosmos(df_full = full_df, fig_folder = fig_folder)
 
+###
+
+plot_omega_allconditions(df_sum = full_sum)
   
