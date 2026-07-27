@@ -247,9 +247,14 @@ full_df_sum <- df_full |>
   dplyr::select(!dif_cond)|> 
   dplyr::select(!norm)|> 
   dplyr::group_by(varName, type, numRep, rpresent, enem)|> 
-  dplyr::summarise(grand_mean = mean(mvalue.mean), var_between = var(mvalue.mean), var_within= mean(mvalue.sd**2)) |> 
-  dplyr::mutate(total_sd =sqrt(var_between+var_within))
-
+  dplyr::summarise(grand_mean = mean(mvalue.mean), 
+  var_between = var(mvalue.mean), 
+  var_within= mean(mvalue.sd**2),
+  grand_mean_omega = mean(omega_mean),
+ var_between_omega = var(omega_mean),
+ var_within_omega= mean((((abs(omega_mean-omega_up)+abs(omega_mean-omega_dw))/2)/1.96)**2)) |>  #lo paso a un desvuacion estandar, y despues saco la media entre las desvacion standas 
+  dplyr::mutate(total_sd =sqrt(var_between+var_within)) |> 
+ dplyr::mutate(total_sd_omega =sqrt(var_between_omega+var_within_omega))
 
 full_df_sum <- full_df_sum |> 
     dplyr::ungroup()|> 
@@ -284,6 +289,33 @@ plot_par_allconditions <- function(df_sum){
     ggtitle(paste0("kernel_chosen ", kernel_chosen)) +
 
     facet_wrap(enem~type, scales = "free", ncol= 4)+
+    
+    geom_hline(yintercept = 0, color= "black", linetype= "dashed")+
+     scale_color_viridis_d(begin=0, end= 0.7, option = "A", direction = 1) +
+
+    theme_bw()
+
+  return(par_plot)
+
+}
+
+################33
+
+
+
+plot_omega_allconditions <- function(df_sum){
+  par_plot <- df_sum |> 
+    ggplot(aes(x= enem, y= 10^grand_mean_omega)) +
+    geom_errorbar(aes(ymin=10^(grand_mean_omega- 1*total_sd_omega),  ymax=10^(grand_mean_omega+ 1*total_sd_omega), group= interaction(enem, rpresent),  color= as.factor(enem)), width=.2,
+                 position=position_dodge(0.6), linewidth=1)+
+    geom_point(aes(color= as.factor(enem), shape=as.factor(rpresent)), fill="white",  position=position_dodge(0.6), size=3)+
+    scale_shape_manual(
+      values = c("FALSE" = 21, "TRUE" = 17),  # 1 = empty circle, 17 = filled triangle
+      name = "rpresent"
+    )+
+
+    xlab("Replicate and variable") +
+    ggtitle(paste0("kernel_chosen ", kernel_chosen)) +
     
     geom_hline(yintercept = 0, color= "black", linetype= "dashed")+
      scale_color_viridis_d(begin=0, end= 0.7, option = "A", direction = 1) +
