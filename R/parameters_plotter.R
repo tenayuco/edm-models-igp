@@ -322,6 +322,11 @@ plot_omega_allconditions <- function(df_sum){
 
     theme_bw()
 
-  return(par_plot)
-
+  
+  ggsave(par_plot, filename = paste0(fig_subfolder, "omega_values.png"),
+   height = 8,
+    width = 8,
+    create.dir = T
+  )
+  
 }

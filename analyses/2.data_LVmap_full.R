@@ -111,6 +111,7 @@ kernel_chosen <- "state"              # Kernel type for the LV model
 # ============================================================================
 # 8. RUN LV MAP ANALYSIS
 # ============================================================================
+#CHECK BEFORE RUNNING 
 
 # Run the analysis separately for each enemy treatment
 # Note: For real data, we iterate over enemies (unlike simulated data)
@@ -204,9 +205,13 @@ plotter_save_conditions(df_sum = full_sum, fig_subfolder = fig_subfolder, abs_no
 ## coexistence valuess. 
 #plotter_theta_microcosmos(df_full = full_df, fig_folder = fig_folder)
 
-plotter_omega_microcosmos(df_full = full_df, fig_folder = fig_folder)
+#plotter_omega_microcosmos(df_full = full_df, fig_folder = fig_folder)
 
 ###
 
 plot_omega_allconditions(df_sum = full_sum)
   
+
+
+####-----------------------------------------------------------
+#here Im gonna call the survival plot, per area, and time to extinction 
