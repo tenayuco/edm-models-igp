@@ -51,21 +51,56 @@ return(DATA_IGP_WIDER)
 
 
 
+##so Ineed some kind of code to tell it that if I find a 0, but the next value is not a 0, change it to 1. 
+##after summarizing to 1 and 0 
 
-pred_coexistence_formatter <- function(data_pred) {
-DATA_TIMES <- data_pred |> 
-  dplyr::mutate(coex = ifelse(X > 0 & Y > 0, 1, 0))|> 
-  dplyr::select(enem, block, week, coex) |> 
-  tidyr::complete(enem, block, week)
-  
-DATA_TIMES$coex[is.na(DATA_TIMES$coex)] <- 0 
 
-  DATA_TIMES <- DATA_TIMES|>
-  dplyr::group_by(enem, week) |> 
-  dplyr::summarise(survival= 100*sum(coex)/10)
-
-return(DATA_TIMES)
+survival_remove_zeros <- function(data_pred){
+  data_surv <- data_pred |>
+    dplyr::group_by(enem, block) |> 
+    dplyr::mutate(X = ifelse(X > 0, 1, 0),  #this checks, if you are higher that 0, then you are 1 
+  Y =ifelse(Y > 0, 1, 0))|> 
+ dplyr::group_by(enem, block)|> 
+  dplyr::mutate(X = ifelse(X == 0 & dplyr::lead(X) == 1, 1, X),   #this part tells,  if you are 0, but the next one is a 1, then youll be a 1
+  Y = ifelse(Y == 0 & dplyr::lead(Y) == 1, 1, Y))
+return(data_surv)
 }
 
+pred_coexistence_adder <- function(data_surv){
+data_coex <- data_surv|> 
+  dplyr::ungroup() |> 
+  dplyr::mutate(coex = ifelse(X > 0 & Y > 0, 1, 0))|> 
+  dplyr::select(enem, block, week, coex, X, Y) |> 
+  tidyr::complete(enem, block, week)
+return(data_coex)
+}
+
+
+coex_average <- function(data_coex) {
+
+  
+  ###de aqui saco el promedio (y esta bien porque ewsta normalizado a 1)
+  
+data_coex$coex[is.na(data_coex$coex)] <- 0 
+
+  data_coex_av <- data_coex|>
+  dplyr::ungroup() |> 
+
+  dplyr::group_by(enem, week) |> 
+  dplyr::summarise(mean_coex= mean(coex), mean_X = mean(X), mean_Y = mean(Y))
+
+return(data_coex_av)
+}
+
+area_coexistence <- function(data_coex_av) {
+
+  data_area <- data_coex_av|>
+  dplyr::ungroup() |> 
+
+  dplyr::group_by(enem) |> 
+  dplyr::summarise(mean_area= mean(mean_coex))
+
+return(data_area)
+}
 
 

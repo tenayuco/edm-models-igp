@@ -260,17 +260,40 @@ size = 0.5) +
 
 plotter_coex <- function(data_coex) {
 
-COEX_PLOT <- data_coex |>
-    ggplot(aes(x = week, y = survival)) +
-    geom_area(fill = "steelblue", alpha = 0.3) +
+coex_plot <- data_coex |>
+    ggplot(aes(x = week, y = mean_coex)) +
+    geom_area(fill = "darkgreen", alpha = 0.3) +
     geom_line(size = 1) +
     facet_wrap(~enem) +
     theme_minimal()
 
 
   ggsave(
-    COEX_PLOT,
+    coex_plot,
     filename = paste0("./figures/coexistence", ".png"),
+    height = 9,
+    width = 10,
+    create.dir = T
+  )
+}
+
+
+
+plotter_survival <- function(data_coex_av) {
+
+data_coex_av_long <-  data_coex_av |> 
+tidyr::gather(key= "mean_species", value= "value", mean_X, mean_Y)
+
+survival_plot <- data_coex_av_long  |>
+    ggplot(aes(x = week, y = value)) +
+    geom_line(size = 1, aes(color= mean_species)) +
+    facet_wrap(~enem) +
+    theme_minimal()
+
+
+  ggsave(
+    survival_plot,
+    filename = paste0("./figures/survival_plot", ".png"),
     height = 9,
     width = 10,
     create.dir = T
