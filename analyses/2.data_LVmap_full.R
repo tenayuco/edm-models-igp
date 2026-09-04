@@ -40,7 +40,7 @@ if (type_data == "real.data") {
 
 
 # ============================================================================
-# 4. DATA PREPARATION
+# 4. DATA PREPARATION FOR LOTKA VOLTERRA
 # ============================================================================
 
 # Prepare data for LV analysis (format columns, handle missing values, etc.)

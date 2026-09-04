@@ -55,7 +55,7 @@ return(DATA_IGP_WIDER)
 ##after summarizing to 1 and 0 
 
 
-survival_remove_zeros <- function(data_pred){
+binary_remove_zeros <- function(data_pred){
   data_surv <- data_pred |>
     dplyr::group_by(enem, block) |> 
     dplyr::mutate(X = ifelse(X > 0, 1, 0),  #this checks, if you are higher that 0, then you are 1 
@@ -81,7 +81,10 @@ coex_average <- function(data_coex) {
   
   ###de aqui saco el promedio (y esta bien porque ewsta normalizado a 1)
   
-data_coex$coex[is.na(data_coex$coex)] <- 0 
+data_coex$coex[is.na(data_coex$coex)] <- 0
+data_coex$X[is.na(data_coex$X)] <- 0 
+data_coex$Y[is.na(data_coex$Y)] <- 0 
+
 
   data_coex_av <- data_coex|>
   dplyr::ungroup() |> 
@@ -104,3 +107,35 @@ return(data_area)
 }
 
 
+
+survival_time_per_run <- function(data_coex){
+
+
+  data_coex$coex[is.na(data_coex$coex)] <- 0
+data_coex$X[is.na(data_coex$X)] <- 0 
+data_coex$Y[is.na(data_coex$Y)] <- 0 
+
+
+  data_survi_per_run<- data_coex|>
+  dplyr::ungroup() |> 
+  dplyr::group_by(enem, block) |> 
+  dplyr::summarise(surv_coex= sum(coex), surv_X = sum(X), surv_Y = sum(Y))
+  
+  return(data_survi_per_run)
+}
+
+
+
+survival_time_average <- function(data_survi_per_run) {
+
+  
+  ###de aqui saco el promedio (y esta bien porque ewsta normalizado a 1)
+
+  data_surv_av <- data_survi_per_run|>
+  dplyr::ungroup() |> 
+
+  dplyr::group_by(enem) |> 
+  dplyr::summarise(mean_surv= mean(surv_coex), sd_surv = sd(surv_coex))
+
+return(data_surv_av)
+}
