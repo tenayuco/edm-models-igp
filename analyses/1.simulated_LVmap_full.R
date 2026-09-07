@@ -185,3 +185,4 @@ plotter_save_conditions(df_sum = full_sum, fig_subfolder = fig_subfolder, abs_no
 
 #########################################333
 ################################################3
+#plot_omega_allconditions(df_sum = full_sum)
