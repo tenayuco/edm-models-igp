@@ -326,3 +326,31 @@ ts_plotter_data <- function(data_pred, plotted_var = c("R", "X", "Y")){
   return(RNP_ts)
 }
 
+
+
+
+
+
+
+
+##this would be one plot per interactions see in face plot 
+plotter_general_coexistence <- function(complete_df_long, chosen_coex_var = "grand_mean_omega") {
+
+coex_total_plot <- complete_df_long |>
+    dplyr::filter(coexistence_variable == chosen_coex_var)|>
+    ggplot(aes(x = grand_mean, y = coex_value)) +
+geom_pointrange(aes(ymin = coex_value-sd_value, ymax = coex_value+sd_value))  +
+  geom_pointrange(aes(xmin = grand_mean- total_sd, xmax = grand_mean+ total_sd))+
+    geom_point(aes(fill = enem), size =3, shape=21, color= "black") +
+    facet_wrap(~varName, scales = "free") +
+    theme_minimal()+
+    scale_fill_viridis_d()
+
+  ggsave(
+    coex_total_plot,
+    filename = paste0("./figures/coexistence_total", "metric_", chosen_coex_var,  ".png"),
+    height = 9,
+    width = 12,
+    create.dir = T
+  )
+}

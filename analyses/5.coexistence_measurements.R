@@ -21,6 +21,7 @@ DATA_IGP <- DATA_IGP |>
 # ============================================================================
 # 3. OUTPUT PATH CONFIGURATION
 # ============================================================================
+type_data <- "real.data"
 
 if (type_data == "real.data") {
   out_folder <- paste0("./outputs/LV_MAP/", type_data, "/")
@@ -72,26 +73,37 @@ full_sum <- summarizer_with_variance(df_full = full_df)
 COMPLETE_DF <-   dplyr::left_join(full_sum, DATA_AREA, by= "enem")
 COMPLETE_DF <-   dplyr::left_join(COMPLETE_DF, DATA_SURV_AV, by= "enem")
 
+##add the cate
+
+COMPLETE_DF <-   dplyr::left_join(COMPLETE_DF ,DF_SUM_LV_CCM, by= "enem")
 
 ##############
-#now some plottings!! Or I can add the IGP and shit 
-
-## just some prepltting
-## SO, we remove the area calculation cause it is equivalente to the first survival measure!! IMPORTANTA RESULT
-
+###here Imm gonna do the inversion from x, y to n,p , where p is always the top predator.
+COMPLETE_DF <-  xy_to_np_transformer(COMPLETE_DF) 
 
 
 
 COMPLETE_DF_LONG <- COMPLETE_DF |> 
   dplyr::select(enem,grand_mean, total_sd, grand_mean_omega,total_sd_omega , mean_surv, type, varName, sd_surv)|> 
   tidyr::gather(key= "coexistence_variable", value= "coex_value", grand_mean_omega, mean_surv)|> 
-    tidyr::gather(key= "coexistence_SD", value= "coex_sd", total_sd_omega, sd_surv)
+    tidyr::gather(key= "coexistence_sd", value= "sd_value", total_sd_omega, sd_surv)
 
   
-  ## IT DPES SOETHING WRONG
+##now i remove the non correpsoning sd
 
-#BUT if I remove thecase that dont correspond togerher, ill sort it out (this is the correpsongin mean and sd, set to na 
-#if not, and then remove the columns with na
-#shoudl wolr
- # dplyr::mutate(sd_surv = sd_surv |> replace_when(coexistence_variable %in% c("grand_omega_mean", "mean_area"))
+
+
+COMPLETE_DF_LONG <-  COMPLETE_DF_LONG |> 
+  dplyr::mutate(sd_value= ifelse(coexistence_variable == "grand_mean_omega" & coexistence_sd == "sd_surv" , NA, sd_value)) |> 
+    dplyr::mutate(sd_value= ifelse(coexistence_variable == "mean_surv" & coexistence_sd == "total_sd_omega" , NA, sd_value)) |> 
+   tidyr::drop_na()
+
+###now some ploting!!
+plotter_general_coexistence(COMPLETE_DF_LONG, chosen_coex_var = "grand_mean_omega")
+plotter_general_coexistence(COMPLETE_DF_LONG, chosen_coex_var = "mean_surv")
+
+
+#i will add my cat
+
+DF_SUM_LV_CCM <- read.csv("./data/summ_lv_ccm_R.csv")
 

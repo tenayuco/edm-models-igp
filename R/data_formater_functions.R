@@ -139,3 +139,20 @@ survival_time_average <- function(data_survi_per_run) {
 
 return(data_surv_av)
 }
+
+##this function is supercumbersome, but it is correct
+
+xy_to_np_transformer <- function(complete_df){
+
+
+complete_mod <- complete_df |> 
+    dplyr::mutate(varName = dplyr::case_when(
+        # For these enem values: replace X→N AND Y→P
+        enem %in% c("ac+am", "cc+ma", "my+aa") ~ gsub("Y", "P", gsub("X", "N", varName)),
+        # For these enem values: replace X→P AND Y→N
+        enem %in% c("ac+ol", "ma+ol", "cc+my") ~ gsub("Y", "N", gsub("X", "P", varName)),
+        TRUE ~ varName
+    ))
+
+return(complete_mod)
+}
