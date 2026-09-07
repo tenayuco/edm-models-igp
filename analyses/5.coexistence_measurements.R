@@ -69,13 +69,18 @@ DATA_SURV_AV <- survival_time_average(DATA_SURV)
 full_df <-  read.csv("./outputs/LV_MAP/real.data/absolute/not_normalized/FULL_DF_parameters_numseed_30.csv")
 full_sum <- summarizer_with_variance(df_full = full_df)
 
-##
+##add the cate of igp and causality
+DF_SUM_LV_CCM <- read.csv("./data/summ_lv_ccm_R.csv")
+
+
+###comple
 COMPLETE_DF <-   dplyr::left_join(full_sum, DATA_AREA, by= "enem")
+
 COMPLETE_DF <-   dplyr::left_join(COMPLETE_DF, DATA_SURV_AV, by= "enem")
 
-##add the cate
+##ADD CATEG
+COMPLETE_DF <-  dplyr::left_join(COMPLETE_DF , DF_SUM_LV_CCM, by= "enem")
 
-COMPLETE_DF <-   dplyr::left_join(COMPLETE_DF ,DF_SUM_LV_CCM, by= "enem")
 
 ##############
 ###here Imm gonna do the inversion from x, y to n,p , where p is always the top predator.
@@ -84,7 +89,7 @@ COMPLETE_DF <-  xy_to_np_transformer(COMPLETE_DF)
 
 
 COMPLETE_DF_LONG <- COMPLETE_DF |> 
-  dplyr::select(enem,grand_mean, total_sd, grand_mean_omega,total_sd_omega , mean_surv, type, varName, sd_surv)|> 
+  dplyr::select(enem,grand_mean, total_sd, grand_mean_omega,total_sd_omega , mean_surv, type, varName, sd_surv, ccm_caus, lv_caus, igp_comp)|> 
   tidyr::gather(key= "coexistence_variable", value= "coex_value", grand_mean_omega, mean_surv)|> 
     tidyr::gather(key= "coexistence_sd", value= "sd_value", total_sd_omega, sd_surv)
 
@@ -99,11 +104,13 @@ COMPLETE_DF_LONG <-  COMPLETE_DF_LONG |>
    tidyr::drop_na()
 
 ###now some ploting!!
-plotter_general_coexistence(COMPLETE_DF_LONG, chosen_coex_var = "grand_mean_omega")
-plotter_general_coexistence(COMPLETE_DF_LONG, chosen_coex_var = "mean_surv")
+plotter_interaction_coexistence(COMPLETE_DF_LONG, chosen_coex_var = "grand_mean_omega")
+plotter_interaction_coexistence(COMPLETE_DF_LONG, chosen_coex_var = "mean_surv")
+
+
 
 
 #i will add my cat
-
-DF_SUM_LV_CCM <- read.csv("./data/summ_lv_ccm_R.csv")
+plotter_cat_coexistence(COMPLETE_DF_LONG, chosen_coex_var = "grand_mean_omega")
+plotter_cat_coexistence(COMPLETE_DF_LONG, chosen_coex_var = "mean_surv")
 

@@ -334,9 +334,9 @@ ts_plotter_data <- function(data_pred, plotted_var = c("R", "X", "Y")){
 
 
 ##this would be one plot per interactions see in face plot 
-plotter_general_coexistence <- function(complete_df_long, chosen_coex_var = "grand_mean_omega") {
+plotter_interaction_coexistence <- function(complete_df_long, chosen_coex_var = "grand_mean_omega") {
 
-coex_total_plot <- complete_df_long |>
+coex_int_plot <- complete_df_long |>
     dplyr::filter(coexistence_variable == chosen_coex_var)|>
     ggplot(aes(x = grand_mean, y = coex_value)) +
 geom_pointrange(aes(ymin = coex_value-sd_value, ymax = coex_value+sd_value))  +
@@ -347,10 +347,32 @@ geom_pointrange(aes(ymin = coex_value-sd_value, ymax = coex_value+sd_value))  +
     scale_fill_viridis_d()
 
   ggsave(
-    coex_total_plot,
-    filename = paste0("./figures/coexistence_total", "metric_", chosen_coex_var,  ".png"),
+    coex_int_plot,
+    filename = paste0("./figures/coexistence_int", "metric_", chosen_coex_var,  ".png"),
     height = 9,
     width = 12,
     create.dir = T
   )
 }
+
+
+
+plotter_cat_coexistence <- function(complete_df_long, chosen_coex_var = "grand_mean_omega") {
+
+coex_cat_plot <- complete_df_long |>
+    dplyr::filter(coexistence_variable == chosen_coex_var)|>
+    ggplot(aes(x = igp_comp, y = coex_value)) +
+geom_pointrange(aes(ymin = coex_value-sd_value, ymax = coex_value+sd_value))  +
+    geom_point(aes(fill = enem), shape=21, size=3,  color= "black") +
+    theme_minimal()+
+    scale_fill_viridis_d()
+
+  ggsave(
+   coex_cat_plot,
+    filename = paste0("./figures/coexistence_cat", "metric_", chosen_coex_var,  ".png"),
+    height = 9,
+    width = 12,
+    create.dir = T
+  )
+}
+
