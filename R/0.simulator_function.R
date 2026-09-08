@@ -89,3 +89,19 @@ saveRDS(par_ms, paste0(data_folder, chosen_scenario, "/", "parameters_used.rds")
 # ------------------------------------------------------------------------------------------
 
 }
+
+
+
+
+### this will be a rhing that removed the seriesofthe data frame WHEN 
+# r is less than 10 percent of its maximu value 
+
+remover_ten_percent <- function(data_input)
+
+data_new <-  data_input |> 
+  dplyr::mutate(R = ifelse(R< 2.5, 0, R))|>
+dplyr::group_by(block) |>
+  dplyr::mutate(
+    R = ifelse(cumsum(R == 0) > 0, 0, R)
+  ) |>
+  dplyr::ungroup()

@@ -38,6 +38,11 @@ scenarios_chosen <- c("pbpb_model_6")
 #loop to generate multiple scenarios of simulated data 
 #long scenarios for reference, shorts for the analyis
 #we need to have coexistence to catch the signal 
+
+#this is for the new try 
+
+#data_folder <- paste0("./data/simulated.data/stocasticDeath/") 
+
 data_folder <- paste0("./data/simulated.data/") 
 
 for (i in scenarios_chosen){
