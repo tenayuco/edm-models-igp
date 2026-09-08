@@ -95,6 +95,8 @@ data_coex$Y[is.na(data_coex$Y)] <- 0
 return(data_coex_av)
 }
 
+
+#function to get the area under normalized curve between 0 to 1
 area_coexistence <- function(data_coex_av) {
 
   data_area <- data_coex_av|>
@@ -106,7 +108,7 @@ area_coexistence <- function(data_coex_av) {
 return(data_area)
 }
 
-
+##so this one summarized over the week, to see the proportion of species that survived 
 
 survival_time_per_run <- function(data_coex){
 
