@@ -104,4 +104,6 @@ dplyr::group_by(block) |>
   dplyr::mutate(
     R = ifelse(cumsum(R == 0) > 0, 0, R)
   ) |>
-  dplyr::ungroup()
+  dplyr::ungroup()|>
+  dplyr::mutate(X = ifelse(R==0, 0, X))|>
+  dplyr::mutate(Y = ifelse(R==0, 0, Y))
