@@ -192,6 +192,14 @@ plotter_full_parameters(df_full = full_df, fig_subfolder = fig_subfolder)
 #plotter_full_parameters_microcosmos(df_full = full_df, fig_folder = fig_folder)
 #full plot
 
+#importantly, the omega reported is the log 10, so we have to do 10**omega to get real omega values
+
+full_df$omega_mean <- 10^full_df$omega_mean
+full_df$omega_dw <- 10^full_df$omega_dw
+full_df$omega_up <- 10^full_df$omega_up
+
+
+
 full_sum <- summarizer_with_variance(df_full = full_df)
 
 #plotter_save_conditions(df_sum = full_sum, fig_subfolder = fig_subfolder, abs_norm_values = "norm")

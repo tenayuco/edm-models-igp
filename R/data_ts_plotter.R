@@ -337,9 +337,9 @@ plotter_interaction_coexistence <- function(complete_df_long, chosen_coex_var = 
 
 coex_int_plot <- complete_df_long |>
     dplyr::filter(coexistence_variable == chosen_coex_var)|>
-    ggplot(aes(x = abs(grand_mean), y = coex_value)) +
+    ggplot(aes(x = grand_mean, y = coex_value)) +
 geom_pointrange(aes(ymin = coex_value-sd_value, ymax = coex_value+sd_value))  +
-  geom_pointrange(aes(xmin = abs(grand_mean)- total_sd, xmax = abs(grand_mean)+ total_sd))+
+  geom_pointrange(aes(xmin = grand_mean- total_sd, xmax = grand_mean+ total_sd))+
     geom_point(aes(fill = enem), size =3, shape=21, color= "black") +
     facet_wrap(~varName, scales = "free") +
     theme_minimal()+

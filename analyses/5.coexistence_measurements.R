@@ -98,8 +98,20 @@ DATA_SURV_AV <- survival_time_average(DATA_SURV)
 
 ##here you specify wich one wou want 
 full_df <-  read.csv("./outputs/LV_MAP/real.data/absolute/not_normalized/FULL_DF_parameters_numseed_30.csv")
+
+
+#importantly, the omega reported is the log 10, so we have to do 10**omega to get real omega values
+
+full_df$omega_mean <- 10^full_df$omega_mean
+full_df$omega_dw <- 10^full_df$omega_dw
+full_df$omega_up <- 10^full_df$omega_up
+
+
+
 ##this is a full summarizer of both sources of variance, of the LV BS, and my resticking between the 30 runs. 
 full_sum <- summarizer_with_variance(df_full = full_df)
+
+
 
 
 ##add the cate of igp and causality
