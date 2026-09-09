@@ -112,10 +112,16 @@ full_df$omega_up <- 10^full_df$omega_up
 full_sum <- summarizer_with_variance(df_full = full_df)
 
 
+##im gonna ADD the simulated data identifies by the enem
+#ok so, i need a code to put every simulaiton together hehe
+
+#full_sim_df <-  read.csv("./outputs/LV_MAP/simulated.data/lblb_model_0/absolute/not_normalized/FULL_DF_parameters_numseed_3.csv")
+
+
 
 
 ##add the cate of igp and causality
-DF_SUM_LV_CCM <- read.csv("./data/summ_lv_ccm_R.csv")
+#DF_SUM_LV_CCM <- read.csv("./data/summ_lv_ccm_R.csv")
 
 
 
@@ -124,7 +130,7 @@ DF_SUM_LV_CCM <- read.csv("./data/summ_lv_ccm_R.csv")
 COMPLETE_DF <-   dplyr::left_join(full_sum, DATA_AREA, by= "enem")
 COMPLETE_DF <-   dplyr::left_join(COMPLETE_DF, DATA_SURV_AV, by= "enem")
 ##ADD CATEG
-COMPLETE_DF <-  dplyr::left_join(COMPLETE_DF , DF_SUM_LV_CCM, by= "enem")
+#COMPLETE_DF <-  dplyr::left_join(COMPLETE_DF , DF_SUM_LV_CCM, by= "enem")
 
 
 ##############
