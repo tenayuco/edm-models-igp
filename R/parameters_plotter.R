@@ -305,8 +305,8 @@ plot_par_allconditions <- function(df_sum){
 
 plot_omega_allconditions <- function(df_sum){
   par_plot <- df_sum |> 
-    ggplot(aes(x= enem, y= grand_mean_omega) +
-    geom_errorbar(aes(ymin=grand_mean_omega- 1*total_sd_omega,  ymax=grand_mean_omega+ 1*total_sd_omega), group= interaction(enem, rpresent),  color= as.factor(enem)), width=.2,
+    ggplot(aes(x= enem, y= grand_mean_omega)) +
+    geom_errorbar(aes(ymin=grand_mean_omega- 1*total_sd_omega,  ymax=grand_mean_omega+ 1*total_sd_omega, group= interaction(enem, rpresent),  color= as.factor(enem)), width=.2,
                  position=position_dodge(0.6), linewidth=1)+
     geom_point(aes(color= as.factor(enem), shape=as.factor(rpresent)), fill="white",  position=position_dodge(0.6), size=3)+
     scale_shape_manual(

@@ -148,7 +148,7 @@ COMPLETE_DF_LONG <-  COMPLETE_DF_LONG |>
 
 ###now some ploting!!
 #importantly, the plotting will be done with absolute valies 
-
+plotter_meanSurv_omega(COMPLETE_DF, fig_path = fig_folder)
 
 plotter_interaction_coexistence(COMPLETE_DF_LONG, chosen_coex_var = "grand_mean_omega", fig_path = fig_folder)
 plotter_interaction_coexistence(COMPLETE_DF_LONG, chosen_coex_var = "mean_surv", fig_path = fig_folder)

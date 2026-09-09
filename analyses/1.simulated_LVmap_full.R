@@ -157,7 +157,7 @@ if (
   full_df <-  read.csv(paste0(out_subfolder, "FULL_DF_parameters_","numseed_",simulaciones,".csv"))
   print("file exist")
 }else{
-  full_df <- extract_par_all_treatment(out_subfolder = out_subfolder,coex_cal = FALSE
+  full_df <- extract_par_all_treatment(out_subfolder = out_subfolder,coex_cal = TRUE
   ) ##generates the file  (that you can download late just to run the full parameters, but chose how many simulaciones!)
   print(head(full_df))
 
@@ -172,9 +172,18 @@ plotter_full_parameters(df_full = full_df, fig_subfolder = fig_subfolder)
 ##========================================================================================
 #full plot
 
+#importantly, the omega reported is the log 10, so we have to do 10**omega to get real omega values
+
+full_df$omega_mean <- 10^full_df$omega_mean
+full_df$omega_dw <- 10^full_df$omega_dw
+full_df$omega_up <- 10^full_df$omega_up
+
+
+
 full_sum <- summarizer_with_variance(df_full = full_df)
 
 plotter_save_conditions(df_sum = full_sum, fig_subfolder = fig_subfolder, abs_norm_values = "abs")
+
 
 
 #==========
@@ -185,4 +194,4 @@ plotter_save_conditions(df_sum = full_sum, fig_subfolder = fig_subfolder, abs_no
 
 #########################################333
 ################################################3
-#plot_omega_allconditions(df_sum = full_sum)
+plot_omega_allconditions(df_sum = full_sum)

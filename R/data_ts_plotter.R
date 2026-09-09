@@ -375,3 +375,26 @@ geom_pointrange(aes(ymin = coex_value-sd_value, ymax = coex_value+sd_value))  +
   )
 }
 
+
+
+
+plotter_meanSurv_omega <- function(complete_df, fig_path) {
+
+surv_omega_plot <- complete_df |>
+    ggplot(aes(x =  mean_surv , y = grand_mean_omega)) +
+  geom_pointrange(aes(ymin = grand_mean_omega-total_sd_omega, ymax = grand_mean_omega+total_sd_omega))  +
+  geom_pointrange(aes(xmin = mean_surv- sd_surv, xmax = mean_surv+ sd_surv))+
+    geom_point(aes(fill = enem), shape=21, size=3,  color= "black") +
+    theme_minimal()+
+    scale_fill_viridis_d()
+
+  ggsave(
+   surv_omega_plot ,
+    filename = paste0(fig_path, "meanSurv_omega",".png"),
+    height = 9,
+    width = 12,
+    create.dir = T
+  )
+}
+
+
