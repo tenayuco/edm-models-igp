@@ -153,6 +153,8 @@ complete_mod <- complete_df |>
         enem %in% c("ac+am", "cc+ma", "my+aa") ~ gsub("Y", "P", gsub("X", "N", varName)),
         # For these enem values: replace X→P AND Y→N
         enem %in% c("ac+ol", "ma+ol", "cc+my") ~ gsub("Y", "N", gsub("X", "P", varName)),
+
+        enem %in% c("xx+yy") ~ gsub("Y", "P", gsub("X", "N", varName)),
         TRUE ~ varName
     ))
 

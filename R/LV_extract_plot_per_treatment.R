@@ -165,6 +165,31 @@ return(LONG_FULL)
 
 
 
+#here is a new function to take all the full df (sumarizin oall the seeds) but of each sumulation
 
+
+
+extract_all_simulation<- function(out_subfolder = out_sim_folder) {
+
+
+full_sim_df <-  data.frame()
+  
+##new method..
+  # One-liner
+all_df_sim <- list.files(out_subfolder, recursive = TRUE, pattern = ".csv")
+  
+sim_names <-  list.dirs(out_subfolder, recursive = FALSE, full.names = F)
+
+  for (i in seq(1: length(sim_names))){
+
+    sim_df <-  read.csv(paste0(out_subfolder, all_df_sim[i]))
+    sim_df$real_sim_name <-  sim_names[i]
+    full_sim_df <-  rbind(full_sim_df, sim_df)
+}
+  
+return(full_sim_df)
+
+
+}
 
   

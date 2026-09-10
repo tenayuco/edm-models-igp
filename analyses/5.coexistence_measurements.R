@@ -97,40 +97,65 @@ DATA_SURV_AV <- survival_time_average(DATA_SURV)
 ###now we gonna put together 1. the omega, 2. the area of coexistence, and 3 the survival time. 
 
 ##here you specify wich one wou want 
-full_df <-  read.csv("./outputs/LV_MAP/real.data/absolute/not_normalized/FULL_DF_parameters_numseed_30.csv")
+FULL_DF <-  read.csv("./outputs/LV_MAP/real.data/absolute/not_normalized/FULL_DF_parameters_numseed_30.csv")
 
 
 #importantly, the omega reported is the log 10, so we have to do 10**omega to get real omega values
 
-full_df$omega_mean <- 10^full_df$omega_mean
-full_df$omega_dw <- 10^full_df$omega_dw
-full_df$omega_up <- 10^full_df$omega_up
+FULL_DF$omega_mean <- 10^FULL_DF$omega_mean
+FULL_DF$omega_dw <- 10^FULL_DF$omega_dw
+FULL_DF$omega_up <- 10^FULL_DF$omega_up
 
+##here a nre coilumb to differentiate from sumularion
+
+FULL_DF$real_sim_name <- "real.data"
 
 
 ##this is a full summarizer of both sources of variance, of the LV BS, and my resticking between the 30 runs. 
-full_sum <- summarizer_with_variance(df_full = full_df)
+FULL_REAL_SUM <- summarizer_with_variance(df_full = FULL_DF)
 
 
 ##im gonna ADD the simulated data identifies by the enem
 #ok so, i need a code to put every simulaiton together hehe
 
-#full_sim_df <-  read.csv("./outputs/LV_MAP/simulated.data/lblb_model_0/absolute/not_normalized/FULL_DF_parameters_numseed_3.csv")
+
+# ============================================================================
+# EXTRSCT SIMULATED. SEE... 
+# ============================================================================
+out_sim_folder <- paste0("./outputs/LV_MAP/", "simulated.data", "/")
 
 
+ALL_SIM_DF <- extract_all_simulation(out_subfolder = out_sim_folder)
+
+ALL_SIM_DF$omega_mean <- 10^ALL_SIM_DF$omega_mean
+ALL_SIM_DF$omega_dw <- 10^ALL_SIM_DF$omega_dw
+ALL_SIM_DF$omega_up <- 10^ALL_SIM_DF$omega_up
 
 
-##add the cate of igp and causality
-#DF_SUM_LV_CCM <- read.csv("./data/summ_lv_ccm_R.csv")
+FULL_SIM_SUM <- summarizer_with_variance(df_full = ALL_SIM_DF)
+
+##i might put a general coexistence folder, outside all the simulated and real data.. 
+
+FULL_SUM <-  rbind(FULL_REAL_SUM, FULL_SIM_SUM)
 
 
+## now to make it complete.. but, for now it does not make sense for simulated..
+
+#for now it does no have any area or survival for the sim data. (it puts NA)
+DF_SUM_LV_CCM <- read.csv("./data/summ_lv_ccm_R.csv")
 
 
 ###comple
-COMPLETE_DF <-   dplyr::left_join(full_sum, DATA_AREA, by= "enem")
+COMPLETE_DF <-   dplyr::left_join(FULL_SUM,  DATA_AREA, by= "enem")
 COMPLETE_DF <-   dplyr::left_join(COMPLETE_DF, DATA_SURV_AV, by= "enem")
 ##ADD CATEG
-#COMPLETE_DF <-  dplyr::left_join(COMPLETE_DF , DF_SUM_LV_CCM, by= "enem")
+COMPLETE_DF <-  dplyr::left_join(COMPLETE_DF , DF_SUM_LV_CCM, by= c("real_sim_name", "enem"))
+
+##so HERE THE NA are 00 but i have to re[place this]
+COMPLETE_DF$lv_caus[is.na(COMPLETE_DF$lv_caus)] <- "missing"
+COMPLETE_DF$ccm_caus[is.na(COMPLETE_DF$ccm_caus)] <- "missing"
+COMPLETE_DF$igp_comp[is.na(COMPLETE_DF$igp_comp)] <- "missing"
+COMPLETE_DF[is.na(COMPLETE_DF)] <- 1
 
 
 ##############
@@ -138,9 +163,13 @@ COMPLETE_DF <-   dplyr::left_join(COMPLETE_DF, DATA_SURV_AV, by= "enem")
 COMPLETE_DF <-  xy_to_np_transformer(COMPLETE_DF) 
 
 
+##to avoid some problems of the R, im gonna remove the R present true
+COMPLETE_DF <- COMPLETE_DF |> 
+  dplyr::filter(rpresent == FALSE)
+
 
 COMPLETE_DF_LONG <- COMPLETE_DF |> 
-  dplyr::select(enem,grand_mean, total_sd, grand_mean_omega,total_sd_omega , mean_surv, type, varName, sd_surv, ccm_caus, lv_caus, igp_comp)|> 
+  dplyr::select(enem,grand_mean, total_sd, grand_mean_omega,total_sd_omega , mean_surv, type, varName, real_sim_name,  sd_surv, ccm_caus, lv_caus, igp_comp)|> 
   tidyr::gather(key= "coexistence_variable", value= "coex_value", grand_mean_omega, mean_surv)|> 
     tidyr::gather(key= "coexistence_sd", value= "sd_value", total_sd_omega, sd_surv)
 
@@ -154,13 +183,19 @@ COMPLETE_DF_LONG <-  COMPLETE_DF_LONG |>
 
 ###now some ploting!!
 #importantly, the plotting will be done with absolute valies 
-plotter_meanSurv_omega(COMPLETE_DF, fig_path = fig_folder)
+fig_external_folder <-  paste0("./figures/LV_MAP/COEXISTENCE/")
 
-plotter_interaction_coexistence(COMPLETE_DF_LONG, chosen_coex_var = "grand_mean_omega", fig_path = fig_folder)
-plotter_interaction_coexistence(COMPLETE_DF_LONG, chosen_coex_var = "mean_surv", fig_path = fig_folder)
+##thois one olny make sense if we have some values of survival for the sim
+##if not, dont plot (for now)
+#plotter_meanSurv_omega(COMPLETE_DF, fig_path = fig_external_folder)
+
+
+plotter_interaction_coexistence(COMPLETE_DF_LONG, chosen_coex_var = "grand_mean_omega", fig_path = fig_external_folder)
+plotter_interaction_coexistence(COMPLETE_DF_LONG, chosen_coex_var = "mean_surv", fig_path = fig_external_folder)
 
 
 
-plotter_cat_coexistence(COMPLETE_DF_LONG, chosen_coex_var = "grand_mean_omega", fig_path = fig_folder)
-plotter_cat_coexistence(COMPLETE_DF_LONG, chosen_coex_var = "mean_surv", fig_path = fig_folder)
+plotter_cat_coexistence(COMPLETE_DF_LONG, chosen_coex_var = "grand_mean_omega", fig_path = fig_external_folder)
+plotter_cat_coexistence(COMPLETE_DF_LONG, chosen_coex_var = "mean_surv", fig_path = fig_external_folder)
 
+#fig_external_folder <-  paste0("./figures/LV_MAP/")
