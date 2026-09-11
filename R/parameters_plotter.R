@@ -246,7 +246,7 @@ full_df_sum <- df_full |>
   dplyr::select(!replicate)|> 
   dplyr::select(!dif_cond)|> 
   dplyr::select(!norm)|> 
-  dplyr::group_by(varName, type, numRep, rpresent, enem, real_sim_name)|> 
+  dplyr::group_by(varName, type, numRep, rpresent, enem)|> 
   dplyr::summarise(grand_mean = mean(mvalue.mean), 
   var_between = var(mvalue.mean), 
   var_within= mean(mvalue.sd**2),

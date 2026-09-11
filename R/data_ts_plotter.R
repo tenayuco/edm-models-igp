@@ -338,12 +338,17 @@ plotter_interaction_coexistence <- function(complete_df_long, chosen_coex_var = 
 coex_int_plot <- complete_df_long |>
     dplyr::filter(coexistence_variable == chosen_coex_var)|>
     ggplot(aes(x = grand_mean, y = coex_value)) +
-geom_pointrange(aes(ymin = coex_value-sd_value, ymax = coex_value+sd_value))  +
-  geom_pointrange(aes(xmin = grand_mean- total_sd, xmax = grand_mean+ total_sd))+
-    geom_point(aes(fill = enem), size =3, shape=21, color= "black") +
+geom_pointrange(aes(ymin = coex_value-sd_value, ymax = coex_value+sd_value, 
+                    xmin = grand_mean- total_sd, xmax = grand_mean+ total_sd, 
+                  fill = enem, shape= enem))  +
+  geom_pointrange(aes(xmin = grand_mean- total_sd, xmax = grand_mean+ total_sd, 
+                  fill = enem, shape= enem)) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "red") +
+    #geom_point(aes(fill = enem, shape= enem), size =2, color= "black") +
     facet_wrap(~varName, scales = "free") +
     theme_minimal()+
-    scale_fill_viridis_d()
+    scale_fill_viridis_d(option = "inferno")+
+    scale_shape_manual(values = c(21, 22, 23, 24, 25, 21))
   
   ggsave(
     coex_int_plot,
@@ -364,7 +369,7 @@ coex_cat_plot <- complete_df_long |>
 geom_pointrange(aes(ymin = coex_value-sd_value, ymax = coex_value+sd_value))  +
     geom_point(aes(fill = enem), shape=21, size=3,  color= "black") +
     theme_minimal()+
-    scale_fill_viridis_d()
+    scale_fill_viridis_d(option = "inferno")
 
   ggsave(
    coex_cat_plot,
