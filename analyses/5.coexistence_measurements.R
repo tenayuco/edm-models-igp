@@ -120,7 +120,7 @@ FULL_REAL_SUM <- summarizer_with_variance(df_full = FULL_DF)
 
 
 # ============================================================================
-# EXTRSCT SIMULATED. SEE... 
+# 7. EXTRSCT SIMULATED. SEE... 
 # ============================================================================
 out_sim_folder <- paste0("./outputs/LV_MAP/", "simulated.data", "/")
 
@@ -131,8 +131,13 @@ ALL_SIM_DF$omega_mean <- 10^ALL_SIM_DF$omega_mean
 ALL_SIM_DF$omega_dw <- 10^ALL_SIM_DF$omega_dw
 ALL_SIM_DF$omega_up <- 10^ALL_SIM_DF$omega_up
 
-
 FULL_SIM_SUM <- summarizer_with_variance(df_full = ALL_SIM_DF)
+
+# ============================================================================
+# 8. PUT EVERYTIN TOGETHER 
+# ============================================================================
+
+
 
 ##i might put a general coexistence folder, outside all the simulated and real data.. 
 
@@ -167,6 +172,12 @@ COMPLETE_DF <-  xy_to_np_transformer(COMPLETE_DF)
 COMPLETE_DF <- COMPLETE_DF |> 
   dplyr::filter(rpresent == FALSE)
 
+#REMOVE OR NOT SIMULATED DATA
+
+COMPLETE_DF<- COMPLETE_DF |>
+  dplyr::filter(real_sim_name == "real.data")
+
+
 
 COMPLETE_DF_LONG <- COMPLETE_DF |> 
   dplyr::select(enem,grand_mean, total_sd, grand_mean_omega,total_sd_omega , mean_surv, type, varName, real_sim_name,  sd_surv, ccm_caus, lv_caus, igp_comp)|> 
@@ -187,7 +198,8 @@ fig_external_folder <-  paste0("./figures/LV_MAP/COEXISTENCE/")
 
 ##thois one olny make sense if we have some values of survival for the sim
 ##if not, dont plot (for now)
-#plotter_meanSurv_omega(COMPLETE_DF, fig_path = fig_external_folder)
+
+
 
 
 plotter_interaction_coexistence(COMPLETE_DF_LONG, chosen_coex_var = "grand_mean_omega", fig_path = fig_external_folder)
@@ -199,3 +211,6 @@ plotter_cat_coexistence(COMPLETE_DF_LONG, chosen_coex_var = "grand_mean_omega", 
 plotter_cat_coexistence(COMPLETE_DF_LONG, chosen_coex_var = "mean_surv", fig_path = fig_external_folder)
 
 #fig_external_folder <-  paste0("./figures/LV_MAP/")
+
+
+plotter_meanSurv_omega(COMPLETE_DF, fig_path = fig_external_folder)
