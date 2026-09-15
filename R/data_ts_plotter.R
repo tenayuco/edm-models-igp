@@ -62,7 +62,7 @@ plotter_data_all <- function(data_long, remove_aphid = FALSE) {
   ggsave(
     TIME_SERIES_ALL,
     filename = paste0("./figures/time-series-all-", aphid, ".png"),
-    height = 9,
+    height = 8,
     width = 10,
     create.dir = T
   )
@@ -100,7 +100,7 @@ plotter_data_mean <- function(data_mean, remove_aphid = FALSE) {
   ggsave(
     TIME_SERIES_MEAN,
     filename = paste0("./figures/time-series-mean-", aphid, ".png"),
-    height = 9,
+    height = 8,
     width = 10,
     create.dir = T
   )
@@ -333,26 +333,29 @@ ts_plotter_data <- function(data_pred, plotted_var = c("R", "X", "Y")){
 
 
 ##this would be one plot per interactions see in face plot 
-plotter_interaction_coexistence <- function(complete_df_long, chosen_coex_var = "grand_mean_omega", fig_path) {
+plotter_interaction_coexistence <- function(complete_df_long, chosen_coex_var = "grand_mean_omega", fig_path, chosen_int, num_columns) {
 
 coex_int_plot <- complete_df_long |>
     dplyr::filter(coexistence_variable == chosen_coex_var)|>
+    dplyr::filter((varName %in% chosen_int))|>
+  
+  
     ggplot(aes(x = grand_mean, y = coex_value)) +
-geom_pointrange(aes(ymin = coex_value-sd_value, ymax = coex_value+sd_value, 
+    geom_pointrange(aes(ymin = coex_value-sd_value, ymax = coex_value+sd_value, 
                     xmin = grand_mean- total_sd, xmax = grand_mean+ total_sd, 
-                  fill = enem, shape= enem))  +
+                  fill = enem, shape= enem), size =1)  +
   geom_pointrange(aes(xmin = grand_mean- total_sd, xmax = grand_mean+ total_sd, 
-                  fill = enem, shape= enem)) +
+                  fill = enem, shape= enem), size=1) +
   geom_vline(xintercept = 0, linetype = "dashed", color = "red") +
-    #geom_point(aes(fill = enem, shape= enem), size =2, color= "black") +
-    facet_wrap(~varName, scales = "free") +
-    theme_minimal()+
+      facet_wrap(~varName, ncol = num_columns) +
+    theme_bw()+
+    labs(subtitle= paste0(chosen_coex_var, " vs ", paste(chosen_int, collapse = "_")), x= "Magnitude of interaction")+
     scale_fill_viridis_d(option = "inferno")+
     scale_shape_manual(values = c(21, 22, 23, 24, 25, 21))
   
   ggsave(
     coex_int_plot,
-    filename = paste0(fig_path, "coex_int_", chosen_coex_var,  ".png"),
+    filename = paste0(fig_path, "coex_int_", chosen_coex_var, "_var_", paste(chosen_int, collapse = "_"),  ".png"),
     height = 9,
     width = 12,
     create.dir = T
@@ -360,7 +363,7 @@ geom_pointrange(aes(ymin = coex_value-sd_value, ymax = coex_value+sd_value,
 }
 
 
-
+## we have to redo this one with the preovi
 plotter_cat_coexistence <- function(complete_df_long, chosen_coex_var = "grand_mean_omega", fig_path) {
 
 coex_cat_plot <- complete_df_long |>
@@ -401,5 +404,8 @@ surv_omega_plot <- complete_df |>
     create.dir = T
   )
 }
+
+
+
 
 

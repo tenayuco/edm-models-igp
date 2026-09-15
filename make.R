@@ -17,6 +17,16 @@ devtools::install_deps(upgrade = "never")
 # Load packages under Depends and in R
 devtools::load_all()
 
+
+
+
+
+
+
+
+
+
+
 #===================================================================================
 
 #================================SIMULATED DATA====================================
