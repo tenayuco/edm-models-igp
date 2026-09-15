@@ -270,8 +270,8 @@ PLOT_GENERAL <- plot_par_allconditions(df_sum)
 
 
 ggsave(PLOT_GENERAL, filename = paste0(fig_subfolder, "all_parameters_", "values_", abs_norm_values,  ".png"),
-   height = 10,
-    width = 13,
+   height = 12,
+    width = 18,
     create.dir = T
   )
 

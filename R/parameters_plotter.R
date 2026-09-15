@@ -195,7 +195,9 @@ parameter_r_alpha_plotter <- function(df_full = FULL_DF_PARAMETERS, par_type = "
     xlab("Replicate and variable") +
     ggtitle(paste0("kernel_chosen ", kernel_chosen)) +
 
-    facet_wrap(~enem, scales = "free", ncol= 3)+
+    #facet_wrap(~enem, scales = "free", ncol= 3)+
+    facet_wrap(~enem, ncol= 3, scales = "free_x")+
+
     
     geom_hline(yintercept = 0, color= "black", linetype= "dashed")+
      scale_color_viridis_d() +
