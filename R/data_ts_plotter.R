@@ -33,7 +33,7 @@ speciesCol_trop <- c(
 )
 
 ###here all
-plotter_data_all <- function(data_long, remove_aphid = FALSE) {
+plotter_data_all <- function(data_long, remove_aphid = FALSE, norm_data = FALSE) {
   aphid = ""
 
   data_long <-  data_long |> 
@@ -49,24 +49,54 @@ plotter_data_all <- function(data_long, remove_aphid = FALSE) {
   TIME_SERIES_ALL <- data_long |>
     ggplot(aes(x = week, y = individuals)) +
     geom_line(
-      aes(color = fullname, group = as.factor(interaction(block, species))),
+      aes(color = species, group = as.factor(interaction(block, species))),
       size = 0.5
     ) +
-    geom_point(aes(color = fullname), size = 1) +
+    geom_point(aes(color = species), size = 1) +
     facet_wrap(~enem, scales = "free_y") +
     scale_color_manual(
-      values = speciesCol_trop
+      values = speciesCol
     ) +
     theme_minimal()
 
   ggsave(
     TIME_SERIES_ALL,
-    filename = paste0("./figures/time-series-all-", aphid, ".png"),
+    filename = paste0("./figures/time-series-all-", aphid, "norm_", norm_data, ".png"),
     height = 8,
-    width = 10,
+    width = 12,
     create.dir = T
   )
 }
+
+
+
+###here aphid as a mean, never using it again.. 
+plotter_data_aphid_mean <- function(data_long_mean_aphid, norm_data=F) {
+  aphid = ""
+
+
+  TIME_SERIES_ALL <- data_long_mean_aphid |>
+    ggplot(aes(x = week, y = individuals)) +
+    geom_line(
+      aes(linewidth= trophic,  color = species, group = as.factor(interaction(block, species)))
+    ) +
+    geom_point(aes(color = species), size = 1) +
+    facet_wrap(~enem, scales = "free_y") +
+    scale_linewidth_manual(values = c("R"= 3, "X"= 1, "Y"=1))+
+    scale_color_manual(
+      values = speciesCol
+    ) +
+    theme_minimal()
+
+  ggsave(
+    TIME_SERIES_ALL,
+    filename = paste0("./figures/time-series-aphidmean-norm_", norm_data, ".png"),
+    height = 8,
+    width = 12,
+    create.dir = T
+  )
+}
+
 
 plotter_data_mean <- function(data_mean, remove_aphid = FALSE) {
   aphid = ""
@@ -300,6 +330,8 @@ ggsave(
 }
 
 
+
+##this is bsic and works for all
 
 
 ts_plotter_data <- function(data_pred, plotted_var = c("R", "X", "Y")){

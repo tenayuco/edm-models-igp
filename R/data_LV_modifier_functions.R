@@ -89,6 +89,19 @@ data_norm <- data_pred |> #normally already selected the columns
 }
 
 
+max_datalong_norm <- function(data_long){
+
+data_long_norm <- data_long |> #normally already selected the columns 
+    dplyr::group_by(enem, species) |>  # Group by enemy
+    dplyr::mutate(individuals = individuals/max(individuals, na.rm = TRUE)) |> 
+    dplyr::ungroup()  # Remove grouping
+  return(data_long_norm)
+
+}
+
+
+
+
 zero_remover_raw <- function(data_pred){
     ##here we remove the 0 
 
