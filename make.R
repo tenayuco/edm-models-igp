@@ -117,6 +117,8 @@ print("totalTIME")
 
 #here you can add a loop to have the time or spatial kernel kernel_v= c("state", "time")
 
+forcing_theta <- FALSE
+
 tic()
 #or source if you wanto to have the full analisis 
   for(norm_data in c(FALSE, TRUE)){
