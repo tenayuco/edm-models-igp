@@ -83,19 +83,6 @@ REAS_DF <-  data.frame("block" = seq(1:10), "replicate" = sample(seq(1:10)))
 DATA_USED <-  dplyr::full_join(DATA_USED, REAS_DF, by= "block")
 DATA_USED$block <-  NULL
 
-#here it just to remove the 0 values.. and add random small values
-
-#for (i in seq(1, dim(DATA_USED)[1])){
-
-#if(DATA_USED[i,]$R ==0){DATA_USED[i,]$R  <- max(DATA_USED$R)/100 * abs(rnorm(1,0,0.5))}
-#if(DATA_USED[i,]$X ==0){DATA_USED[i,]$X  <- max(DATA_USED$X)/100 * abs(rnorm(1,0,0.5))} 
-#if(DATA_USED[i,]$Y ==0){DATA_USED[i,]$Y  <- max(DATA_USED$Y)/100 * abs(rnorm(1,0,0.5))} 
-
-#}
-
-
-
-
 
 ##now here a renaming
 names(DATA_USED) <- c("R", "X", "Y", "time", "replicate")

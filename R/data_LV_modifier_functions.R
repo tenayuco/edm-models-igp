@@ -80,9 +80,9 @@ max_normalization <- function(data_pred){
 
 data_norm <- data_pred |> #normally already selected the columns 
     dplyr::group_by(enem) |>  # Group by enemy
-    dplyr::mutate(R = R/max(R, na.rm = TRUE), 
-                  X = X/max(X, na.rm = TRUE), 
-                  Y = Y/max(Y, na.rm = TRUE)) |> 
+    dplyr::mutate(R = R/max(R, X, Y, na.rm = TRUE), 
+                  X = X/max(R, X, Y, na.rm = TRUE), 
+                  Y = Y/max(R, X, Y, na.rm = TRUE)) |> 
     dplyr::ungroup()  # Remove grouping
   return(data_norm)
 
