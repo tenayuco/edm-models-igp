@@ -11,7 +11,8 @@ library(patchwork)
 rdeps::add_deps()
 
 # Install/update packages listed in DESCRIPTION
-devtools::install_deps(upgrade = "never")
+devtools::install_deps(upgrade =  "never")
+#devtools::install_deps()
 
 ###########RUN this alwys
 # Load packages under Depends and in R

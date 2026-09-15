@@ -23,6 +23,7 @@ Imports:
     dplyr,
     EnvStats,
     forcats,
+    igraph,
     knitr,
     maditr,
     multispatialCCM,

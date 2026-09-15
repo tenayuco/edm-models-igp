@@ -332,3 +332,74 @@ plot_omega_allconditions <- function(df_sum){
   )
   
 }
+
+
+
+
+network_plotters <- function(chosen_enem){
+
+
+ONLY_INT <-  NET_DF |> 
+  dplyr::filter(enem== chosen_enem) |> 
+  dplyr::mutate(varName = ifelse(varName == "N", "X.N", 
+                          ifelse(varName== "P", "Y.P", varName)))|> 
+  dplyr::select(varName, grand_mean_pro)|> 
+  tidyr::separate(col=varName, into= c("source", "target"))
+
+NODES <- data.frame(name = c("X", "Y", "N", "P"))
+
+network <- igraph::graph_from_data_frame(d=ONLY_INT, vertices=NODES, directed=T) 
+
+
+
+
+#done with deepseek
+
+
+# --- Edge widths ---
+# Handle negatives: scale to positive range
+gm <- igraph::E(network)$grand_mean_pro
+w  <- abs(gm)                    # or: scales::rescale(gm, to = c(1, 6))
+#w  <- w*10 + 0.5       # keep a minimum visible width
+w  <- 20*sqrt(w)       # keep a minimum visible width
+
+# --- Edge colors: sign of grand_mean (optional but helpful) ---
+edge_col <- ifelse(gm >= 0, "steelblue", "firebrick")
+
+
+# --- Plot ---
+
+print(w)
+
+png(paste0("./figures/LV_MAP/real.data/network/network_", chosen_enem,".png"),
+    width = 1200, height = 1200, res = 200)
+  
+
+plot(
+  network,
+  edge.width     = w,
+  edge.color     = edge_col,
+  edge.curved    = 0.2,           # gentle curve; set to 0 to keep straight
+  edge.loop.angle =  3/2*pi ,       # rotate self-loops so they don't overlap
+  vertex.size    = c(X = 5, Y = 5, N = 20, P = 20)[igraph::V(network)$name],
+  vertex.color   = "white",
+  vertex.frame.color = "grey30",
+  vertex.label.color  = "black",
+  vertex.label.cex    = 1.1,
+  layout         = matrix(
+                     c(1.2, 1.2,      # X
+                       0, 1.2,      # Y
+                       1, 1,      # N
+                       0.2, 1),     # P
+                     ncol = 2, byrow = TRUE),
+  rescale= FALSE, 
+  main = as.character(chosen_enem)
+)
+
+
+
+# --- Close device LAST ---
+dev.off()
+
+
+}
