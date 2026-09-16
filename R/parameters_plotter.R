@@ -341,10 +341,11 @@ network_plotters <- function(chosen_enem){
 
 ONLY_INT <-  NET_DF |> 
   dplyr::filter(enem== chosen_enem) |> 
-  dplyr::mutate(varName = ifelse(varName == "N", "X.N", 
-                          ifelse(varName== "P", "Y.P", varName)))|> 
+  dplyr::mutate(varName = ifelse(varName == "N", "N.X", 
+                          ifelse(varName== "P", "P.Y", varName)))|> 
   dplyr::select(varName, grand_mean_pro)|> 
-  tidyr::separate(col=varName, into= c("source", "target"))
+  tidyr::separate(col=varName, into= c("target", "source"))|> 
+  dplyr::relocate(source, target)   # <-- swap order
 
 NODES <- data.frame(name = c("X", "Y", "N", "P"))
 

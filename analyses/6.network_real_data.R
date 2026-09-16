@@ -15,7 +15,7 @@ NET_DF <-  COMPLETE_DF|>
   dplyr::mutate(grand_mean_pro = 1* grand_mean/max(abs(grand_mean)))
 
 
-dir.create("./figures/LV_MAP/real.data/network/")
+dir.create("./figures/LV_MAP/real.data/network/", recursive = T)
 
 
 for(enemigo in unique(NET_DF$enem)){
