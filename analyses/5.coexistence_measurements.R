@@ -296,6 +296,12 @@ plotter_interaction_coexistence(
 
 
 
+##now lets plot the omega vs min eta
+
+plotter_eta_omega(COMPLETE_DF, fig_path = fig_folder)
 
 
-plotter_meanSurv_omega(COMPLETE_DF, fig_path = fig_external_folder)
+
+
+
+#plotter_meanSurv_omega(COMPLETE_DF, fig_path = fig_external_folder)

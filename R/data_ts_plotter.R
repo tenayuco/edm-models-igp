@@ -440,5 +440,48 @@ surv_omega_plot <- complete_df |>
 
 
 
+plotter_eta_omega <- function(complete_df, fig_path) {
+
+complete_df$min_eta <-0
+complete_df$chosen_eta <- ""
+complete_df$total_sd_eta <- 0
+
+for (i in 1:dim(complete_df)[1]){
+  
+  complete_df$min_eta[[i]] <- min(complete_df$grand_mean_eta1[[i]],complete_df$grand_mean_eta2[[i]])
+
+  if(complete_df$min_eta[[i]] == complete_df$grand_mean_eta1[[i]]){
+    complete_df$chosen_eta[[i]] <- "eta1"
+    complete_df$total_sd_eta[[i]] <- complete_df$total_sd_eta1[[i]]
+  }
+  else {
+    complete_df$chosen_eta[[i]] <- "eta2"
+    complete_df$total_sd_eta[[i]] <- complete_df$total_sd_eta2[[i]]
+
+  }
+}
+
+
+eta_omega_plot <- complete_df |>
+    ggplot(aes(x =  min_eta , y = grand_mean_omega)) +
+  geom_pointrange(aes(ymin = grand_mean_omega-total_sd_omega, ymax = grand_mean_omega+total_sd_omega, fill = enem, shape= enem), size=1)  +
+  geom_pointrange(aes(xmin = min_eta- total_sd_eta, xmax = min_eta+ total_sd_eta, fill = enem, shape= enem), size=1)+
+    theme_minimal()+
+    scale_fill_viridis_d(option = "inferno")+
+    theme_bw()+
+    scale_shape_manual(values = c(21, 22, 23, 24, 25, 21))+
+   theme(axis.text=element_text(size=12))+
+   labs(subtitle= "Omega vs Eta", x= "Eta - distance", y="omega- potential")
+
+
+  ggsave(
+   eta_omega_plot,
+    filename = paste0(fig_path, "omega_eta",".png"),
+    height = 9,
+    width = 12,
+    create.dir = T
+  )
+}
+
 
 
