@@ -383,7 +383,8 @@ coex_int_plot <- complete_df_long |>
     theme_bw()+
     labs(subtitle= paste0(chosen_coex_var, " vs ", paste(chosen_int, collapse = "_")), x= "Magnitude of interaction")+
     scale_fill_viridis_d(option = "inferno")+
-    scale_shape_manual(values = c(21, 22, 23, 24, 25, 21))
+    scale_shape_manual(values = c(21, 22, 23, 24, 25, 21))+
+   theme(axis.text=element_text(size=12))
   
   ggsave(
     coex_int_plot,
