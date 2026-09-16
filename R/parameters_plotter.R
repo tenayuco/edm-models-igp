@@ -254,9 +254,20 @@ full_df_sum <- df_full |>
   var_within= mean(mvalue.sd**2),
   grand_mean_omega = mean(omega_mean),
  var_between_omega = var(omega_mean),
- var_within_omega= mean((((abs(omega_mean-omega_up)+abs(omega_mean-omega_dw))/2)/1.96)**2)) |>  #lo paso a un desvuacion estandar, y despues saco la media entre las desvacion standas 
+ var_within_omega= mean((((abs(omega_mean-omega_up)+abs(omega_mean-omega_dw))/2)/1.96)**2),
+  
+  grand_mean_eta1 = mean(eta1_mean),
+ var_between_eta1 = var(eta1_mean),
+ var_within_eta1= mean((((abs(eta1_mean-eta1_up)+abs(eta1_mean-eta1_dw))/2)/1.96)**2),
+  
+ grand_mean_eta2 = mean(eta2_mean),
+ var_between_eta2 = var(eta2_mean),
+ var_within_eta2= mean((((abs(eta2_mean-eta2_up)+abs(eta2_mean-eta2_dw))/2)/1.96)**2)) |>  #lo paso a un desvuacion estandar, y despues saco la media entre las desvacion standas 
+  
   dplyr::mutate(total_sd =sqrt(var_between+var_within)) |> 
- dplyr::mutate(total_sd_omega =sqrt(var_between_omega+var_within_omega))
+ dplyr::mutate(total_sd_omega =sqrt(var_between_omega+var_within_omega))|> 
+ dplyr::mutate(total_sd_eta1 =sqrt(var_between_eta1+var_within_eta1))|> 
+ dplyr::mutate(total_sd_eta2 =sqrt(var_between_eta2+var_within_eta2))
 
 full_df_sum <- full_df_sum |> 
     dplyr::ungroup()|> 

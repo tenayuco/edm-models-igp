@@ -8,7 +8,6 @@ lv_looper_lists_general <- function(data_used, v_num_rep, v_rpresent, v_num_seed
 
       out_lv <- paste0("enem_", enemigo, "/", "numrep_", num_rep, "/", "R_", rpresent, "/") ## Creates a subfolder name based on time length and noise level chosen
 
-     # out_subfolder <- paste0("numrep_", num_rep, "/", "R_", rpresent, "/") ## Cn
       fig_lv <- out_lv
   
   
@@ -51,7 +50,6 @@ lv_looper_lists_general <- function(data_used, v_num_rep, v_rpresent, v_num_seed
           }
         )
 
-        # source("./analyses/3a.data_LV_map.R")
       }
     }
   }

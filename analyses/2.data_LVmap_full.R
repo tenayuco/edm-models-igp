@@ -149,12 +149,14 @@ tictoc::toc()  # End timing and display elapsed time
 ##i dont wanna run tis
 
 #plot_per_treatment(out_subfolder = out_subfolder, true_values = FALSE) #we dont want the true values of the eq
+              # Random seeds for data shuffling
 
-
-##this is to take the full df that might existe already 
-simulaciones <- length(v_num_seed)
-
-
+#only activate if you wanna check this part 
+simulaciones <- 30
+out_subfolder <- "./outputs/LV_MAP/real.data/absolute/not_normalized/"
+norm_data <-  "FALSE"
+type_data= "real.data"  #data from the experiments
+dif_cond <-  FALSE
 ##check this and tun
 if (
   file.exists(paste0(out_subfolder,"FULL_DF_parameters_","numseed_",simulaciones,".csv"

@@ -121,6 +121,38 @@ DF_THETA <- DF_THETA |>
 
 #i can do this cause you inly have one value per replicate 
 DF_THETA <- unique(DF_THETA)
+  
+  
+DF_ETA_1 <- process_list(data_list = list_treatment_used$eta1_mean_list)  
+DF_ETA_1_CI_DW <-  process_list(data_list = list_treatment_used$eta1_cimean_list[[1]])
+DF_ETA_1_CI_UP <-  process_list(data_list = list_treatment_used$eta1_cimean_list[[2]])
+
+  
+
+DF_ETA_2 <- process_list(data_list = list_treatment_used$eta2_mean_list)  
+DF_ETA_2_CI_DW <-  process_list(data_list = list_treatment_used$eta2_cimean_list[[1]])
+DF_ETA_2_CI_UP <-  process_list(data_list = list_treatment_used$eta2_cimean_list[[2]])
+
+  
+ 
+#do not need any additional form
+DF_ETA_1_FULL <-  dplyr::full_join(DF_ETA_1, DF_ETA_1_CI_DW, by=c("replicate", "time"))
+DF_ETA_1_FULL <-  dplyr::full_join(DF_ETA_1_FULL, DF_ETA_1_CI_UP, by=c("replicate", "time"))
+
+names(DF_ETA_1_FULL) <- c("eta1_mean", "time", "replicate", "eta1_dw", "eta1_up")
+
+  
+#do not need any additional form
+DF_ETA_2_FULL <-  dplyr::full_join(DF_ETA_2, DF_ETA_2_CI_DW, by=c("replicate", "time"))
+DF_ETA_2_FULL <-  dplyr::full_join(DF_ETA_2_FULL, DF_ETA_2_CI_UP, by=c("replicate", "time"))
+names(DF_ETA_2_FULL) <- c("eta2_mean", "time", "replicate", "eta2_dw", "eta2_up")
+
+  
+DF_ETA_FULL <-  dplyr::full_join(DF_ETA_1_FULL, DF_ETA_2_FULL, by=c("replicate", "time"))
+
+  
+
+
 }
 
 
@@ -141,6 +173,8 @@ LONG_FULL <- rbind(LONG_FULL_RT, LONG_FULL_ALPHA)
 if(coex_cal ==TRUE){
 LONG_FULL <- dplyr::inner_join(LONG_FULL, DF_THETA, by="replicate")
 LONG_FULL <- dplyr::inner_join(LONG_FULL, DF_OMEGA_FULL, by="replicate")
+LONG_FULL <- dplyr::inner_join(LONG_FULL, DF_ETA_FULL, by="replicate")
+
 }
   
 LONG_FULL$numRep <- list_treatment_used$treatment[["num_rep"]]
