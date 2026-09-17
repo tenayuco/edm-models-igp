@@ -87,7 +87,6 @@ names(DATA_USED) <- c("R", "X", "Y", "time", "replicate")
 
 ###here i removed the H
 if (rpresent == FALSE){DATA_USED$R <- NULL}
-  #we remove these as they have a strong autocorrelation.. 
 
 
   #here i order by replocates
