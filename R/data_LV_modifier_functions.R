@@ -101,15 +101,30 @@ data_long_norm <- data_long |> #normally already selected the columns
 
 
 
-
+#we chnange the 0 to 1 when it is followed by a non zero value. And then we remove the rows with 0.. 
 zero_remover_raw <- function(data_pred){
     ##here we remove the 0 
 
- data_pred$R[data_pred$R==0] <-  1
-  data_pred$X[data_pred$X==0] <- 1
-data_pred$Y[data_pred$Y==0] <- 1
-return(data_pred)
+data_surv <- data_pred |>
+    dplyr::group_by(enem, block) |>
+    dplyr::mutate(X = ifelse(X == 0 & dplyr::lag(X)> 0, 1, X),  #with the predators a real 0 is when you have two conse 0
+                  Y = ifelse(Y == 0 & dplyr::lag(Y)> 0, 1, Y),
+                  R = ifelse(R == 0, 1, R))
+  
+## then the function creats Na when in the first week they are not found so we haveto make them also 1
+  
+data_surv[is.na(data_surv)] <- 1
+
+  
+#now we gonna remove the rows where we have zeros either for X or for Y (normally there are not zeros for R now) 
+  
+data_surv <- data_surv |> 
+  dplyr::filter(!(X ==0))|> 
+  dplyr::filter(!(Y ==0))
+  
+return(data_surv)
 }
+
 
 
 change_xy_realValues <-  function(df_full){
