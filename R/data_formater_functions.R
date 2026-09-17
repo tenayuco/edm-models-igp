@@ -30,17 +30,6 @@ herbivore <-c("mp")
 
 
 
-
-mean_formatter <- function(data_long) {
-DATA_MEAN <- data_long |> 
-  dplyr::group_by(enem, week, species, trophic) |> 
-  dplyr::summarise(meanIndividuals = mean(individuals, na.rm = TRUE), sdIndividuals = sd(individuals, na.rm = TRUE))
-return(DATA_MEAN)
-}
-
-
-
-
 pred_formatter <- function(data_long) {
 DATA_IGP_WIDER <- data_long |> 
   dplyr::select(!species)|> 
@@ -48,6 +37,43 @@ DATA_IGP_WIDER <- data_long |>
   tidyr::pivot_wider(names_from = "trophic", values_from = "individuals")
 return(DATA_IGP_WIDER)
 }
+
+data_pred_forRep <- function(data_pred){
+ 
+vecX <- c("cc", "ol", "sr", "am", "aa")
+vecY <- c("ma", "my", "ac", "ec")
+
+  data_long <- data_pred |> 
+    tidyr::pivot_longer(cols=c("R", "X", "Y"), names_to ="trophic", values_to = "individuals") |> 
+    tidyr::separate(enem, into = c("spA", "spB"), sep = "\\+", remove=F)
+
+  data_x <- data_long |> 
+    dplyr::filter(trophic== "X")|> 
+    dplyr::mutate(species = dplyr::if_else(spA %in% vecX, spA ,dplyr::if_else(spB %in% vecX, spB, "mp")))
+
+  data_y <- data_long |> 
+    dplyr::filter(trophic== "Y")|> 
+    dplyr::mutate(species = dplyr::if_else(spA %in% vecY, spA ,dplyr::if_else(spB %in% vecY, spB, "mp")))
+  
+  data_r <- data_long |> 
+    dplyr::filter(trophic== "R")|> 
+    dplyr::mutate(species = "mp")
+
+  data_long_sp <- rbind(data_x, data_y, data_r)|> 
+    dplyr::select(!(c(spA, spB)))
+  
+  return(data_long_sp)
+
+}
+
+mean_formatter <- function(data_pred_sp) {
+  
+data_mean <- data_long |> 
+  dplyr::group_by(enem, week, species, trophic) |> 
+  dplyr::summarise(meanIndividuals = mean(individuals, na.rm = TRUE), sdIndividuals = sd(individuals, na.rm = TRUE))
+return(data_mean)
+}
+
 
 
 

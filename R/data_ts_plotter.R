@@ -61,7 +61,7 @@ plotter_data_all <- function(data_long, remove_aphid = FALSE, norm_data = FALSE)
 
   ggsave(
     TIME_SERIES_ALL,
-    filename = paste0("./figures/time-series-all-", aphid, "norm_", norm_data, ".png"),
+    filename = paste0("./figures/ts/time-series-all-", aphid, "norm_", norm_data, ".png"),
     height = 8,
     width = 12,
     create.dir = T
@@ -90,7 +90,7 @@ plotter_data_aphid_mean <- function(data_long_mean_aphid, norm_data=F) {
 
   ggsave(
     TIME_SERIES_ALL,
-    filename = paste0("./figures/time-series-aphidmean-norm_", norm_data, ".png"),
+    filename = paste0("./figures/ts/time-series-aphidmean-norm_", norm_data, ".png"),
     height = 8,
     width = 12,
     create.dir = T
@@ -129,7 +129,7 @@ plotter_data_mean <- function(data_mean, remove_aphid = FALSE) {
     theme_minimal()
   ggsave(
     TIME_SERIES_MEAN,
-    filename = paste0("./figures/time-series-mean-", aphid, ".png"),
+    filename = paste0("./figures/ts/time-series-mean-", aphid, ".png"),
     height = 8,
     width = 10,
     create.dir = T

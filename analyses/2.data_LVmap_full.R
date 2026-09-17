@@ -53,8 +53,9 @@ DATA_PRED <- DATA_PRED |>
 # Remove rows with zeros (which can cause issues in LV models)
 DATA_PRED <- zero_remover_raw(DATA_PRED)
 
-# Create time series plots to visualize the raw data
-#ts_plot_normal <- ts_plotter_data(DATA_PRED, plotted_var = c("R", "X", "Y"))
+
+##if you wanna see the time serries, check the 2.a data_representation code
+
 
 
 
