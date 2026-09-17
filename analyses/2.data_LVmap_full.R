@@ -9,7 +9,7 @@
 # 1. DATA SOURCE CONFIGURATION
 # ============================================================================
 
-
+#norm_data  <- FALSE
 
 type_data= "real.data"  #data from the experiments
 dif_cond <-  FALSE
@@ -107,7 +107,7 @@ v_num_seed <- seq(1:3)                # Random seeds for data shuffling
 v_enemigos <- unique(DATA_PRED$enem)  # List of enemy species/treatments to analyze
 kernel_chosen <- "state"              # Kernel type for the LV model
 
-
+v_enemigos <- c("ac+ol")
 
 # ============================================================================
 # 8. RUN LV MAP ANALYSIS

@@ -72,6 +72,11 @@ DATA_USED <- df_used
   
 DATA_USED$enem <- NULL
 
+  
+
+  
+#reshuffling of replicates
+  
 ###here I change the values of the replicate to chage the order.
 
 set.seed(num_seed)
@@ -94,7 +99,28 @@ DATA_USED <-  DATA_USED |>
 dplyr::arrange(replicate, .by_group = FALSE)
 ###########3
 
+##here i used the replicate to know the lengh
+  # 
+  #====================
+long_series <- DATA_USED |> 
+  dplyr::ungroup() |> 
+  dplyr::mutate(count =1) |>
+  dplyr::group_by(replicate) |> 
+  dplyr::summarise(long = sum(count))|> 
+  dplyr::select(long)
 
+long_series_vec <- as.vector(long_series$long)
+
+R_F_index <-  cumsum(long_series_vec)[-10]  #9   
+R_0_index <- rep(1, 10)
+R_0_index[-1] <- R_0_index[-1] + R_F_index ## this gives the end of each, so by summing it we have the intial of nthe next
+
+  #==================================
+  
+  
+  
+  
+  
 #####here it is just to gather in block, but keeping the new given order
 
 size_block <- length(unique(DATA_USED$replicate))/num_rep
