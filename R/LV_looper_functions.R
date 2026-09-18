@@ -146,8 +146,9 @@ S <-  dim(N_list_sim[[1]])[2]
 # ================
 
 
- chosen_theta_v = seq(0, 3, 0.01)
-
+#chosen_theta_v = seq(0, 3, 0.01)
+chosen_theta_v = seq(0, 0)
+  
 cv_list_sim <- vector(mode = "list", length = num_rep)
 
 tictoc::tic()
@@ -177,7 +178,13 @@ tictoc::toc()
   
 list_treatment$cv_list_sim <- cv_list_sim
 
+plot(list_treatment$cv_list_sim[[1]]$observed_Y_all
+, list_treatment$cv_list_sim[[1]]$predicted_Y_all)
 
+#plot predicted agains observed
+  
+  
+  
 # ========================
 # Estimation of parameters
 # ========================

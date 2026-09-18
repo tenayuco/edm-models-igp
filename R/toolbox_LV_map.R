@@ -198,66 +198,75 @@ weighted_regression_time_kernel <- function(X,Y,N,S,t,Tmax,time.p,theta){
 }
 
 
-#################
-## cross validation for state kernel 
-LV_map_state_space_cross_validation_mod <- function(N, theta_v = seq(0, 5, 0.05), p = 0.1, mod_XY_mat = FALSE, R_0_index, R_F_index, remove_stiching=F) {
-  Tmax <- dim(N)[1] # number of time steps
+LV_map_state_space_cross_validation_mod <- function(N, theta_v = seq(0, 5, 0.05), p = 0.1, mod_XY_mat = TRUE, R_0_index, R_F_index, remove_stiching = F) {
+  
+  Tmax <- dim(N)[1]
   n <- length(theta_v)
   Tstart <- round(Tmax * p)
+  n_species <- dim(N)[2]          # <-- number of species
+  n_time <- Tmax - 1              # <-- number of prediction steps
 
   RMSE <- rep(NA, n)
 
+  # ---- STORAGE: 3D array to hold predicted_Y for every theta, t, species ----
+  # Dimensions: [theta, time, species]
+  predicted_Y_all <- array(NA, dim = c(n, n_time, n_species))
+
+  # Optional: also store the actual (observed) values for comparison
+  observed_Y_all <- array(NA, dim = c(n, n_time, n_species))
+
+
+
+
+
+
+  X_ALL <- N
+    for (ncut_index in seq(1:dim(X_ALL)[1])) {
+          if (!(ncut_index %in% R_0_index)) {
+             X_ALL[ncut_index, 1] <-  X_ALL[ncut_index, 1] + 400
+          }
+        }
+  
+        #X_ALL <- cbind(rep(1, Tmax - 1), N_mod[-Tmax, ])
+
+
+
+
+
   for (i in 1:n) {
-    #print(paste0("numtheta",i))
-    ESS <- 0 # initialize the error sum of squares to zero
+    ESS <- 0
     theta <- theta_v[i]
     for (t in Tstart:(Tmax - 1)) {
-     # print(paste0("t", t))
+
       N.cut <- N[-((t + 1):Tmax), ]
       logN.cut <- log(N.cut)
 
+      Y <- logN.cut[-1, ] - logN.cut[-t, ]
+      X <- cbind(rep(1, t - 1), N.cut[-t, ])
 
-  Y <- logN.cut[-1, ] - logN.cut[-t, ]
-  X <- cbind(rep(1, t - 1), N.cut[-t, ])
+      #=========== procedure to modify ncut and log ncut ===========
+      if (mod_XY_mat == TRUE & dim(N)[2] != 2) {
+        N.cut_mod <- N.cut
+        for (ncut_index in seq(1:dim(N.cut_mod)[1])) {
+          if (!(ncut_index %in% R_0_index)) {
+            N.cut_mod[ncut_index, 1] <- N.cut_mod[ncut_index, 1] + 400
+          }
+        }
+        logN.cut_mod <- log(N.cut_mod)
+        Y <- logN.cut[-1, ] - logN.cut_mod[-t, ]
+        X <- cbind(rep(1, t - 1), N.cut_mod[-t, ])
 
-#===========procedure to modify ncut and log ncut to add the real time series of herbovore
-if(mod_XY_mat == TRUE & dim(N)[2] !=2){
-      N.cut_mod <- N.cut ## this is not a real matrix per se
-     
-
- for (ncut_index in seq(1:dim(N.cut_mod)[1])){
-      if (!(ncut_index %in%  R_0_index)){  #r0 index is defined outside the loop
-        N.cut_mod[ncut_index, 1] <- N.cut_mod[ncut_index, 1]+400 ##so if you are not in the index of initial youll have +400
+        if (remove_stiching == T) {
+          for (ncut_index in seq(1:dim(N.cut_mod[-t, ])[1])) {
+            if (ncut_index %in% R_F_index) {
+              X[ncut_index, 2] <- X[ncut_index - 1, 2]
+              Y[ncut_index, 1] <- Y[ncut_index - 1, 1]
+            }
+          }
+        }
       }
-    }
-      
-      
-      
-     logN.cut_mod <- log(N.cut_mod)  ##right side of the rest
+      #==============================================================
 
-# now here we rebuuld the X and Y with this auxiliary matrix #this rewrites 
-     Y <- logN.cut[-1, ] - logN.cut_mod[-t, ]
-     X <- cbind(rep(1, t - 1), N.cut_mod[-t, ])  #explanatory variable 
-    
-      #print(X)
-      #print(Y)
-  #and the last detail is that in X and Y i repeated the last value! (less problematic than artificil stihci)
-  if(remove_stiching == T){    
-       for (ncut_index in seq(1:dim(N.cut_mod[-t, ])[1])){  #aqui -t, porque realmente en los x y y todavia no llega al indice
-      if (ncut_index %in%  R_F_index){  #
-     #   print(ncut_index)
-        X[ncut_index, 2] <- X[ncut_index-1, 2]
-        Y[ncut_index, 1] <- Y[ncut_index-1, 1]##
-      }
-    }
-  }
-  }
-#end of procedure 
-#=================================================
-
-
-      # d <- sqrt(colSums(((t(logN.cut)[, t - 1]) - t(logN.cut)[, -t])^2))
-    
       d <- sqrt(colSums(((t(N.cut)[, t - 1]) - t(N.cut)[, -t])^2))
       omega <- exp(-theta * d / mean(d))
 
@@ -267,31 +276,42 @@ if(mod_XY_mat == TRUE & dim(N)[2] !=2){
       r_hat <- t(t(beta_hat[1, ]))
       alpha_hat <- t(beta_hat[-1, ])
 
-      
-      predicted_Y <-  N[t, ] * exp(r_hat + alpha_hat %*% N[t, ])
+      predicted_Y <- X_ALL[t, ] * exp(r_hat + alpha_hat %*% X_ALL[t, ])
 
-      ESS <- ESS + sum((N[t + 1, ] - predicted_Y)^2)
-     # print(sum(exp(r_hat + alpha_hat %*% N[t, ])))
+      # ---- SAVE predicted_Y and observed Y ----
+      # The time index relative to the storage array:
+      t_idx <- t - Tstart + 1
+      predicted_Y_all[i, t_idx, ] <- as.numeric(predicted_Y)
+
+      
+      #observed_Y_all[i, t_idx, ]  <- as.numeric(N[t + 1,])         # drop last element (base R))
+      observed_Y_all[i, t_idx, ]  <- as.numeric(X_ALL[t + 1,])         # drop last element (base R))
+
+
+      #ESS <- ESS + sum((N[t + 1, ] - predicted_Y)^2)
+
+      ESS <- ESS + sum((X_ALL[t + 1, ] - predicted_Y)^2)
     }
 
     RMSE[i] <- sqrt(ESS / (Tmax - 1))
   }
 
-  # smoother <- smooth.spline(theta_v, RMSE)
-  # theta_o <- smoother$x[which.min(smoother$y)]
-  # RMSE_o <- min(smoother$y)
-
   theta_o <- theta_v[which.min(RMSE)]
   RMSE_o <- min(RMSE)
 
   out <- list(
-    theta_v = theta_v, RMSE = RMSE,
-    theta_o = theta_o, RMSE_o = RMSE_o
+    theta_v = theta_v,
+    RMSE = RMSE,
+    theta_o = theta_o,
+    RMSE_o = RMSE_o,
+    predicted_Y_all = predicted_Y_all,   # <-- saved predictions
+    observed_Y_all  = observed_Y_all,    # <-- observed values (optional)
+    Tstart = Tstart,
+    theta_o_idx = which.min(RMSE)        # <-- index to easily extract best theta
   )
 
   return(out)
 }
-
 
 #################
 ## cross validation for time kernel 
