@@ -9,8 +9,9 @@
 # 1. DATA SOURCE CONFIGURATION
 # ============================================================================
 
-#norm_data  <- FALSE
-
+#only run this if internallu called 
+norm_data  <- FALSE
+forcing_theta <- FALSE
 type_data= "real.data"  #data from the experiments
 dif_cond <-  FALSE
 
@@ -102,7 +103,7 @@ dir.create(paste0(out_subfolder), recursive = TRUE)
 
 # Parameters for the LV map cross-validation
 v_num_rep <- c(1)                     # Number of replicates (fixed due to limited time points)
-v_rpresent <- c(TRUE) #c(FALSE, TRUE)  #         # Whether to include R (resource) in the model
+v_rpresent <- c(TRUE, FALSE) #c(FALSE, TRUE)  #         # Whether to include R (resource) in the model
 v_num_seed <- seq(1:3)                # Random seeds for data shuffling
 v_enemigos <- unique(DATA_PRED$enem)  # List of enemy species/treatments to analyze
 kernel_chosen <- "state"              # Kernel type for the LV model
@@ -153,11 +154,18 @@ tictoc::toc()  # End timing and display elapsed time
               # Random seeds for data shuffling
 
 #only activate if you wanna check this part 
-simulaciones <- 30
-out_subfolder <- "./outputs/LV_MAP/real.data/absolute/not_normalized/"
-norm_data <-  "FALSE"
-type_data= "real.data"  #data from the experiments
-dif_cond <-  FALSE
+
+simulaciones <- length(v_num_seed)
+
+#===================
+#simulaciones <- 3
+#out_subfolder <- "./outputs/LV_MAP/real.data/absolute/not_normalized/"
+#norm_data <-  "FALSE"
+#type_data= "real.data"  #data from the experiments
+#dif_cond <-  FALSE
+#==================
+
+
 ##check this and tun
 if (
   file.exists(paste0(out_subfolder,"FULL_DF_parameters_","numseed_",simulaciones,".csv"
@@ -173,11 +181,6 @@ if (
     )
   )
 }
-
-###NEW CODE TO CHANGE THE CREATE A COLUMN OF REAL VALUES 
-#full_df  <- read.csv("./outputs/LV_MAP/real.data/absolute/not_normalized/FULL_DF_parameters_numseed_30.csv")
-
-#this is the original assingmeng
 
 
 
