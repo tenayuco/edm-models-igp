@@ -113,7 +113,6 @@ DF_OMEGA_FULL <-  dplyr::full_join(DF_OMEGA, DF_OMEGA_CI_DW, by=c("replicate", "
 DF_OMEGA_FULL <-  dplyr::full_join(DF_OMEGA_FULL, DF_OMEGA_CI_UP, by=c("replicate", "time"))
 names(DF_OMEGA_FULL) <- c("omega_mean", "time", "replicate", "omega_dw", "omega_up")
 
-  
   ###
 DF_THETA <- process_list(data_list = list_treatment_used$cv_list_sim)
 DF_THETA <- DF_THETA |> 
