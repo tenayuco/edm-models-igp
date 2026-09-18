@@ -21,7 +21,7 @@ LV_map_mod <- function(N, theta = 0, kernel = 'state', R_0_index, R_F_index, rem
   X <- cbind(rep(1, Tmax - 1), N[-Tmax, ]) # create the explanatory variables matrix
 #===========procedure to modify ncut and log ncut to add the real time series of herbovore
   
-if(mod_XY_mat == TRUE){
+if(mod_XY_mat == TRUE & dim(N)[2] !=2){
  #creata an auxiliary matrix 
   N_mod <- N ## this is not a real matrix per se
   for (n_index in seq(1:dim(N_mod)[1])){
@@ -200,7 +200,7 @@ weighted_regression_time_kernel <- function(X,Y,N,S,t,Tmax,time.p,theta){
 
 #################
 ## cross validation for state kernel 
-LV_map_state_space_cross_validation_mod <- function(N, theta_v = seq(0, 5, 0.05), p = 0.1, mod_XY_mat = FALSE) {
+LV_map_state_space_cross_validation_mod <- function(N, theta_v = seq(0, 5, 0.05), p = 0.1, mod_XY_mat = FALSE, R_0_index, R_F_index, remove_stiching=F) {
   Tmax <- dim(N)[1] # number of time steps
   n <- length(theta_v)
   Tstart <- round(Tmax * p)
@@ -218,10 +218,10 @@ LV_map_state_space_cross_validation_mod <- function(N, theta_v = seq(0, 5, 0.05)
 
 
   Y <- logN.cut[-1, ] - logN.cut[-t, ]
-      X <- cbind(rep(1, t - 1), N.cut[-t, ])
+  X <- cbind(rep(1, t - 1), N.cut[-t, ])
 
 #===========procedure to modify ncut and log ncut to add the real time series of herbovore
-    if(mod_XY_mat==TRUE){
+if(mod_XY_mat == TRUE & dim(N)[2] !=2){
       N.cut_mod <- N.cut ## this is not a real matrix per se
      
 
@@ -235,14 +235,14 @@ LV_map_state_space_cross_validation_mod <- function(N, theta_v = seq(0, 5, 0.05)
       
      logN.cut_mod <- log(N.cut_mod)  ##right side of the rest
 
-# now here we rebuuld the X and Y with this auxiliary matrix 
+# now here we rebuuld the X and Y with this auxiliary matrix #this rewrites 
      Y <- logN.cut[-1, ] - logN.cut_mod[-t, ]
      X <- cbind(rep(1, t - 1), N.cut_mod[-t, ])  #explanatory variable 
     
       #print(X)
       #print(Y)
   #and the last detail is that in X and Y i repeated the last value! (less problematic than artificil stihci)
-      
+  if(remove_stiching == T){    
        for (ncut_index in seq(1:dim(N.cut_mod[-t, ])[1])){  #aqui -t, porque realmente en los x y y todavia no llega al indice
       if (ncut_index %in%  R_F_index){  #
      #   print(ncut_index)
@@ -251,13 +251,9 @@ LV_map_state_space_cross_validation_mod <- function(N, theta_v = seq(0, 5, 0.05)
       }
     }
   }
+  }
 #end of procedure 
 #=================================================
-
-      
-      
-      #original
-    
 
 
       # d <- sqrt(colSums(((t(logN.cut)[, t - 1]) - t(logN.cut)[, -t])^2))
@@ -265,17 +261,16 @@ LV_map_state_space_cross_validation_mod <- function(N, theta_v = seq(0, 5, 0.05)
       d <- sqrt(colSums(((t(N.cut)[, t - 1]) - t(N.cut)[, -t])^2))
       omega <- exp(-theta * d / mean(d))
 
-
-
-
-
       Y.tilde <- omega * Y
       X.tilde <- omega * X
       beta_hat <- solve(t(X.tilde) %*% X.tilde, t(X.tilde)) %*% Y.tilde
       r_hat <- t(t(beta_hat[1, ]))
       alpha_hat <- t(beta_hat[-1, ])
 
-      ESS <- ESS + sum((N[t + 1, ] - N[t, ] * exp(r_hat + alpha_hat %*% N[t, ]))^2)
+      
+      predicted_Y <-  N[t, ] * exp(r_hat + alpha_hat %*% N[t, ])
+
+      ESS <- ESS + sum((N[t + 1, ] - predicted_Y)^2)
      # print(sum(exp(r_hat + alpha_hat %*% N[t, ])))
     }
 

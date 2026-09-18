@@ -161,7 +161,8 @@ if(forcing_theta == TRUE){
   print("Im doing the cross validation stuff")
 
   if(kernel_chosen == "state") {
-out_cv <- LV_map_state_space_cross_validation_mod(N_list_sim[[i]], theta_v = chosen_theta_v)
+out_cv <- LV_map_state_space_cross_validation_mod(N_list_sim[[i]], theta_v = chosen_theta_v, 
+    R_0_index = R_0_index, R_F_index = R_F_index,  mod_XY_mat = TRUE, remove_stiching = T)
   }
 if(kernel_chosen == "time") {
   out_cv <- LV_map_time_cross_validation_mod(N_list_sim[[i]], theta_v = chosen_theta_v)
@@ -192,7 +193,7 @@ tic()
 for (i in 1:num_rep) {
 
   out_list[[i]] <- LV_map_mod(N_list_sim[[i]], cv_list_sim[[i]]$theta_o, 
-    kernel = kernel_chosen, R_0_index = R_0_index, R_F_index = R_F_index
+    kernel = kernel_chosen, R_0_index = R_0_index, R_F_index = R_F_index, remove_stiching = T, mod_XY_mat = TRUE
   )
   r_hat_list[[i]] <- out_list[[i]]$r_hat
   r_se_list[[i]] <- out_list[[i]]$r_se
