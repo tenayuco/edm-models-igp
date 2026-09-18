@@ -158,3 +158,20 @@ return(df_full)
   
   
 }
+
+
+
+####this function will create a modified verwson
+## of the herbivore, putting everything at the befin
+
+herbivore_modification <- function(data_pred){
+
+data_norm <- data_pred |> #normally already selected the columns 
+    dplyr::group_by(enem) |>  # Group by enemy
+    dplyr::mutate(R = R/max(R, X, Y, na.rm = TRUE), 
+                  X = X/max(R, X, Y, na.rm = TRUE), 
+                  Y = Y/max(R, X, Y, na.rm = TRUE)) |> 
+    dplyr::ungroup()  # Remove grouping
+  return(data_norm)
+
+}

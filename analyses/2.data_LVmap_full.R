@@ -11,8 +11,13 @@
 
 
 
+
+#only run this if internallu called 
+norm_data  <- FALSE
+forcing_theta <- FALSE
 type_data= "real.data"  #data from the experiments
 dif_cond <-  FALSE
+
 
 # ============================================================================
 # 2. LOAD AND FILTER DATA
@@ -49,6 +54,9 @@ DATA_PRED <- df_modifier_lv(raw_data = DATA_IGP)
 # Select only the columns needed for LV analysis
 DATA_PRED <- DATA_PRED |> 
   dplyr::select(block, R, X, Y, week, enem)
+
+##modfied herbivore values!!
+
 
 # Remove rows with zeros (which can cause issues in LV models)
 DATA_PRED <- zero_remover_raw(DATA_PRED)
@@ -153,12 +161,16 @@ tictoc::toc()  # End timing and display elapsed time
               # Random seeds for data shuffling
 
 #only activate if you wanna check this part 
-simulaciones <- 30
-out_subfolder <- "./outputs/LV_MAP/real.data/absolute/not_normalized/"
-norm_data <-  "FALSE"
-type_data= "real.data"  #data from the experiments
-dif_cond <-  FALSE
-##check this and tun
+
+simulaciones <- length(v_num_seed)
+
+#===================
+#simulaciones <- 3
+#out_subfolder <- "./outputs/LV_MAP/real.data/absolute/not_normalized/"
+#norm_data <-  "FALSE"
+#type_data= "real.data"  #data from the experiments
+#dif_cond <-  FALSE
+#==================
 if (
   file.exists(paste0(out_subfolder,"FULL_DF_parameters_","numseed_",simulaciones,".csv"
   ))) {
