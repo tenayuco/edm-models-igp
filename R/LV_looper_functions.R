@@ -120,7 +120,7 @@ R_0_index[-1] <- R_0_index[-1] + R_F_index ## this gives the end of each, so by 
   
   
   
-  
+  #from now on the new teplicate will not make snse  
 #####here it is just to gather in block, but keeping the new given order
 
 size_block <- length(unique(DATA_USED$replicate))/num_rep
@@ -145,7 +145,10 @@ list_treatment$N_list_sim <- N_list_sim
 
 S <-  dim(N_list_sim[[1]])[2]
 
+  
 
+
+  
 # ================
 # Cross validation
 # ================
@@ -162,10 +165,10 @@ tictoc::tic()
 for (i in 1:num_rep) {
 
   if(kernel_chosen == "state") {
-out_cv <- LV_map_state_space_cross_validation(N_list_sim[[i]], theta_v = chosen_theta_v)
+out_cv <- LV_map_state_space_cross_validation_mod(N_list_sim[[i]], theta_v = chosen_theta_v)
   }
 if(kernel_chosen == "time") {
-  out_cv <- LV_map_time_cross_validation(N_list_sim[[i]], theta_v = chosen_theta_v)
+  out_cv <- LV_map_time_cross_validation_mod(N_list_sim[[i]], theta_v = chosen_theta_v)
   }
 
 

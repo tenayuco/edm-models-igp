@@ -168,7 +168,7 @@ weighted_regression_time_kernel <- function(X,Y,N,S,t,Tmax,time.p,theta){
 
 #################
 ## cross validation for state kernel 
-LV_map_state_space_cross_validation <- function(N, theta_v = seq(0, 5, 0.05), p = 0.1) {
+LV_map_state_space_cross_validation_mod <- function(N, theta_v = seq(0, 5, 0.05), p = 0.1) {
   Tmax <- dim(N)[1] # number of time steps
   n <- length(theta_v)
   Tstart <- round(Tmax * p)
@@ -176,20 +176,69 @@ LV_map_state_space_cross_validation <- function(N, theta_v = seq(0, 5, 0.05), p 
   RMSE <- rep(NA, n)
 
   for (i in 1:n) {
+    #print(paste0("numtheta",i))
     ESS <- 0 # initialize the error sum of squares to zero
     theta <- theta_v[i]
-
     for (t in Tstart:(Tmax - 1)) {
+     # print(paste0("t", t))
       N.cut <- N[-((t + 1):Tmax), ]
       logN.cut <- log(N.cut)
-      Y <- logN.cut[-1, ] - logN.cut[-t, ]
-      X <- cbind(rep(1, t - 1), N.cut[-t, ])
+
+#===========procedure to modify ncut and log ncut to add the real time series of herbovore
+      
+      N.cut_mod <- N.cut ## this is not a real matrix per se
+     
+
+      
+
+ for (ncut_index in seq(1:dim(N.cut_mod)[1])){
+      if (!(ncut_index %in%  R_0_index)){  #r0 index is defined outside the loop
+        N.cut_mod[ncut_index, 1] <- N.cut_mod[ncut_index, 1]+400 ##so if you are not in the index of initial youll have +400
+      }
+    }
+      
+      
+    #print(N.cut_mod)
+      
+     logN.cut_mod <- log(N.cut_mod)  ##right side of the rest
+
+# now here we rebuuld the X and Y with this auxiliary matrix 
+     Y <- logN.cut[-1, ] - logN.cut_mod[-t, ]
+     X <- cbind(rep(1, t - 1), N.cut_mod[-t, ])  #explanatory variable 
+    
+      #print(X)
+      #print(Y)
+  #and the last detail is that in X and Y i repeated the last value! (less problematic than artificil stihci)
+      
+       for (ncut_index in seq(1:dim(N.cut_mod[-t, ])[1])){  #aqui -t, porque realmente en los x y y todavia no llega al indice
+      if (ncut_index %in%  R_F_index){  #
+     #   print(ncut_index)
+        X[ncut_index, 2] <- X[ncut_index-1, 2]
+        Y[ncut_index, 1] <- Y[ncut_index-1, 1]##
+      }
+    }
+      
+      
+
+      
+      
+      #original
+      #Y <- logN.cut[-1, ] - logN.cut[-t, ]
+      #X <- cbind(rep(1, t - 1), N.cut[-t, ])
+
+
       # d <- sqrt(colSums(((t(logN.cut)[, t - 1]) - t(logN.cut)[, -t])^2))
-    #  print(t(N.cut)[, t - 1]) ###here the mods
-    #  print("dei")
-    #  print(t(N.cut)[, -t]) ##here the mods
+    
       d <- sqrt(colSums(((t(N.cut)[, t - 1]) - t(N.cut)[, -t])^2))
       omega <- exp(-theta * d / mean(d))
+
+
+#end of procedure 
+#=================================================
+
+
+
+
       Y.tilde <- omega * Y
       X.tilde <- omega * X
       beta_hat <- solve(t(X.tilde) %*% X.tilde, t(X.tilde)) %*% Y.tilde
@@ -221,7 +270,7 @@ LV_map_state_space_cross_validation <- function(N, theta_v = seq(0, 5, 0.05), p 
 
 #################
 ## cross validation for time kernel 
-LV_map_time_cross_validation <- function(N, theta_v = seq(0, 5, 0.05), p = 0.1) {
+LV_map_time_cross_validation_mod <- function(N, theta_v = seq(0, 5, 0.05), p = 0.1) {
   Tmax <- dim(N)[1] # number of time steps
   n <- length(theta_v)
   Tstart <- round(Tmax * p)
@@ -236,8 +285,43 @@ LV_map_time_cross_validation <- function(N, theta_v = seq(0, 5, 0.05), p = 0.1) 
       time.p <- seq(1, t - 1)
       N.cut <- N[-((t + 1):Tmax), ]
       logN.cut <- log(N.cut)
-      Y <- logN.cut[-1, ] - logN.cut[-t, ]
-      X <- cbind(rep(1, t - 1), N.cut[-t, ])
+
+#===========procedure to modify ncut and log ncut to add the real time series of herbovore
+      
+      N.cut_mod <- N.cut ## this is not a real matrix per se
+     
+
+ for (ncut_index in seq(1:dim(N.cut)[1])){
+      if (!(ncut_index %in%  R_0_index)){  #r0 index is defined outside the loop
+        N.cut_mod[ncut_index, 1] <- N.cut_mod[ncut_index, 1]+400 ##so if you are not in the index of initial youll have +400
+      }
+    }
+      
+     logN.cut_mod <- log(N.cut_mod)  ##right side of the rest
+
+# now here we rebuuld the X and Y with this auxiliary matrix 
+     Y <- logN.cut[-1, ] - logN.cut_mod[-t, ]
+     X <- cbind(rep(1, t - 1), N.cut_mod[-t, ])  #explanatory variable 
+    
+      
+       
+  #and the last detail is that in X and Y i repeated the last value! (less problematic than artificil stihci)
+      
+       for (ncut_index in seq(1:dim(N.cut_mod)[1])){
+      if (ncut_index %in%  R_F_index){  #
+        X[ncut_index, 2] <- X[ncut_index-1, 2]
+        Y[ncut_index, 1] <- Y[ncut_index-1, 1]##
+      }
+    }
+      
+      
+      #original
+      #Y <- logN.cut[-1, ] - logN.cut[-t, ]
+      #X <- cbind(rep(1, t - 1), N.cut[-t, ])
+#end of procedure 
+#=================================================
+
+
       d <- abs((t - 1) - time.p)
       omega <- exp(-theta * d / mean(d))
       Y.tilde <- omega * Y
