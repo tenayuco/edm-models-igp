@@ -212,26 +212,16 @@ LV_map_state_space_cross_validation_mod <- function(N, theta_v = seq(0, 5, 0.05)
   # Dimensions: [theta, time, species]
   predicted_Y_all <- array(NA, dim = c(n, n_time, n_species))
 
-  # Optional: also store the actual (observed) values for comparison
+  # also store the actual (observed) values for comparison
   observed_Y_all <- array(NA, dim = c(n, n_time, n_species))
 
-
-
-
-
-
+  #I save this complete X for the prediction 
   X_ALL <- N
     for (ncut_index in seq(1:dim(X_ALL)[1])) {
           if (!(ncut_index %in% R_0_index)) {
              X_ALL[ncut_index, 1] <-  X_ALL[ncut_index, 1] + 400
           }
         }
-  
-        #X_ALL <- cbind(rep(1, Tmax - 1), N_mod[-Tmax, ])
-
-
-
-
 
   for (i in 1:n) {
     ESS <- 0
@@ -276,6 +266,8 @@ LV_map_state_space_cross_validation_mod <- function(N, theta_v = seq(0, 5, 0.05)
       r_hat <- t(t(beta_hat[1, ]))
       alpha_hat <- t(beta_hat[-1, ])
 
+
+      #it does the predicted with the modifed values, that it is were it comes from 
       predicted_Y <- X_ALL[t, ] * exp(r_hat + alpha_hat %*% X_ALL[t, ])
 
       # ---- SAVE predicted_Y and observed Y ----
@@ -283,14 +275,13 @@ LV_map_state_space_cross_validation_mod <- function(N, theta_v = seq(0, 5, 0.05)
       t_idx <- t - Tstart + 1
       predicted_Y_all[i, t_idx, ] <- as.numeric(predicted_Y)
 
-      
-      #observed_Y_all[i, t_idx, ]  <- as.numeric(N[t + 1,])         # drop last element (base R))
-      observed_Y_all[i, t_idx, ]  <- as.numeric(X_ALL[t + 1,])         # drop last element (base R))
+      #and the observerd with the N matrix, that is where it came from 
+      observed_Y_all[i, t_idx, ]  <- as.numeric(N[t + 1,])         # drop last element (base R))
+      #observed_Y_all[i, t_idx, ]  <- as.numeric(X_ALL[t + 1,])         # drop last element (base R))
 
 
-      #ESS <- ESS + sum((N[t + 1, ] - predicted_Y)^2)
-
-      ESS <- ESS + sum((X_ALL[t + 1, ] - predicted_Y)^2)
+      ESS <- ESS + sum((N[t + 1, ] - predicted_Y)^2)
+      #ESS <- ESS + sum((X_ALL[t + 1, ] - predicted_Y)^2)
     }
 
     RMSE[i] <- sqrt(ESS / (Tmax - 1))
@@ -315,6 +306,7 @@ LV_map_state_space_cross_validation_mod <- function(N, theta_v = seq(0, 5, 0.05)
 
 #################
 ## cross validation for time kernel 
+#DOES NOT WORK
 LV_map_time_cross_validation_mod <- function(N, theta_v = seq(0, 5, 0.05), p = 0.1) {
   Tmax <- dim(N)[1] # number of time steps
   n <- length(theta_v)

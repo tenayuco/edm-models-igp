@@ -1,4 +1,6 @@
 
+
+#this function LOOPS over num rep and rpresent and check if nothing is already created
 lv_looper_lists_general <- function(data_used, v_num_rep, v_rpresent, v_num_seed, enemigo){ 
   for (num_rep in v_num_rep) {
     for (rpresent in v_rpresent) {
@@ -58,10 +60,12 @@ lv_looper_lists_general <- function(data_used, v_num_rep, v_rpresent, v_num_seed
 
 
 
-
+#this function does the general LV analysis
 
 lv_map_general <- function(df_used, rpresent, num_seed, num_rep, kernel_chosen){
 
+  ##1. data arrangement 
+ #========================================================================================================= 
 list_treatment<- list()
 
 ### heres is the data
@@ -70,30 +74,24 @@ DATA_USED$enem <- NULL
 
 
 #reshuffling of replicates
-  
 ###here I change the values of the replicate to chage the order.
 
 set.seed(num_seed)
 
 REAS_DF <-  data.frame("block" = seq(1:10), "replicate" = sample(seq(1:10)))
-
 DATA_USED <-  dplyr::full_join(DATA_USED, REAS_DF, by= "block")
 DATA_USED$block <-  NULL
-
-
 ##now here a renaming
 names(DATA_USED) <- c("R", "X", "Y", "time", "replicate")
-
 ###here i removed the H
 if (rpresent == FALSE){DATA_USED$R <- NULL}
-
 
   #here i order by replocates
 DATA_USED <-  DATA_USED |> 
 dplyr::arrange(replicate, .by_group = FALSE)
 ###########3
 
-##here i used the replicate to know the lengh
+##here i used the replicate to know the initial R_0 index and RF_index
   # 
   #====================
 long_series <- DATA_USED |> 
@@ -118,6 +116,8 @@ R_0_index[-1] <- R_0_index[-1] + R_F_index ## this gives the end of each, so by 
 size_block <- length(unique(DATA_USED$replicate))/num_rep
 DATA_USED$replicate <- floor((DATA_USED$replicate-0.1)/size_block) +1   #fake block to make larger data inly work wiht zie block divisor of 10
 
+#==================================================================================================  
+  #PREDATA FOR LV
 #---transforms to a matrix
 N_list_sim <- vector(mode = "list", length = num_rep)
 
@@ -137,7 +137,7 @@ list_treatment$N_list_sim <- N_list_sim
 
 S <-  dim(N_list_sim[[1]])[2]
 
-  
+#=========================================================================================  
 
 
   
@@ -166,7 +166,9 @@ out_cv <- LV_map_state_space_cross_validation_mod(N_list_sim[[i]], theta_v = cho
     R_0_index = R_0_index, R_F_index = R_F_index,  mod_XY_mat = TRUE, remove_stiching = T)
   }
 if(kernel_chosen == "time") {
-  out_cv <- LV_map_time_cross_validation_mod(N_list_sim[[i]], theta_v = chosen_theta_v)
+  ##this does not WORK FOR OUR MOD
+  print("dont use time kernel")
+  #out_cv <- LV_map_time_cross_validation_mod(N_list_sim[[i]], theta_v = chosen_theta_v)
   }
   cv_list_sim[[i]] <- out_cv
 }
