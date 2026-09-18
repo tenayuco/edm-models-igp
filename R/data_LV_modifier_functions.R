@@ -166,12 +166,29 @@ return(df_full)
 
 herbivore_modification <- function(data_pred){
 
-data_norm <- data_pred |> #normally already selected the columns 
-    dplyr::group_by(enem) |>  # Group by enemy
-    dplyr::mutate(R = R/max(R, X, Y, na.rm = TRUE), 
-                  X = X/max(R, X, Y, na.rm = TRUE), 
-                  Y = Y/max(R, X, Y, na.rm = TRUE)) |> 
-    dplyr::ungroup()  # Remove grouping
-  return(data_norm)
+long_series <- data_pred |> 
+  dplyr::ungroup() |> 
+  dplyr::mutate(count =1) |> 
+  dplyr::group_by(enem, block) |> 
+  dplyr::summarise(long = sum(count))
 
+data_pred_mod <- dplyr::full_join(data_pred, long_series, by=c("enem", "block"))
+
+data_pred_mod$Rnew <-  0
+
+for( i in seq(1:dim(data_pred_mod)[1])){
+if(data_pred_mod$week[i] ==1 |data_pred_mod$week[i] ==2){
+  data_pred_mod$Rnew[i] <- data_pred_mod$R[i] + (data_pred_mod$long[i]- 2)*400
 }
+else(data_pred_mod$Rnew[i] <- data_pred_mod$R[i] + (data_pred_mod$long[i]- data_pred_mod$week[i])*400)
+}
+  
+#here i update
+data_pred_mod <- data_pred_mod |>
+  dplyr::mutate(R = Rnew) |> 
+  dplyr::select(!(c(Rnew, long)))
+  
+return(data_pred_mod)
+  
+}
+  #==================================

@@ -24,9 +24,14 @@ DATA_PRED <- DATA_PRED |>
   dplyr::select(block, R, X, Y, week, enem)
 
 #====================ESEENTIAL STEP============
+
+
+#new herbivore
+DATA_PRED <- herbivore_modification(DATA_PRED)
+
+
 # Remove rows with zeros (which can cause issues in LV models)
 DATA_PRED <- zero_remover_raw(DATA_PRED)
-
 
 #====================================================
 ##now for the representation of the data
@@ -35,7 +40,7 @@ DATA_PRED <- zero_remover_raw(DATA_PRED)
 ##here we use 2 formats of data
 
 DATA_PRED_SP_LONG <-  data_pred_forRep(DATA_PRED)
-DATA_MEAN <-  mean_formatter(DATA_PRED_SP_LONG) 
+#DATA_MEAN <-  mean_formatter(DATA_PRED_SP_LONG) 
 
 
 ### plot and save data
@@ -48,8 +53,8 @@ plotter_data_all(DATA_PRED_SP_LONG, remove_aphid = FALSE, norm_data = TRUE)
 plotter_data_all(DATA_PRED_SP_LONG, remove_aphid = TRUE, norm_data = TRUE)
 
 
-plotter_data_mean(DATA_MEAN, remove_aphid = FALSE)
-plotter_data_mean(DATA_MEAN, remove_aphid = TRUE)
+#plotter_data_mean(DATA_MEAN, remove_aphid = FALSE)
+#plotter_data_mean(DATA_MEAN, remove_aphid = TRUE)
 
 
 #now we take theherbivore as mean 

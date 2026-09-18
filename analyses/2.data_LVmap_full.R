@@ -56,10 +56,13 @@ DATA_PRED <- DATA_PRED |>
   dplyr::select(block, R, X, Y, week, enem)
 
 ##modfied herbivore values!!
+DATA_PRED <- herbivore_modification(DATA_PRED)
 
 
 # Remove rows with zeros (which can cause issues in LV models)
 DATA_PRED <- zero_remover_raw(DATA_PRED)
+
+
 
 
 ##if you wanna see the time serries, check the 2.a data_representation code
@@ -115,7 +118,7 @@ v_num_seed <- seq(1:3)                # Random seeds for data shuffling
 v_enemigos <- unique(DATA_PRED$enem)  # List of enemy species/treatments to analyze
 kernel_chosen <- "state"              # Kernel type for the LV model
 
-
+v_enemigos <- c("ac+ol")
 
 # ============================================================================
 # 8. RUN LV MAP ANALYSIS
