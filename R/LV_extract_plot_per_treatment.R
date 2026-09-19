@@ -75,11 +75,6 @@ all_df_csv <- list.files(out_folder, recursive = TRUE, pattern = ".csv")  #
 
 
 
-
-
-extracter_data_frame  <- function(list_treatment_used, coex_cal =TRUE){
-
-### ok now im gonna run all over the lists, not so much the DF maybe similar.. 
 process_list <- function(data_list){
 df_total <- data.frame()
 for (i in 1:length(data_list)){
@@ -90,6 +85,10 @@ for (i in 1:length(data_list)){
 }
 return(df_total)
 }
+
+extracter_data_frame  <- function(list_treatment_used, coex_cal =TRUE){
+
+### ok now im gonna run all over the lists, not so much the DF maybe similar.. 
 
 
 DF_RT <- process_list(data_list = list_treatment_used$r_hat_list)
@@ -114,12 +113,12 @@ DF_OMEGA_FULL <-  dplyr::full_join(DF_OMEGA_FULL, DF_OMEGA_CI_UP, by=c("replicat
 names(DF_OMEGA_FULL) <- c("omega_mean", "time", "replicate", "omega_dw", "omega_up")
 
   ###
-DF_THETA <- process_list(data_list = list_treatment_used$cv_list_sim)
-DF_THETA <- DF_THETA |> 
-  dplyr::select(theta_o, RMSE_o, replicate)
+#DF_THETA <- process_list(data_list = list_treatment_used$cv_list_sim)
+#DF_THETA <- DF_THETA |> 
+ # dplyr::select(theta_o, RMSE_o, replicate)
 
 #i can do this cause you inly have one value per replicate 
-DF_THETA <- unique(DF_THETA)
+#DF_THETA <- unique(DF_THETA)
   
   
 DF_ETA_1 <- process_list(data_list = list_treatment_used$eta1_mean_list)  
@@ -170,7 +169,7 @@ LONG_FULL <- rbind(LONG_FULL_RT, LONG_FULL_ALPHA)
   # 
 
 if(coex_cal ==TRUE){
-LONG_FULL <- dplyr::inner_join(LONG_FULL, DF_THETA, by="replicate")
+#LONG_FULL <- dplyr::inner_join(LONG_FULL, DF_THETA, by="replicate")
 LONG_FULL <- dplyr::inner_join(LONG_FULL, DF_OMEGA_FULL, by="replicate")
 LONG_FULL <- dplyr::inner_join(LONG_FULL, DF_ETA_FULL, by="replicate")
 
@@ -191,7 +190,25 @@ return(LONG_FULL)
 }
 
 
+extracter_model_fit <- function(list_treatment_used){
+
+DF_MODEL <- data.frame("observed" = list_treatment_used$cv_list_sim[[1]]$observed_Y_all,
+                          "predicted" = list_treatment_used$cv_list_sim[[1]]$predicted_Y_all)
+
+DF_THETA <- as.data.frame(list_treatment_used$cv_list_sim)
+
+DF_THETA <- process_list(data_list = list_treatment_used$cv_list_sim)
+DF_THETA <- DF_THETA |> 
+  tidyr::pivot_longer(cols= predicted_Y_all.1:: )
+  dplyr::select(theta_o, RMSE_o, replicate)
+
+#i can do this cause you inly have one value per replicate 
+DF_THETA <- unique(DF_THETA)
   
+LONG_FULL <- dplyr::inner_join(LONG_FULL, DF_THETA, by="replicate")
+  
+  
+}
 
 
 

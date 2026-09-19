@@ -146,8 +146,8 @@ S <-  dim(N_list_sim[[1]])[2]
 # ================
 
 
-#chosen_theta_v = seq(0, 3, 0.01)
-chosen_theta_v = seq(0, 0)
+chosen_theta_v = seq(0, 3, 0.01)
+#chosen_theta_v = seq(0, 0)
   
 cv_list_sim <- vector(mode = "list", length = num_rep)
 

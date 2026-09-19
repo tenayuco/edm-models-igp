@@ -19,7 +19,9 @@ LV_map_mod <- function(N, theta = 0, kernel = 'state', R_0_index, R_F_index, rem
   logN <- log(N)
   Y <- logN[-1, ] - logN[-Tmax, ] # create the log ratio matrix (response variables)
   X <- cbind(rep(1, Tmax - 1), N[-Tmax, ]) # create the explanatory variables matrix
-#===========procedure to modify ncut and log ncut to add the real time series of herbovore
+
+
+#===========NEW PROCEDURE to modify ncut and log ncut to add the real time series of herbovore
   
 if(mod_XY_mat == TRUE & dim(N)[2] !=2){
  #creata an auxiliary matrix 
@@ -36,7 +38,7 @@ logN_mod <- log(N_mod)  ##right side of the rest
      Y <- logN_mod[-1, ] - logN_mod[-Tmax, ]
      X <- cbind(rep(1, Tmax - 1), N_mod[-Tmax, ])  #explanatory variable 
   
-  #and the last detail is that in X and Y i repeated the last value! (less problematic than artificil stihci)    
+  #and the last detail is that in X and Y i repeated the last value! (less problematic than doing an artificial stiching)    
      
   #for now, im not changin this, to see if i can get the prev results 
  if(remove_stiching == T){
@@ -49,10 +51,7 @@ logN_mod <- log(N_mod)  ##right side of the rest
   }
 }
 #end of procedure 
-#=================================================
-# i dont use these values
-
-
+#==================================================================================================
   if (theta == 0){
     
     if (kernel == 'state') {
@@ -206,14 +205,17 @@ LV_map_state_space_cross_validation_mod <- function(N, theta_v = seq(0, 5, 0.05)
   n_species <- dim(N)[2]          # <-- number of species
   n_time <- Tmax - 1              # <-- number of prediction steps
 
+##we create an empty list that will be added to cv_list
+  fitting <- list()
+  
   RMSE <- rep(NA, n)
 
   # ---- STORAGE: 3D array to hold predicted_Y for every theta, t, species ----
   # Dimensions: [theta, time, species]
-  predicted_Y_all <- array(NA, dim = c(n, n_time, n_species))
+  #predicted_Y_all <- array(NA, dim = c(n, n_time, n_species))
 
   # also store the actual (observed) values for comparison
-  observed_Y_all <- array(NA, dim = c(n, n_time, n_species))
+  #observed_Y_all <- array(NA, dim = c(n, n_time, n_species))
 
   #I save this complete X for the prediction 
   X_ALL <- N
@@ -223,16 +225,19 @@ LV_map_state_space_cross_validation_mod <- function(N, theta_v = seq(0, 5, 0.05)
           }
         }
 
+  ##loop over the theta
   for (i in 1:n) {
     ESS <- 0
     theta <- theta_v[i]
+
     for (t in Tstart:(Tmax - 1)) {
 
       N.cut <- N[-((t + 1):Tmax), ]
       logN.cut <- log(N.cut)
 
-      Y <- logN.cut[-1, ] - logN.cut[-t, ]
-      X <- cbind(rep(1, t - 1), N.cut[-t, ])
+      #now this is not used
+    #  Y <- logN.cut[-1, ] - logN.cut[-t, ]
+     # X <- cbind(rep(1, t - 1), N.cut[-t, ])
 
       #=========== procedure to modify ncut and log ncut ===========
       if (mod_XY_mat == TRUE & dim(N)[2] != 2) {
@@ -273,15 +278,16 @@ LV_map_state_space_cross_validation_mod <- function(N, theta_v = seq(0, 5, 0.05)
       # ---- SAVE predicted_Y and observed Y ----
       # The time index relative to the storage array:
       t_idx <- t - Tstart + 1
+      fitting[[i]] <- data.frame("leng_training" = t, "predicted"= as.numeric(predicted_Y))
+
+      
       predicted_Y_all[i, t_idx, ] <- as.numeric(predicted_Y)
 
       #and the observerd with the N matrix, that is where it came from 
       observed_Y_all[i, t_idx, ]  <- as.numeric(N[t + 1,])         # drop last element (base R))
-      #observed_Y_all[i, t_idx, ]  <- as.numeric(X_ALL[t + 1,])         # drop last element (base R))
 
 
       ESS <- ESS + sum((N[t + 1, ] - predicted_Y)^2)
-      #ESS <- ESS + sum((X_ALL[t + 1, ] - predicted_Y)^2)
     }
 
     RMSE[i] <- sqrt(ESS / (Tmax - 1))

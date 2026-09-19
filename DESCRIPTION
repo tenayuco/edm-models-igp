@@ -29,6 +29,7 @@ Imports:
     multispatialCCM,
     parallel,
     plyr,
+    png,
     rdeps,
     readr,
     rEDM,
