@@ -204,11 +204,10 @@ LV_map_state_space_cross_validation_mod <- function(N, theta_v = seq(0, 5, 0.05)
 
       #it does the predicted with the modifed values, that it is were it comes from 
       predicted_Y <- X_ALL[t, ] * exp(r_hat + alpha_hat %*% X_ALL[t, ])
-
       observed_Y <- N[t + 1,]
       # ---- SAVE predicted_Y and observed Y ----
       # The time index relative to the storage array:
-      t_idx <- t - Tstart + 1
+      #t_idx <- t - Tstart + 1
 
       
       #predicted_Y_all[i, t_idx, ] <- as.numeric(predicted_Y)
@@ -220,11 +219,15 @@ LV_map_state_space_cross_validation_mod <- function(N, theta_v = seq(0, 5, 0.05)
       fitting[[i]] <- data.frame("leng_training" = t, "observed"= 
         as.numeric(observed_Y), "predicted" = as.numeric(predicted_Y))
 
-
-      ESS <- ESS + sum((N[t + 1, ] - predicted_Y)^2)
+      ESS <- ESS + sum((observed_Y - predicted_Y)^2)
     }
 
     RMSE[i] <- sqrt(ESS / (Tmax - 1))
+    
+    ## check this 
+    fitting[[i]]$theta <- theta
+    fitting[[i]]$rmse <- RMSE[i]
+
   }
 
   theta_o <- theta_v[which.min(RMSE)]
@@ -235,10 +238,8 @@ LV_map_state_space_cross_validation_mod <- function(N, theta_v = seq(0, 5, 0.05)
     RMSE = RMSE,
     theta_o = theta_o,
     RMSE_o = RMSE_o,
-    predicted_Y_all = predicted_Y_all,   # <-- saved predictions
-    observed_Y_all  = observed_Y_all,    # <-- observed values (optional)
+    fitting = fitting,
     Tstart = Tstart,
-    theta_o_idx = which.min(RMSE)        # <-- index to easily extract best theta
   )
 
   return(out)
