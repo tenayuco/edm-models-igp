@@ -62,6 +62,13 @@ lv_looper_lists_general <- function(data_used, v_num_rep, v_rpresent, v_num_seed
 
 #this function does the general LV analysis
 
+#this to check the function manually
+#df_used <- DATA_PRED |> dplyr::filter(enem == "ac+ol")
+#rpresent <- TRUE
+#num_seed <- 1
+#num_rep <- 1
+#kernel_chosen <- "state"
+
 lv_map_general <- function(df_used, rpresent, num_seed, num_rep, kernel_chosen){
 
   ##1. data arrangement 
@@ -165,6 +172,7 @@ if(forcing_theta == TRUE){
 out_cv <- LV_map_state_space_cross_validation_mod(N_list_sim[[i]], theta_v = chosen_theta_v, 
     R_0_index = R_0_index, R_F_index = R_F_index,  mod_XY_mat = TRUE, remove_stiching = T)
   }
+
 if(kernel_chosen == "time") {
   ##this does not WORK FOR OUR MOD
   print("dont use time kernel")
@@ -178,10 +186,10 @@ print("crossvalidationtime")
 tictoc::toc()
   
   
+  
+  
 list_treatment$cv_list_sim <- cv_list_sim
 
-plot(list_treatment$cv_list_sim[[1]]$observed_Y_all
-, list_treatment$cv_list_sim[[1]]$predicted_Y_all)
 
 #plot predicted agains observed
   
@@ -202,7 +210,7 @@ tic()
 for (i in 1:num_rep) {
 
   out_list[[i]] <- LV_map_mod(N_list_sim[[i]], cv_list_sim[[i]]$theta_o, 
-    kernel = kernel_chosen, R_0_index = R_0_index, R_F_index = R_F_index, remove_stiching = T, mod_XY_mat = TRUE
+    kernel = kernel_chosen, R_0_index = R_0_index, R_F_index = R_F_index, remove_stiching = F, mod_XY_mat = TRUE
   )
   r_hat_list[[i]] <- out_list[[i]]$r_hat
   r_se_list[[i]] <- out_list[[i]]$r_se

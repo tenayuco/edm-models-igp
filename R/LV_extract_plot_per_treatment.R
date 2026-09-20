@@ -198,9 +198,8 @@ DF_MODEL <- data.frame("observed" = list_treatment_used$cv_list_sim[[1]]$observe
 DF_THETA <- as.data.frame(list_treatment_used$cv_list_sim)
 
 DF_THETA <- process_list(data_list = list_treatment_used$cv_list_sim)
-DF_THETA <- DF_THETA |> 
-  tidyr::pivot_longer(cols= predicted_Y_all.1:: )
-  dplyr::select(theta_o, RMSE_o, replicate)
+
+ # dplyr::select(theta_o, RMSE_o, replicate)
 
 #i can do this cause you inly have one value per replicate 
 DF_THETA <- unique(DF_THETA)

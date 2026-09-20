@@ -6,6 +6,7 @@ LV_map_mod <- function(N, theta = 0, kernel = 'state', R_0_index, R_F_index, rem
   S <- dim(N)[2] # number of species
   Tmax <- dim(N)[1] # number of time steps
   sp_names <- colnames(N) # species names
+  n_species <- dim(N)[2]          # <-- number of species
 
   r_hat <- array(NA, dim = c(Tmax - 1, S)) # array to store the fitted intrinsic growth rate
   alpha_hat <- array(NA, dim = c(Tmax - 1, S, S)) # array to store the fitted per capita interaction strengths
@@ -16,40 +17,38 @@ LV_map_mod <- function(N, theta = 0, kernel = 'state', R_0_index, R_F_index, rem
   # fitted intrinsic growth rate and per capita interaction strengths
   time.p <- seq(1:(Tmax-1)) #create vector of time
   
-  logN <- log(N)
-  Y <- logN[-1, ] - logN[-Tmax, ] # create the log ratio matrix (response variables)
-  X <- cbind(rep(1, Tmax - 1), N[-Tmax, ]) # create the explanatory variables matrix
 
-
-#===========NEW PROCEDURE to modify ncut and log ncut to add the real time series of herbovore
+N_ALL_MOD <- N
   
-if(mod_XY_mat == TRUE & dim(N)[2] !=2){
- #creata an auxiliary matrix 
-  N_mod <- N ## this is not a real matrix per se
-  for (n_index in seq(1:dim(N_mod)[1])){
+  if (mod_XY_mat == TRUE & n_species>2) {
+  for (n_index in seq(1:dim(N_ALL_MOD)[1])) {
       if (!(n_index %in%  R_0_index)){  #r0 index is defined outside the loop
-        N_mod[n_index, 1] <- N_mod[n_index, 1]+400 ##so if you are not in the index of initial youll have +400
+        N_ALL_MOD[n_index, 1] <- N_ALL_MOD[n_index, 1]+400 ##so if you are not in the index of initial youll have +400
       }
     }
-          
-logN_mod <- log(N_mod)  ##right side of the rest
+  }
+  
+  
+logN <- log(N)
+logN_mod <- log(N_ALL_MOD)  ##right side of the rest
 
-# now here we rebuuld the X and Y with this auxiliary matrix 
-     Y <- logN_mod[-1, ] - logN_mod[-Tmax, ]
-     X <- cbind(rep(1, Tmax - 1), N_mod[-Tmax, ])  #explanatory variable 
+    
+Y <- logN[-1, ] - logN_mod[-Tmax, ]  ##NOTE the rest is not symmetric
+X <- cbind(rep(1, Tmax - 1), N_ALL_MOD[-Tmax, ]) # create the explanatory variables matrix
+
   
   #and the last detail is that in X and Y i repeated the last value! (less problematic than doing an artificial stiching)    
      
   #for now, im not changin this, to see if i can get the prev results 
- if(remove_stiching == T){
-  for (n_index in seq(1:dim(N_mod)[1])){ 
-      if (n_index %in%  R_F_index){  #
-        X[n_index, 2] <- X[n_index-1, 2]
-        Y[n_index, 1] <- Y[n_index-1, 1]##
-      }
-    }
-  }
-}
+ #if(remove_stiching == T){
+  #for (n_index in seq(1:dim(N_mod)[1])){ 
+   #   if (n_index %in%  R_F_index){  #
+    #    X[n_index, 2] <- X[n_index-1, 2]
+     #   Y[n_index, 1] <- Y[n_index-1, 1]##
+      #}
+    #}
+  #}
+  
 #end of procedure 
 #==================================================================================================
   if (theta == 0){
@@ -197,8 +196,10 @@ weighted_regression_time_kernel <- function(X,Y,N,S,t,Tmax,time.p,theta){
 }
 
 
+#this it to run it here, but you have to prerun the N and the values of rindex
+#N <- N_list_sim[[1]]
 
-LV_map_state_space_cross_validation_mod <- function(N, theta_v = seq(0, 5, 0.05), p = 0.1, mod_XY_mat = TRUE, R_0_index, R_F_index, remove_stiching = F) {
+LV_map_state_space_cross_validation_mod <- function(N, theta_v = seq(0, 3, 0.01), p = 0.1, mod_XY_mat = TRUE, R_0_index, R_F_index, remove_stiching = F) {
   
   Tmax <- dim(N)[1]
   n <- length(theta_v)
@@ -208,23 +209,22 @@ LV_map_state_space_cross_validation_mod <- function(N, theta_v = seq(0, 5, 0.05)
 
 ##we create an empty list that will be added to cv_list
   fitting <- list()
-  
   RMSE <- rep(NA, n)
 
-  # ---- STORAGE: 3D array to hold predicted_Y for every theta, t, species ----
-  # Dimensions: [theta, time, species]
-  #predicted_Y_all <- array(NA, dim = c(n, n_time, n_species))
 
-  # also store the actual (observed) values for comparison
-  #observed_Y_all <- array(NA, dim = c(n, n_time, n_species))
 
-  #I save this complete X for the prediction 
-  X_ALL <- N
-    for (ncut_index in seq(1:dim(X_ALL)[1])) {
-          if (!(ncut_index %in% R_0_index)) {
-             X_ALL[ncut_index, 1] <-  X_ALL[ncut_index, 1] + 400
+  ##I first create a modified N that will be the base
+## i check if the num of spec is ore than2 
+  #just to have the modified matrix for prediction 
+N_ALL_MOD <- N  #always a modified matrix that can be used or not 
+    
+if (mod_XY_mat == TRUE & n_species>2) {
+  for (n_index in seq(1:dim(N_ALL_MOD)[1])) {
+         if (!(n_index %in% R_0_index)) {
+             N_ALL_MOD[n_index, 1] <-  N_ALL_MOD[n_index, 1] + 400
           }
         }
+      }
 
   ##loop over the theta
   for (i in 1:n) {
@@ -233,36 +233,32 @@ LV_map_state_space_cross_validation_mod <- function(N, theta_v = seq(0, 5, 0.05)
 
     for (t in Tstart:(Tmax - 1)) {
 
+
       N.cut <- N[-((t + 1):Tmax), ]
       logN.cut <- log(N.cut)
 
-      #now this is not used
-    #  Y <- logN.cut[-1, ] - logN.cut[-t, ]
-     # X <- cbind(rep(1, t - 1), N.cut[-t, ])
+#modified (have the index already!)
+  #if the species are the same as the nor modified, but still important to keep both 
+      #for when they are different
+      N.cut_mod <- N_ALL_MOD[-((t + 1):Tmax), ]
+      logN.cut_mod <- log(N.cut_mod)
 
-      #=========== procedure to modify ncut and log ncut ===========
-      if (mod_XY_mat == TRUE & dim(N)[2] != 2) {
-        N.cut_mod <- N.cut
-        for (ncut_index in seq(1:dim(N.cut_mod)[1])) {
-          if (!(ncut_index %in% R_0_index)) {
-            N.cut_mod[ncut_index, 1] <- N.cut_mod[ncut_index, 1] + 400
-          }
-        }
-        logN.cut_mod <- log(N.cut_mod)
-        Y <- logN.cut[-1, ] - logN.cut_mod[-t, ]
-        X <- cbind(rep(1, t - 1), N.cut_mod[-t, ])
 
-        if (remove_stiching == T) {
-          for (ncut_index in seq(1:dim(N.cut_mod[-t, ])[1])) {
-            if (ncut_index %in% R_F_index) {
-              X[ncut_index, 2] <- X[ncut_index - 1, 2]
-              Y[ncut_index, 1] <- Y[ncut_index - 1, 1]
-            }
-          }
-        }
-      }
+      Y <- logN.cut[-1, ] - logN.cut_mod[-t, ]  ##NOTE the rest is not symmetric
+      X <- cbind(rep(1, t - 1), N.cut_mod[-t, ])
+
+
+      #if (remove_stiching == T) {
+       #   for (n_index in seq(1:dim(N.cut[-t, ])[1])) {
+        #    if (n_index %in% R_F_index) {
+         #     X[n_index, 2] <- X[n_index - 1, 2]
+          #    Y[n_index, 1] <- Y[n_index - 1, 1]
+           # }
+          #}
+        #}
+      
       #==============================================================
-
+##this is not importat the source 
       d <- sqrt(colSums(((t(N.cut)[, t - 1]) - t(N.cut)[, -t])^2))
       omega <- exp(-theta * d / mean(d))
 
@@ -274,17 +270,10 @@ LV_map_state_space_cross_validation_mod <- function(N, theta_v = seq(0, 5, 0.05)
 
 
       #it does the predicted with the modifed values, that it is were it comes from 
-      predicted_Y <- X_ALL[t, ] * exp(r_hat + alpha_hat %*% X_ALL[t, ])
-      observed_Y <- N[t + 1,]
+      predicted_Y <- N_ALL_MOD[t, ] * exp(r_hat + alpha_hat %*% N_ALL_MOD[t, ]) #the beggining
+      observed_Y <- N[t + 1,]  #the end of each
       # ---- SAVE predicted_Y and observed Y ----
-      # The time index relative to the storage array:
-      #t_idx <- t - Tstart + 1
-
-      
-      #predicted_Y_all[i, t_idx, ] <- as.numeric(predicted_Y)
-
-      #and the observerd with the N matrix, that is where it came from 
-     # observed_Y_all[i, t_idx, ]  <- as.numeric(N[t + 1,])         # drop last element (base R))
+           # drop last element (base R))
 
 
       fitting[[i]] <- data.frame("leng_training" = t, "observed"= 
@@ -310,11 +299,11 @@ LV_map_state_space_cross_validation_mod <- function(N, theta_v = seq(0, 5, 0.05)
     theta_o = theta_o,
     RMSE_o = RMSE_o,
     fitting = fitting,
-    Tstart = Tstart,
+    Tstart = Tstart
   )
 
   return(out)
-}
+  }
 
 
 #################

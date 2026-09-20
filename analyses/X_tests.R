@@ -127,7 +127,9 @@ dev.off()
 png::writePNG()
 
 
-LV_map_state_space_cross_validation_mod <- function(N, theta_v = seq(0, 5, 0.05), p = 0.1, mod_XY_mat = TRUE, R_0_index, R_F_index, remove_stiching = F) {
+
+
+LV_map_state_space_cross_validation_mod_test <- function(N, theta_v = seq(0, 5, 0.05), p = 0.1, mod_XY_mat = TRUE, R_0_index, R_F_index, remove_stiching = F) {
   
   Tmax <- dim(N)[1]
   n <- length(theta_v)
