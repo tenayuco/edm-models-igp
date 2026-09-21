@@ -243,14 +243,28 @@ eta2_cimean_list <- array(NA, dim = c(num_rep, 2))
 
 
 tic()
+#this is a bypass cos coexistence with 3 species is giving errors
+
+if (S >2){
+log_Omega_mean_list[i] <- NA
+  eta1_mean_list[i] <- NA
+  eta2_mean_list[i] <- NA
+  log_Omega_cimean_list[i, ] <- NA
+  eta1_cimean_list[i, ] <- NA
+  eta2_cimean_list[i, ] <-NA
+}
+if (S==2){
 for (i in 1:num_rep) {
-  o_coexistence <- coexistence_metrics_f2(out_list[[i]])
+
+  if (S==2){o_coexistence <- coexistence_metrics_f2(out_list[[i]])}
+  
   log_Omega_mean_list[i] <- mean(o_coexistence$log_Omega_hat)
   eta1_mean_list[i] <- mean(o_coexistence$eta_hat[, 1])
   eta2_mean_list[i] <- mean(o_coexistence$eta_hat[, 2])
   log_Omega_cimean_list[i, ] <- colMeans(o_coexistence$log_Omega_ci)
   eta1_cimean_list[i, ] <- colMeans(o_coexistence$eta_ci[, 1, ])
   eta2_cimean_list[i, ] <- colMeans(o_coexistence$eta_ci[, 2, ])
+}
 }
 print("LVMAP_time")
 

@@ -4,6 +4,9 @@ COMPLETE_DF <- read.csv(
   "./outputs/LV_MAP/real.data/coexistence/complete_coex_df.csv"
 )
 
+COMPLETE_DF <- COMPLETE_DF |>
+  dplyr::ungroup()|>
+  dplyr::filter(rpresent == FALSE)
 
 ##ok ima do a pre-scaling categorization process. 
 ## were for each value of interaction i will put 

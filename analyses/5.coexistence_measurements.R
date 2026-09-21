@@ -305,3 +305,26 @@ plotter_eta_omega(COMPLETE_DF, fig_path = fig_folder)
 
 
 #plotter_meanSurv_omega(COMPLETE_DF, fig_path = fig_external_folder)
+
+###on the fitting of the model
+
+THETA_VALUES <- read.csv(
+  "./outputs/LV_MAP/real.data/absolute/not_normalized/FULL_THETA_numseed_30.csv"
+)
+
+hist(THETA_VALUES$theta_o)
+
+THETA_VALUES_SUM <- THETA_VALUES |> 
+  dplyr::ungroup() |> 
+  dplyr::group_by(enem, norm, dif_cond, numRep, rpresent) |> 
+  dplyr::summarise(theta_o_mean = mean(theta_o), RMSE_o_mean = mean(RMSE_o))
+
+
+THETA_PLOT <- THETA_VALUES|> 
+ ggplot(aes(x = theta_o, y = RMSE_o, color= as.factor(numSeed))) +
+  geom_point() +
+  facet_wrap(~ enem) +
+  labs(x = "Theta", y = "RMSE") +
+  theme_bw()+
+  scale_color_viridis_d()+
+  theme(legend.position = "none")

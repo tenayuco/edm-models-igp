@@ -10,10 +10,10 @@
 # ============================================================================
 
 #only run this if internallu called 
-norm_data  <- FALSE
-forcing_theta <- FALSE
-type_data= "real.data"  #data from the experiments
-dif_cond <-  FALSE
+#norm_data  <- FALSE
+#forcing_theta <- FALSE
+#type_data= "real.data"  #data from the experiments
+#dif_cond <-  FALSE
 
 # ============================================================================
 # 2. LOAD AND FILTER DATA
@@ -103,12 +103,12 @@ dir.create(paste0(out_subfolder), recursive = TRUE)
 
 # Parameters for the LV map cross-validation
 v_num_rep <- c(1)                     # Number of replicates (fixed due to limited time points)
-v_rpresent <- c(TRUE, FALSE) #c(FALSE, TRUE)  #         # Whether to include R (resource) in the model
+v_rpresent <- c(FALSE) #c(FALSE, TRUE)  #         # Whether to include R (resource) in the model
 v_num_seed <- seq(1:2)                # Random seeds for data shuffling
 v_enemigos <- unique(DATA_PRED$enem)  # List of enemy species/treatments to analyze
 kernel_chosen <- "state"              # Kernel type for the LV model
 
-v_enemigos <- c("ac+ol")
+#v_enemigos <- c("ac+ol")
 
 # ============================================================================
 # 8. RUN LV MAP ANALYSIS
@@ -172,11 +172,12 @@ tictoc::toc()  # End timing and display elapsed time
 simulaciones <- length(v_num_seed)
 
 #===================
-#simulaciones <- 3
-#out_subfolder <- "./outputs/LV_MAP/real.data/absolute/not_normalized/"
-#norm_data <-  "FALSE"
-#type_data= "real.data"  #data from the experiments
-#dif_cond <-  FALSE
+simulaciones <- 30
+out_subfolder <- "./outputs/LV_MAP/real.data/absolute/not_normalized/"
+norm_data <-  "FALSE"
+type_data= "real.data"  #data from the experiments
+dif_cond <-  FALSE
+kernel_chosen <- "state"
 #==================
 
 
@@ -187,10 +188,12 @@ if (
   full_df <-  read.csv(paste0(out_subfolder, "FULL_DF_parameters_","numseed_",simulaciones,".csv"))
   print("file exist")
 }else{
+  full_theta <- extract_par_all_treatment_theta(out_subfolder = out_subfolder)
   full_df <- extract_par_all_treatment(out_subfolder = out_subfolder,coex_cal = TRUE
   ) ##generates the file  (that you can download late just to run the full parameters, but chose how many simulaciones!)
   print(head(full_df))
-  
+  write.csv(full_theta,file = paste0(out_subfolder,"FULL_THETA_","numseed_",simulaciones,".csv"))
+
   write.csv(full_df,file = paste0(out_subfolder,"FULL_DF_parameters_","numseed_",simulaciones,".csv"
     )
   )
@@ -221,6 +224,8 @@ full_df$omega_up <- 10^full_df$omega_up
 
 
 full_sum <- summarizer_with_variance(df_full = full_df)
+
+
 
 #plotter_save_conditions(df_sum = full_sum, fig_subfolder = fig_subfolder, abs_norm_values = "norm")
 plotter_save_conditions(df_sum = full_sum, fig_subfolder = fig_subfolder, abs_norm_values = "abs")

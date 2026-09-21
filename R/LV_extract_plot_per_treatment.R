@@ -25,6 +25,33 @@ for (treatment in vec_treatments){
 #######now a function to stract the general plot of all treatments#####
 
 
+extract_par_all_treatment_theta <- function(out_subfolder, coex_cal = TRUE){
+
+full_theta<-  data.frame()
+  
+##new method..
+  # One-liner
+all_dirs <- list.dirs(out_subfolder, recursive = TRUE)[-1]  # -1 removes the first element (root)
+
+vec_treatments <- setdiff(all_dirs, dirname(all_dirs))  
+
+for (treatment in vec_treatments){
+  for (i in seq(1:length(list.files(treatment)))){
+  #print(1:length(list.files(treatment)))
+  list_used <- readRDS(paste0(treatment,"/" , list.files(treatment)[i]))
+
+  theta_temp <- extracter_model_fit(list_used)    
+  full_theta <- rbind(full_theta, theta_temp)
+  }
+}
+
+
+
+return(full_theta)
+
+}
+
+
 extract_par_all_treatment <- function(out_subfolder, coex_cal = TRUE){
 
 full_df<-  data.frame()
@@ -51,7 +78,6 @@ for (treatment in vec_treatments){
 return(full_df)
 
 }
-
 
 
 
@@ -192,20 +218,28 @@ return(LONG_FULL)
 
 extracter_model_fit <- function(list_treatment_used){
 
-DF_MODEL <- data.frame("observed" = list_treatment_used$cv_list_sim[[1]]$observed_Y_all,
-                          "predicted" = list_treatment_used$cv_list_sim[[1]]$predicted_Y_all)
+#DF_MODEL <- data.frame("observed" = list_treatment_used$cv_list_sim[[1]]$observed_Y_all,
+ #                         "predicted" = list_treatment_used$cv_list_sim[[1]]$predicted_Y_all)
 
 DF_THETA <- as.data.frame(list_treatment_used$cv_list_sim)
-
 DF_THETA <- process_list(data_list = list_treatment_used$cv_list_sim)
 
- # dplyr::select(theta_o, RMSE_o, replicate)
+DF_THETA <- DF_THETA |>
+  dplyr::select(theta_o, RMSE_o)
 
 #i can do this cause you inly have one value per replicate 
 DF_THETA <- unique(DF_THETA)
+
+
+DF_THETA$numRep <- list_treatment_used$treatment[["num_rep"]]
+DF_THETA$numSeed <- list_treatment_used$treatment[["num_seed"]]
+DF_THETA$rpresent <- list_treatment_used$treatment[["rpresent"]]
+DF_THETA$enem <- list_treatment_used$treatment[["enem"]]
+DF_THETA$norm <- norm_data
+DF_THETA$dif_cond <- dif_cond  
   
-LONG_FULL <- dplyr::inner_join(LONG_FULL, DF_THETA, by="replicate")
-  
+return(DF_THETA)
+
   
 }
 

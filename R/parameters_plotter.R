@@ -301,7 +301,7 @@ plot_par_allconditions <- function(df_sum){
     xlab("Replicate and variable") +
     ggtitle(paste0("kernel_chosen ", kernel_chosen)) +
 
-    facet_wrap(enem~type, scales = "free", ncol= 4)+
+    facet_wrap(enem~type, scales = "free_x", ncol= 4)+
     
     geom_hline(yintercept = 0, color= "black", linetype= "dashed")+
      scale_color_viridis_d(begin=0, end= 0.7, option = "A", direction = 1) +
