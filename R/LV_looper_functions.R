@@ -1,6 +1,18 @@
 
+#this loops over num rep and rpresent within each enemy, and multiple seeds
+###############################################################################################################
+# Function that loops over replicates, rpresent values, and seeds to run and save LV simulations
+#' @param data_used A data frame with the data to be used by lv_map_general
+#' @param v_num_rep Vector of num_rep values to loop over
+#' @param v_rpresent Vector of rpresent (TRUE/FALSE) values to loop over
+#' @param v_num_seed Vector of seeds to loop over
+#' @param enemigo Character string identifying the enemy (used in folder/file names)
+#' @return Nothing; saves one .rds file per (num_rep, rpresent, num_seed) combination
+#' @details Creates a subfolder per num_rep/rpresent and saves a list_treatment per seed
+#' @details Errors inside lv_map_general are caught with tryCatch so the loop continues
+#' @examples lv_looper_lists_general(data_used = my_data, v_num_rep = c(1,2), v_rpresent = c(TRUE,FALSE), v_num_seed = 1:5, enemigo = "ma+ol")
+#######################################################################################################
 
-#this function LOOPS over num rep and rpresent and check if nothing is already created
 lv_looper_lists_general <- function(data_used, v_num_rep, v_rpresent, v_num_seed, enemigo){ 
   for (num_rep in v_num_rep) {
     for (rpresent in v_rpresent) {
@@ -8,7 +20,7 @@ lv_looper_lists_general <- function(data_used, v_num_rep, v_rpresent, v_num_seed
      num_rep <- num_rep
       rpresent <- rpresent
 
-      out_lv <- paste0("enem_", enemigo, "/", "numrep_", num_rep, "/", "R_", rpresent, "/") ## Creates a subfolder name based on time length and noise level chosen
+      out_lv <- paste0("enem_", enemigo, "/", "numrep_", num_rep, "/", "R_", rpresent, "/") ## subfolder per num_rep and rpresent
       fig_lv <- out_lv
   
   
@@ -17,17 +29,17 @@ lv_looper_lists_general <- function(data_used, v_num_rep, v_rpresent, v_num_seed
     } else {
       dir.create(paste0(out_subfolder, out_lv), recursive = TRUE)
       
-      #htne i loop over the seeds (the reshuffling)
+      # loop over seeds (the reshuffling)      
       for (num_seed in v_num_seed) {
           num_seed <- num_seed
         
+        #tryCatch keeps the loop running even if one simulation fails
         tryCatch(
           {
 
             
 
             list_treatment <- lv_map_general(df_used= data_used, rpresent, num_seed, num_rep, kernel_chosen)
-
             list_treatment$treatment["enem"] <- enemigo
             list_treatment$treatment["num_rep"] <- num_rep
             list_treatment$treatment["rpresent"] <- rpresent
@@ -57,34 +69,35 @@ lv_looper_lists_general <- function(data_used, v_num_rep, v_rpresent, v_num_seed
 }
 }
 
+#############################################################################################################
+# Function that runs the full LV pipeline: reshuffling, cross-validation, parameter estimation, and coexistence metrics
+#' @param df_used A data frame with the data to be used
+#' @param rpresent Logical; whether to keep the R (herbivore) column
+#' @param num_seed Seed used for the replicate reshuffling
+#' @param num_rep Number of replicates (groups) to build
+#' @param kernel_chosen Kernel to use, either "state" or "time" (time is not supported)
+#' @return A list containing N_list_sim, cv_list_sim, parameter estimates, and coexistence metrics
+#' @details Reshuffles replicates, builds N_list_sim matrices, runs cross-validation and LV_map_mod
+#' @details Coexistence metrics are only computed when S == 2; for S > 2 they are set to NA
+#' @examples lv_map_general(df_used = my_data, rpresent = TRUE, num_seed = 1, num_rep = 2, kernel_chosen = "state")
+#####################################################################################################
 
-
-
-#this function does the general LV analysis
-
-#this to check the function manually
-#df_used <- DATA_PRED |> dplyr::filter(enem == "ac+ol")
-#rpresent <- TRUE
-#num_seed <- 1
-#num_rep <- 1
-#kernel_chosen <- "state"
 
 lv_map_general <- function(df_used, rpresent, num_seed, num_rep, kernel_chosen){
 
+#=================================================================================
   ##1. data arrangement 
- #========================================================================================================= 
+ #==================================================================================== 
 list_treatment<- list()
 
-### heres is the data
+### here is the data
 DATA_USED <- df_used
 DATA_USED$enem <- NULL
 
-
-#reshuffling of replicates
-###here I change the values of the replicate to chage the order.
+#reshuffling of replicates: change the block order
+### here I change the values of the replicate to change the order
 
 set.seed(num_seed)
-
 REAS_DF <-  data.frame("block" = seq(1:10), "replicate" = sample(seq(1:10)))
 DATA_USED <-  dplyr::full_join(DATA_USED, REAS_DF, by= "block")
 DATA_USED$block <-  NULL
@@ -93,14 +106,12 @@ names(DATA_USED) <- c("R", "X", "Y", "time", "replicate")
 ###here i removed the H
 if (rpresent == FALSE){DATA_USED$R <- NULL}
 
-  #here i order by replocates
+  #here i order by replicates
 DATA_USED <-  DATA_USED |> 
 dplyr::arrange(replicate, .by_group = FALSE)
-###########3
-
-##here i used the replicate to know the initial R_0 index and RF_index
-  # 
-  #====================
+  
+## here I use the replicate to know the initial R_0 index and RF_index  # 
+#====side job===========
 long_series <- DATA_USED |> 
   dplyr::ungroup() |> 
   dplyr::mutate(count =1) |>
@@ -109,16 +120,13 @@ long_series <- DATA_USED |>
   dplyr::select(long)
 
 long_series_vec <- as.vector(long_series$long)
-
 R_F_index <-  cumsum(long_series_vec)[-10]  #9   
 R_0_index <- rep(1, 10)
 R_0_index[-1] <- R_0_index[-1] + R_F_index ## this gives the end of each, so by summing it we have the intial of nthe next
-
   #==================================
   
-  
-  #from now on the new teplicate will not make snse  
-#####here it is just to gather in block, but keeping the new given order
+# from now on the new replicate will not make sense  
+## here it is just to gather in blocks, but keeping the new given orde
 
 size_block <- length(unique(DATA_USED$replicate))/num_rep
 DATA_USED$replicate <- floor((DATA_USED$replicate-0.1)/size_block) +1   #fake block to make larger data inly work wiht zie block divisor of 10
@@ -144,14 +152,10 @@ list_treatment$N_list_sim <- N_list_sim
 
 S <-  dim(N_list_sim[[1]])[2]
 
-#=========================================================================================  
 
-
-  
-# ================
-# Cross validation
-# ================
-
+#=================================================================================
+  ##2. Cross validation
+#==================================================================================== 
 
 chosen_theta_v = seq(0, 3, 0.01)
 #chosen_theta_v = seq(0, 0)
@@ -163,7 +167,8 @@ for (i in 1:num_rep) {
 
 if(forcing_theta == TRUE){
     cv_list_sim[[i]]$theta_o <-  0
-    cv_list_sim[[i]]$RMSE_o <- 0}  #here the forced theta
+    cv_list_sim[[i]]$RMSE_o <- 0  #here the forced theta
+    print("I fixed the the theta to 0! ")}
 
   else{
   print("Im doing the cross validation stuff")

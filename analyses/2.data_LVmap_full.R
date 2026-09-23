@@ -61,12 +61,12 @@ DATA_PRED <- zero_remover_raw(DATA_PRED)
 # 5. DATA TRANSFORMATIONS AND OUTPUT FIGURES PATH
 # ============================================================================
 if (norm_data == TRUE) {
-  out_subfolder <- paste0(out_subfolder, "normalized/")
-  fig_subfolder <- paste0(fig_subfolder, "normalized/")
+  out_subfolder <- paste0(out_folder, "normalized/")
+  fig_subfolder <- paste0(fig_folder, "normalized/")
   DATA_PRED <- max_normalization(DATA_PRED)  #the other options are max_normalization_per_trophic and min_max_normalization
 } else {
-  out_subfolder <- paste0(out_subfolder, "not_normalized/")
-  fig_subfolder <- paste0(fig_subfolder, "not_normalized/")
+  out_subfolder <- paste0(out_folder, "not_normalized/")
+  fig_subfolder <- paste0(fig_folder, "not_normalized/")
 }
 
 # ============================================================================
@@ -102,8 +102,9 @@ forcing_theta <- FALSE ## TRUE is you want to fix a theta 0
 # ============================================================================
 #CHECK BEFORE RUNNING 
 
-# Run the analysis separately for each enemy treatment
-# Note: For real data, we iterate over enemies (unlike simulated data)
+
+#This loops over each of the enemies and save it in different folder. 
+
 tictoc::tic()  # Start timing
 
 for (e in v_enemigos) {
