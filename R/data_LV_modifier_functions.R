@@ -1,58 +1,65 @@
-##here Im gonna put all the functions related to the LV map with data 
+# ============================================================================
+# FUNCTIONS TO MODIFY FOR LV MAP
+# ============================================================================
 
-
+###########################################################################################
+# Function that applies the long and prediction formatters to raw data
+#' @param raw_data A data frame containing the raw data to be processed
+#' @return A data frame in wide format with trophic levels as columns
+#' @details This function is a wrapper that chains long_formatter and pred_formatter
+#' @details It first reshapes the data to long format, then back to wide format by trophic level
+#' #' @examples df_modifier_lv(raw_data = my_raw_data_IGP)
+###########################################################################################
 
 df_modifier_lv <- function(raw_data){
-
-  ##here we use 2 formats of data
   DATA_LONG <-  long_formatter(raw_data)
-
-  ##here we remove the 0 
   DATA_PRED <-  pred_formatter(DATA_LONG) 
-
-
-  
   return(DATA_PRED)  
 }
 
 
-df_modifier_lv_erase <- function(raw_data, chosen_enemies){
 
-##here we use 2 formats of data
-DATA_LONG <-  long_formatter(raw_data)
+###HEADER###################################################################################
+# Function that cleans zeros from prediction data by replacing them with 1 when preced by a 1
+#' @param data_pred A data frame in wide format with columns: enem, block, X, Y, R
+#' @return A data frame with zeros replaced by 1 and rows containing 0 for X or Y removed
+#' @details For X and Y, a 0 is replaced by 1 when preceded by a non-zero value (a real 0 is two consecutive 0s)
+#' @details For R, every 0 is replaced by 1
+#' @details NAs (e.g. species not found in the first week) are also replaced by 1
+#' @details Finally, rows where X or Y are still 0 are filtered out
+#' @examples zero_remover_raw(data_pred = df_modifier_lv(my_raw_data))
+#########HEADER############################################################################
 
-##here we remove the 0 
+zero_remover_raw <- function(data_pred){
+    ##here we remove the 0 
 
-
-DATA_PRED <-  pred_formatter(DATA_LONG) 
-
-
-DATA_USED <- DATA_PRED |> 
-  dplyr::filter(enem == chosen_enemies)|> 
-  dplyr::select(block, R, X, Y, week)  
-
-#I add a normalization That we did had.. 
-DATA_USED <- DATA_USED |> 
-  dplyr::mutate(R = R/max(R, na.rm = TRUE), X = X/max(X, na.rm = TRUE), Y = Y/max(Y, na.rm = TRUE) )
+data_pred_nozero <- data_pred |>
+    dplyr::group_by(enem, block) |>
+    dplyr::mutate(X = ifelse(X == 0 & dplyr::lag(X)> 0, 1, X),  #with the predators a real 0 is when you have two conse 0
+                  Y = ifelse(Y == 0 & dplyr::lag(Y)> 0, 1, Y),
+                  R = ifelse(R == 0, 1, R))
   
-return(DATA_USED)  
+## then the function creats Na when in the first week they are not found so we haveto make them also 1
+data_pred_nozero[is.na(data_pred_nozero)] <- 1
+
+  
+#now we gonna remove the rows where we have zeros either for X or for Y (normally there are not zeros for R now) 
+data_pred_nozero <- data_pred_nozero |> 
+  dplyr::filter(!(X ==0))|> 
+  dplyr::filter(!(Y ==0))
+return(data_pred_nozero)
 }
 
 
-df_differencer_lv <- function(data_pred){
-   data_dif<- data_pred |> 
-    dplyr::group_by(block, enem) |>  # Group by both replicate AND enemy
-    dplyr::mutate(
-      R = c(NA, diff(R) - 300),  # A2 - (A1 + 300)  #the 1000 is to avoid negative values, that the lv map can not use beacuse of the log trnas
-      X = c(NA, diff(X)),        # Just the difference
-      Y = c(NA, diff(Y))         # Just the difference
-    ) |> 
-    tidyr::drop_na() |> 
-    dplyr::ungroup()  # Optional: remove grouping after
-
-  return(data_dif)
-}
-
+###############################################################################
+# Function that applies min-max normalization to X, Y, and R within each enem group
+#' @param data_pred A data frame with columns: enem, X, Y, R (columns should already be selected)
+#' @return A data frame with X, Y, R each scaled to the [0, 1] range within each enem group
+#' @details Each column is scaled separately using (value - min) / (max - min) per enem group
+#' @details Zeros are then replaced by 0.01 to avoid issues with log transforms downstream
+#' @details The grouping is removed with ungroup() before the zero replacement step
+#' @examples min_max_normalization(data_pred = my_data_pred)
+#############################################################################
 
 min_max_normalization <- function(data_pred){
 
@@ -64,7 +71,8 @@ min_max_normalization <- function(data_pred){
       R= (R - min(R)) / (max(R) - min(R)),
       X= (X - min(X)) / (max(X) - min(X)),
       Y = (Y - min(Y)) / (max(Y) - min(Y))
-    )
+    )|> 
+    dplyr::ungroup()
   
   
   data_norm$R[data_norm$R==0] <-  0.01
@@ -75,6 +83,17 @@ min_max_normalization <- function(data_pred){
   
   return(data_norm)
 }
+
+
+##############################################################################################
+# Function that normalizes X, Y, and R by their group-wise maximum
+#' @param data_pred A data frame with columns: enem, X, Y, R (columns should already be selected)
+#' @return A data frame with X, Y, R scaled between 0 and 1 within each enem group
+#' @details The maximum is computed across X, Y, and R together within each enem group
+#' @details The same maximum value is used to divide all three columns, preserving their relative proportions
+#' @details NAs are ignored when computing the maximum (na.rm = TRUE)
+#' @examples max_normalization(data_pred = my_data_pred)
+##############################################################################################
 
 max_normalization <- function(data_pred){
 
@@ -89,10 +108,43 @@ data_norm <- data_pred |> #normally already selected the columns
 }
 
 
-max_datalong_norm <- function(data_long){
+##############################################################################################
+# Function that normalizes X, Y, and R each by their own group-wise maximum
+#' @param data_pred A data frame with columns: enem, X, Y, R (columns should already be selected)
+#' @return A data frame with X, Y, R each scaled between 0 and 1 within each enem group
+#' @details Unlike max_normalization, the maximum is computed separately for each column within each enem group
+#' @details This means the relative proportions between X, Y, and R are not preserved
+#' @details NAs are ignored when computing the maximum (na.rm = TRUE)
+#' @examples max_normalization_pertrophic(data_pred = my_data_pred)
+##############################################################################################
+
+max_normalization_pertrophic <- function(data_pred){
+
+data_norm <- data_pred |> #normally already selected the columns 
+    dplyr::group_by(enem) |>  # Group by enemy
+    dplyr::mutate(R = R/max(R, na.rm = TRUE), 
+                  X = X/max(X, na.rm = TRUE), 
+                  Y = Y/max(Y, na.rm = TRUE)) |> 
+    dplyr::ungroup()  # Remove grouping
+  return(data_norm)
+
+}
+
+
+
+
+##########################################################################################
+# Function that normalizes individuals by the group-wise maximum in long format data
+#' @param data_long A data frame in long format with columns: enem, species, individuals
+#' @return A data frame in long format with individuals scaled between 0 and 1 within each enem/species group
+#' @details The maximum is computed separately for each combination of enem and species
+#' @details NAs are ignored when computing the maximum (na.rm = TRUE)
+#' @examples max_datalong_norm(data_long = my_data_long)
+##########################################################################################
+max_datalong_norm_pertrophic <- function(data_long){
 
 data_long_norm <- data_long |> #normally already selected the columns 
-    dplyr::group_by(enem, species) |>  # Group by enemy
+    dplyr::group_by(enem, species) |>  # Group by enemy and species 
     dplyr::mutate(individuals = individuals/max(individuals, na.rm = TRUE)) |> 
     dplyr::ungroup()  # Remove grouping
   return(data_long_norm)
@@ -101,29 +153,6 @@ data_long_norm <- data_long |> #normally already selected the columns
 
 
 
-#we chnange the 0 to 1 when it is followed by a non zero value. And then we remove the rows with 0.. 
-zero_remover_raw <- function(data_pred){
-    ##here we remove the 0 
-
-data_surv <- data_pred |>
-    dplyr::group_by(enem, block) |>
-    dplyr::mutate(X = ifelse(X == 0 & dplyr::lag(X)> 0, 1, X),  #with the predators a real 0 is when you have two conse 0
-                  Y = ifelse(Y == 0 & dplyr::lag(Y)> 0, 1, Y),
-                  R = ifelse(R == 0, 1, R))
-  
-## then the function creats Na when in the first week they are not found so we haveto make them also 1
-  
-data_surv[is.na(data_surv)] <- 1
-
-  
-#now we gonna remove the rows where we have zeros either for X or for Y (normally there are not zeros for R now) 
-  
-data_surv <- data_surv |> 
-  dplyr::filter(!(X ==0))|> 
-  dplyr::filter(!(Y ==0))
-  
-return(data_surv)
-}
 
 
 
@@ -158,3 +187,6 @@ return(df_full)
   
   
 }
+
+
+

@@ -1,42 +1,47 @@
 
-#' Function to change the formats of the data
-#'
-#' @param file_path the path to the data we wand to import
-#' @return the db corresponding to the file
-#' @examples
-#' load_data()
 
-
+##########################################################################################################
+# Function that reshapes raw data from wide to long format
+#' @param da_ta A data frame in wide format with species as columns
+#' @return A data frame in long format with columns: species, individuals, and trophic
+#' @details Pivots species columns (mp, ac, am, ma, cc, my, ol, aa, sr, ec) into long format
+#' @details Removes rows with NA individuals
+#' @details Assigns trophic level: "X" for cc, ol, sr, am, aa; "Y" for ma, my, ac, ec; "R" for others (e.g. mp)
+#' #' @examples long_formatter(da_ta = my_raw_data)
+#######################################################################################################
 
 long_formatter <- function(da_ta) {
 
 X <- c("cc", "ol", "sr", "am", "aa")
 Y <- c("ma", "my", "ac", "ec")
-  
-#pred_NP <- c("ac", "am", "ol", "cc", "my", "ma")
-#pred_N <- c("aa", "sr")
-#pred_P <- c("ec")
-  
+
 herbivore <-c("mp")
 
   DATA_IGP_LONG <- da_ta |> 
   tidyr::pivot_longer(c(mp, ac, am, ma , cc, my, ol, aa, sr, ec), names_to = "species", values_to = "individuals")|> 
   dplyr::filter(!(is.na(individuals)))|> 
-  #dplyr::mutate(trophic_def = ifelse(species %in% pred_NP, "pred_NP", ifelse(species %in% pred_N, "pred_N", ifelse(species %in% pred_P, "pred_P", "herbivore")))) |> 
   dplyr::mutate(trophic = ifelse(species %in% X, "X", ifelse(species %in% Y, "Y", "R")))  
-  
   return(DATA_IGP_LONG)
 }
 
 
+########################################################################################################
+# Function that reshapes long format data into wide format by trophic level
+#' @param data_long A data frame in long format with columns: species, individuals, and trophic
+#' @return A data frame in wide format with trophic levels (X, Y, R) as columns
+#' @details Removes the species column and pivots trophic into columns
+#' @details Each row represents an observation with individuals counts per trophic level
+#' #' @examples pred_formatter(data_long = my_long_data) after long_formatter
+#####################################################################################################
 
 pred_formatter <- function(data_long) {
 DATA_IGP_WIDER <- data_long |> 
   dplyr::select(!species)|> 
-   # dplyr::select(!troph_sp)|> 
   tidyr::pivot_wider(names_from = "trophic", values_from = "individuals")
 return(DATA_IGP_WIDER)
 }
+
+
 
 data_pred_forRep <- function(data_pred){
  

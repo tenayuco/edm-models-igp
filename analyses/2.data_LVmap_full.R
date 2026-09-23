@@ -6,21 +6,26 @@
 # ============================================================================
 
 # ============================================================================
-# 1. DATA SOURCE CONFIGURATION
-# ============================================================================
 
-#only run this if internallu called 
-#norm_data  <- FALSE
-#forcing_theta <- FALSE
-#type_data= "real.data"  #data from the experiments
-#dif_cond <-  FALSE
+# I. PREPARATION OF DATA
+
+# ===========================================================================
+
+
+# ============================================================================
+# 1. CONDITIONS FOR DATA 
+# ===========================================================================
+
+
+#these are conditions for the DATA, before the LV-map
+norm_data  <- FALSE # if the data is normalized
+type_data= "real.data"  #data from the experiments
+# Load the raw IGP dataset
+DATA_IGP <- readr::read_csv("data/dataIGP_2025.csv")
 
 # ============================================================================
 # 2. LOAD AND FILTER DATA
-# ============================================================================
-
-# Load the raw IGP dataset
-DATA_IGP <- readr::read_csv("data/dataIGP_2025.csv")
+# ===========================================================================
 
 # Remove treatments that don't make sense for the analysis
 # (ec+sr and ec+am are excluded)
@@ -32,13 +37,11 @@ DATA_IGP <- DATA_IGP |>
 # ============================================================================
 # 3. OUTPUT PATH CONFIGURATION
 # ============================================================================
-
 if (type_data == "real.data") {
   out_folder <- paste0("./outputs/LV_MAP/", type_data, "/")
   fig_folder <- paste0("./figures/LV_MAP/", type_data, "/")
 
 }
-
 
 # ============================================================================
 # 4. DATA PREPARATION FOR LOTKA VOLTERRA
@@ -51,40 +54,16 @@ DATA_PRED <- df_modifier_lv(raw_data = DATA_IGP)
 DATA_PRED <- DATA_PRED |> 
   dplyr::select(block, R, X, Y, week, enem)
 
-# Remove rows with zeros (which can cause issues in LV models)
+# Remove fake zeros
 DATA_PRED <- zero_remover_raw(DATA_PRED)
-
-
-##if you wanna see the time serries, check the 2.a data_representation code
-
-
-
 
 # ============================================================================
 # 5. DATA TRANSFORMATIONS AND OUTPUT FIGURES PATH
 # ============================================================================
-
-# Option 1: Convert to differences (if dif_cond = TRUE)
-# This transforms the data from absolute values to changes between time points
-if (dif_cond == TRUE) {
-  out_subfolder <- paste0(out_folder, "differences/")
-  fig_subfolder <- paste0(fig_folder, "differences/")
-  DATA_PRED <- df_differencer_lv(DATA_PRED)
-  #ts_plot_inputR <- ts_plotter_data(DATA_PRED, plotted_var = c("R", "X", "Y"))
-} else {
-  out_subfolder <- paste0(out_folder, "absolute/")
-  fig_subfolder <- paste0(fig_folder, "absolute/")
-}
-
-# Option 2: Normalize data using min-max scaling (if norm_data = TRUE)
-# This scales all variables to range [0,1]
 if (norm_data == TRUE) {
   out_subfolder <- paste0(out_subfolder, "normalized/")
   fig_subfolder <- paste0(fig_subfolder, "normalized/")
-
-  DATA_PRED <- max_normalization(DATA_PRED)
- # ts_plot_inputR <- ts_plotter_data(DATA_PRED, plotted_var = c("R", "X", "Y"))
-  #ts_plot_norm <- ts_plotter_data(DATA_PRED, plotted_var = c("R", "X", "Y"))
+  DATA_PRED <- max_normalization(DATA_PRED)  #the other options are max_normalization_per_trophic and min_max_normalization
 } else {
   out_subfolder <- paste0(out_subfolder, "not_normalized/")
   fig_subfolder <- paste0(fig_subfolder, "not_normalized/")
@@ -93,9 +72,17 @@ if (norm_data == TRUE) {
 # ============================================================================
 # 6. CREATE OUTPUT DIRECTORY
 # ============================================================================
-
 dir.create(paste0(out_subfolder), recursive = TRUE)
 
+
+
+
+
+# ============================================================================
+
+# II. LOTKA VOLTERRA ANALYSIS
+
+# ===========================================================================
 
 # ============================================================================
 # 7. CROSS-VALIDATION LOOP CONFIGURATION
@@ -107,8 +94,8 @@ v_rpresent <- c(FALSE) #c(FALSE, TRUE)  #         # Whether to include R (resour
 v_num_seed <- seq(1:2)                # Random seeds for data shuffling
 v_enemigos <- unique(DATA_PRED$enem)  # List of enemy species/treatments to analyze
 kernel_chosen <- "state"              # Kernel type for the LV model
+forcing_theta <- FALSE ## TRUE is you want to fix a theta 0
 
-#v_enemigos <- c("ac+ol")
 
 # ============================================================================
 # 8. RUN LV MAP ANALYSIS
