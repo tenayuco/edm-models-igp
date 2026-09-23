@@ -81,7 +81,9 @@ plotter_data_aphid_mean <- function(data_long_mean_aphid, norm_data=F) {
       aes(linewidth= trophic,  color = species, group = as.factor(interaction(block, species)))
     ) +
     geom_point(aes(color = species), size = 1) +
-    facet_wrap(~enem, scales = "free_y") +
+
+    facet_wrap(~enem, scales = "free_y", axes = "all") +   # <-- here
+
     scale_linewidth_manual(values = c("R"= 3, "X"= 1, "Y"=1))+
     scale_color_manual(
       values = speciesCol
@@ -92,7 +94,7 @@ plotter_data_aphid_mean <- function(data_long_mean_aphid, norm_data=F) {
     TIME_SERIES_ALL,
     filename = paste0("./figures/ts/time-series-aphidmean-norm_", norm_data, ".png"),
     height = 8,
-    width = 12,
+    width = 14,
     create.dir = T
   )
 }
@@ -482,6 +484,36 @@ eta_omega_plot <- complete_df |>
     create.dir = T
   )
 }
+
+
+
+
+
+plotter_rmse_theta <- function(theta_df_sum, fig_path) {
+
+THETA_RMSE_MEAN <- theta_df_sum |>
+    ggplot(aes(x =  theta_o_mean , y = RMSE_o_mean)) +
+  geom_pointrange(aes(ymin = RMSE_o_mean - RMSE_o_sd, ymax = RMSE_o_mean + RMSE_o_sd, fill = enem, shape= enem), size=1)  +
+  geom_pointrange(aes(xmin = theta_o_mean-theta_o_sd, xmax = theta_o_mean+theta_o_sd, fill = enem, shape= enem), size=1)+
+    theme_minimal()+
+    scale_fill_viridis_d(option = "inferno")+
+    theme_bw()+
+  geom_text(aes(label = paste0("RMSE: ", round(RMSE_o_mean, 2),
+                            "\ntheta: ", round(theta_o_mean, 2)),
+              hjust = -0.05, vjust = -0.7), size = 4)+
+    scale_shape_manual(values = c(21, 22, 23, 24, 25, 21))+
+   theme(axis.text=element_text(size=14))+
+   labs(subtitle= "RSME_o vs Theta_o", x= "theta_o", y="RMSE_o")
+
+  ggsave(
+   THETA_RMSE_MEAN,
+    filename = paste0(fig_path, "rmse_theta",".png"),
+    height = 9,
+    width = 12,
+    create.dir = T
+  )
+}
+
 
 
 
