@@ -70,13 +70,7 @@ plot_par_sum_allconditions(df_sum = full_sum, fig_subfolder = fig_subfolder, plo
 plot_omega_allconditions(df_sum = full_sum)
   
 
-
-####-----------------------------------------------------------
-#here Im gonna call the survival plot, per area, and time to extinction 
-
-
-
-
+#still missing to replot the chnages of variables in time 
 
 #plot_per_treatment(out_subfolder = out_subfolder, true_values = FALSE) #we dont want the true values of the eq
               # Random seeds for data shuffling
