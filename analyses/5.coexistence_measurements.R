@@ -107,12 +107,6 @@ COMPLETE_DF <- dplyr::left_join(COMPLETE_DF, DATA_SURV_AV, by = "enem")
 DF_SUM_LV_CCM <- read.csv("./data/summ_lv_ccm_R.csv")
 COMPLETE_DF <- dplyr::left_join(COMPLETE_DF, DF_SUM_LV_CCM, by = c("enem"))
 
-##so HERE THE NA are 00 but i have to re[place this]
-#COMPLETE_DF$lv_caus[is.na(COMPLETE_DF$lv_caus)] <- "missing"
-#COMPLETE_DF$ccm_caus[is.na(COMPLETE_DF$ccm_caus)] <- "missing"
-#COMPLETE_DF$igp_comp[is.na(COMPLETE_DF$igp_comp)] <- "missing"
-#COMPLETE_DF[is.na(COMPLETE_DF)] <- 1
-
 ##############
 ###here Imm gonna do the inversion from x, y to n,p , where p is always the top predator.
 COMPLETE_DF <- xy_to_np_transformer(COMPLETE_DF)
@@ -312,19 +306,18 @@ THETA_VALUES <- read.csv(
   "./outputs/LV_MAP/real.data/absolute/not_normalized/FULL_THETA_numseed_30.csv"
 )
 
-hist(THETA_VALUES$theta_o)
+THETA_VALUES_NORM <- read.csv(
+  "./outputs/LV_MAP/real.data/absolute/not_normalized/FULL_THETA_numseed_30.csv"
+)
+
 
 THETA_VALUES_SUM <- THETA_VALUES |> 
   dplyr::ungroup() |> 
   dplyr::group_by(enem, norm, dif_cond, numRep, rpresent) |> 
-  dplyr::summarise(theta_o_mean = mean(theta_o), RMSE_o_mean = mean(RMSE_o))
+  dplyr::summarise(theta_o_mean = mean(theta_o), RMSE_o_mean = mean(RMSE_o),
+theta_o_sd = sd(theta_o), RMSE_o_sd = sd(RMSE_o))
 
 
-THETA_PLOT <- THETA_VALUES|> 
- ggplot(aes(x = theta_o, y = RMSE_o, color= as.factor(numSeed))) +
-  geom_point() +
-  facet_wrap(~ enem) +
-  labs(x = "Theta", y = "RMSE") +
-  theme_bw()+
-  scale_color_viridis_d()+
-  theme(legend.position = "none")
+plotter_rmse_theta(theta_df_sum = THETA_VALUES_SUM, fig_path = fig_folder)
+
+
