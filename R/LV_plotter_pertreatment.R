@@ -1,154 +1,55 @@
-## estimated parameters extractor
+############################################################################################################
+# Function that replaces generic X and Y labels in varName with the actual species names
+#' @param df_full A data frame with columns: enem and varName
+#' @return The same data frame with X and Y in varName replaced by the matching species name
+#' @details X is replaced by the species in X (cc, ol, sr, am, aa) that appears in the enem string
+#' @details Y is replaced by the species in Y (ma, my, ac, ec) that appears in the enem string
+#' @examples change_xy_realValues(df_full = my_full_data)
+##########################################################################
+change_xy_realValues <-  function(df_full){
 
-##The first thing to do, is download the respective data and due all the internal plots
-## then per I'll do a general plot for all the treaments 
-
-##esto es para hacerlo para todas las seeds
+X <- c("cc", "ol", "sr", "am", "aa")
+Y <- c("ma", "my", "ac", "ec")
 
 
+#change all the x 
+for (x in X){
+  print(x)
+  for (i in seq(1:dim(df_full)[1])){
+      if(grepl(x, df_full$enem[[i]])){
+        df_full$varName[[i]] <- gsub("X", x, df_full$varName[[i]])
+      }
+  }
+}
 
-plotter_lv_map_treatment <- function(list_treatment_used, fig_path, num_seed, true_values =TRUE, reso='NA'){
-###primero volvemos en data frames 
 
+
+for (y in Y){
+  print(y)
+  for (i in seq(1:dim(df_full)[1])){
+      if(grepl(y, df_full$enem[[i]])){
+        df_full$varName[[i]] <- gsub("Y", y, df_full$varName[[i]])
+      }
+  }
+}
+ 
+return(df_full)  
   
-if(true_values ==TRUE){
-  DF_RT_EQ <- as.double(list_treatment_used$r_eq)
-  DF_ALPHA_EQ <- as.double(list_treatment_used$alpha_eq)}
-
-if(true_values ==FALSE) {  
-  DF_RT_EQ <- as.double(c(0, 0, 0))
-  DF_ALPHA_EQ <- as.double(matrix(0L, ncol=3, nrow=3))}
   
-#for r
-
-DF_RT_EQ <- as.data.frame(DF_RT_EQ)
-names(DF_RT_EQ) <- "par_eq"
-DF_RT_EQ$varName <- c("R","N","P")
-
-#for alpha
-DF_ALPHA_EQ <- as.data.frame(DF_ALPHA_EQ)
-names(DF_ALPHA_EQ) <- "par_eq"
-DF_ALPHA_EQ$varName <- c("R.R", "N.R", "P.R", "R.N", "N.N", "P.N", "R.P", "N.P", "P.P")
-
-
-############3
-
-
-##------------now plotting the parameters---------------
-
-###intento loco
-process_list <- function(data_list){
-df_total <- data.frame()
-for (i in 1:length(data_list)){
-  df_rt_temp <- as.data.frame(data_list[[i]])
-  df_rt_temp$replicate <- i
-  df_rt_temp$time <- seq(1, dim(df_rt_temp)[1])
-  df_total <-  rbind(df_total, df_rt_temp)
-}
-return(df_total)
-}
-
-#---here I all as data frames
-DF_RT <- process_list(data_list = list_treatment_used$r_hat_list)
-DF_RT_SE <- process_list(data_list = list_treatment_used$r_se_list)
-DF_ALPHA <- process_list(data_list = list_treatment_used$alpha_hat_list)
-DF_ALPHA_SE <- process_list(data_list = list_treatment_used$alpha_se_list)
-
-
-###########I save all data frame in the corresponding 
-
-
-
-#### the first plot you wanna make are the time series plot (ok?)
-
-### the plotss
-
-#plot the phase plot and time series
-
-#just for the plot, i put the time steps, as 1, 2, 3.. 
-
-
-##AQUI VOY, pero vamo lo meto en loop y ya
-
-##how the parameters change in time
-S <- length(DF_RT)-2
-RT_TIME_PLOT <- par_time_plotter(DF_RT, num_col = S) ##to only include the varia
-ALPHA_TIME_PLOT <- par_time_plotter(DF_ALPHA, num_col =S)
-
-
-ggsave(RT_TIME_PLOT, filename = paste0(fig_path, "rt_time_",  "reso_",reso, "_seed_", num_seed,  ".png"),
-   height = 4,
-    width = 12,
-    create.dir = T
-  )
-
-
-ggsave(ALPHA_TIME_PLOT, filename = paste0(fig_path, "alpha_time_", "reso_",reso, "_seed_", num_seed,  ".png"),
-   height = 10,
-    width = 12,
-    create.dir = T
-  )
-
-
-
-LONG_FULL_RT<-long_par_formatter(df_par = DF_RT, df_par_se = DF_RT_SE)
-LONG_FULL_ALPHA <- long_par_formatter(df_par=DF_ALPHA, df_par_se = DF_ALPHA_SE)
-
-#now the mean and sd 
-
-RT_MEAN_SD_PLOT <- par_mean_sd_plotter(df_par_se_long =  LONG_FULL_RT, df_par_eq= DF_RT_EQ, num_col=max(S, dim(DF_RT_EQ)[1]), trueParameters = 
-true_values)
-ALPHA_MEAN_SD_PLOT <- par_mean_sd_plotter(df_par_se_long =  LONG_FULL_ALPHA , df_par_eq= DF_ALPHA_EQ, num_col=max(S, dim(DF_RT_EQ)[1]), trueParameters = true_values)
-
-
-ggsave(RT_MEAN_SD_PLOT, filename = paste0(fig_path, "rt_mean_",  "reso_",reso, "_seed_", num_seed, ".png"),
-   height = 4,
-    width = 12,
-    create.dir = T
-  )
-
-ggsave(ALPHA_MEAN_SD_PLOT, filename = paste0(fig_path, "alpha_mean_", "reso_",reso, "_seed_", num_seed, ".png"),
-   height = 10,
-    width = 12,
-    create.dir = T
-  )
-
-
-
-if(true_values ==TRUE){
-
-
-##now check if it makes sense against the TRUE VALUES 
-#averages #does ot work YET
-ALPHA_EST <- av_comp_plotter_v2(df_par_se_long = LONG_FULL_ALPHA, df_par_eq = DF_ALPHA_EQ)
-RT_EST <- av_comp_plotter_v2(df_par_se_long = LONG_FULL_RT, df_par_eq = DF_RT_EQ)
-
-ggsave(RT_EST, filename = paste0(fig_path,"rt_acc_", "reso_",reso, "_seed_", num_seed,  ".png"),
-   height = 10,
-    width = 12,
-    create.dir = T
-  )
-
-ggsave(ALPHA_EST, filename = paste0(fig_path, "alpha_acc_",  "reso_",reso, "_seed_", num_seed,  ".png"),
-   height = 10,
-    width = 12,
-    create.dir = T
-  )
 }
 
 
-# --------------------------------------------------- ----------------------------------------
-##now with the re
 
 
-##########this is probabcly for another code
-
-
-
-
-}
-
-
+##########################################################################################################
+# Function that averages parameters across replicates and saves r and alpha plots per rpresent/numRep
+#' @param df_full A data frame with columns: varName, type, numSeed, rpresent, numRep, enem, replicate
+#' @param fig_subfolder Character; path to the folder where the plots will be saved
+#' @return Nothing; saves one PNG per par_type (r, alpha) per rpresent/numRep combination
+#' @details Averages all columns across replicates, grouped by varName, type, numSeed, rpresent, numRep, enem
+#' @details Loops over rpresent and numRep, filters the averaged data, and calls parameter_r_alpha_plotter
+#' @examples plotter_full_parameters(df_full = my_full_data, fig_subfolder = "figs/")
+########################################################################################################
 
 plotter_full_parameters <- function(df_full, fig_subfolder){
 
@@ -158,8 +59,6 @@ FULL_DF_PARAMETERS_M <- df_full|>
   dplyr::group_by(varName, type, numSeed, rpresent, numRep, enem)|> 
   dplyr::summarise_all(mean)
   
-## with R present
-
   
 enemy <-  unique(FULL_DF_PARAMETERS_M$enem)
   
@@ -170,7 +69,6 @@ FULL_DF <-  FULL_DF_PARAMETERS_M |>
   dplyr::filter(rpresent == i)|> 
   dplyr::filter(numRep == j)
   
-## without R
 
 PLOT_PAR_SIM_RT <-  parameter_r_alpha_plotter(df_full = FULL_DF, par_type = "r")
 PLOT_PAR_SIM_ALPHA <-  parameter_r_alpha_plotter(df_full = FULL_DF, par_type = "a")
@@ -193,12 +91,90 @@ ggsave(PLOT_PAR_SIM_ALPHA, filename = paste0(fig_subfolder, "alpha_allseed_",  "
 }
 }
 
+############################################################################################################
+# Function that builds an r or alpha parameter plot faceted by enem
+#' @param df_full A data frame already filtered to one rpresent/numRep combination
+#' @param par_type Character; either "r" for growth rates or "a" for interaction terms
+#' @return A ggplot object with points and error bars, faceted by enem
+#' @details Error bars are mean +/- sd, colored by numSeed
+#' @details A dashed line at y = 0 is added as reference
+#' @examples parameter_r_alpha_plotter(df_full = my_filtered_data, par_type = "r")
+####################################################################################
+parameter_r_alpha_plotter <- function(df_full = FULL_DF_PARAMETERS, par_type = "r"){
+
+  #var_order <- c("Y.Y", "X.X", "X.Y", "Y.X", "R.R", "R.Y", "Y.R", "R.X", "X.R", "Y", "X", "R")
+
+  par_plot <- df_full |> 
+    dplyr::filter(type == par_type) |> 
+   # dplyr::mutate(varName = factor(varName, levels = var_order)) |>
+
+    ggplot(aes(x= varName, y= mvalue.mean)) +
+    geom_errorbar(aes(ymin=mvalue.mean- 1*mvalue.sd,  ymax=mvalue.mean+ 1*mvalue.sd, color= as.factor(numSeed)), width=.2,
+                 position=position_dodge(0.3))+
+    geom_point(aes(color= as.factor(numSeed)), position=position_dodge(0.3))+
+
+    xlab("Replicate and variable") +
+    ggtitle(paste0("kernel_chosen ", kernel_chosen)) +
+
+    #facet_wrap(~enem, scales = "free", ncol= 3)+
+    facet_wrap(~enem, ncol= 3, scales = "free_x")+
+
+    
+    geom_hline(yintercept = 0, color= "black", linetype= "dashed")+
+     scale_color_viridis_d() +
+
+    theme_bw()
+
+  return(par_plot)
+}
 
 
+###############################################################################################################
+# Function that plots summarized parameters (r and alpha) across all conditions, faceted by enem and type
+#' @param df_sum A summarized data frame produced by summarizer_with_variance
+#' @param fig_subfolder Character; path to the folder where the plot will be saved
+#' @return Nothing; saves a PNG of the plot
+#' @details Error bars show grand_mean +/- total_sd, dodged by type and rpresent
+#' @details Points use color for type and shape for rpresent (21 = empty circle, 17 = filled triangle)
+#' @details Facets are enem x type with free x scales
+#' @examples plot_par_sum_allconditions(df_sum = my_sum_df, fig_subfolder = "figs/")
+##################################################################################################
+plot_par_sum_allconditions <- function(df_sum, fig_subfolder, scale_chosen= "free", plotted_type = c("r", "a")){
+
+  df_sum <- df_sum |> 
+    dplyr::filter(type %in% plotted_type)
+
+  n_col= length(plotted_type)*2
+
+  par_plot <- df_sum |> 
+    ggplot(aes(x= varName, y= grand_mean)) +
+    geom_errorbar(aes(ymin=grand_mean- 1*total_sd,  ymax=grand_mean+ 1*total_sd, group= interaction(type, rpresent),  color= as.factor(type)), width=.2,
+                 position=position_dodge(0.6), linewidth=1)+
+    geom_point(aes(color= as.factor(type), shape=as.factor(rpresent)), fill="white",  position=position_dodge(0.6), size=3)+
+    scale_shape_manual(
+      values = c("FALSE" = 21, "TRUE" = 17),  # 1 = empty circle, 17 = filled triangle
+      name = "rpresent"
+    )+
+
+    xlab("Replicate and variable") +
+    ggtitle(paste0("kernel_chosen ", kernel_chosen)) +
 
 
+    facet_wrap(enem~type, scales = scale_chosen, ncol= n_col)+
+    
+    geom_hline(yintercept = 0, color= "black", linetype= "dashed")+
+     scale_color_viridis_d(begin=0, end= 0.7, option = "A", direction = 1) +
 
+    theme_bw()
 
+  
+  ggsave(par_plot, filename = paste0(fig_subfolder, "all_parameters_scale",scale_chosen, "_variables_", paste0(plotted_type, collapse = "_"),    ".png"),
+   height = 12,
+    width = n_col*4,
+    create.dir = T)
+  #return(par_plot)
+
+}
 
 
 
@@ -226,9 +202,6 @@ ggsave(PLOT_PAR_THETA, filename = paste0(fig_folder, "theta_allrep_allr_allseed_
 }
 
 
-
-
-
 plotter_omega_microcosmos <- function(df_full, fig_folder){
 
 #just if you have several treatments (replicatess)
@@ -250,32 +223,6 @@ ggsave(PLOT_PAR_OMEGA, filename = paste0(fig_folder, "omega_allrep_allr_allseed_
 }
 
 
-
-plotter_save_conditions <- function(df_sum, fig_subfolder, abs_norm_values){
-
-
-if (abs_norm_values == "norm"){
-  df_sum <-  df_sum |> 
-    dplyr::rename(plot_mean ="norm_grand_mean" ,
-  plot_sd = "norm_total_sd")
-}
-if(abs_norm_values== "abs"){
-   df_sum <-  df_sum |> 
-    dplyr::rename(plot_mean ="grand_mean" ,
-  plot_sd = "total_sd")
-}
-
-
-PLOT_GENERAL <- plot_par_allconditions(df_sum)
-
-
-ggsave(PLOT_GENERAL, filename = paste0(fig_subfolder, "all_parameters_", "values_", abs_norm_values,  ".png"),
-   height = 12,
-    width = 18,
-    create.dir = T
-  )
-
-}
 
 
 

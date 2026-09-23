@@ -77,7 +77,7 @@ lv_looper_lists_general <- function(data_used, v_num_rep, v_rpresent, v_num_seed
 #' @param num_rep Number of replicates (groups) to build
 #' @param kernel_chosen Kernel to use, either "state" or "time" (time is not supported)
 #' @return A list containing N_list_sim, cv_list_sim, parameter estimates, and coexistence metrics
-#' @details Reshuffles replicates, builds N_list_sim matrices, runs cross-validation and LV_map_mod
+#' @details Reshuffles replicates, builds N_list_sim matrices, runs cross-validation and LV_map
 #' @details Coexistence metrics are only computed when S == 2; for S > 2 they are set to NA
 #' @examples lv_map_general(df_used = my_data, rpresent = TRUE, num_seed = 1, num_rep = 2, kernel_chosen = "state")
 #####################################################################################################
@@ -174,8 +174,7 @@ if(forcing_theta == TRUE){
   print("Im doing the cross validation stuff")
 
   if(kernel_chosen == "state") {
-out_cv <- LV_map_state_space_cross_validation_mod(N_list_sim[[i]], theta_v = chosen_theta_v, 
-    R_0_index = R_0_index, R_F_index = R_F_index,  mod_XY_mat = TRUE, remove_stiching = T)
+out_cv <- LV_map_state_space_cross_validation(N_list_sim[[i]], theta_v = chosen_theta_v) 
   }
 
 if(kernel_chosen == "time") {
@@ -214,9 +213,8 @@ tic()
   
 for (i in 1:num_rep) {
 
-  out_list[[i]] <- LV_map_mod(N_list_sim[[i]], cv_list_sim[[i]]$theta_o, 
-    kernel = kernel_chosen, R_0_index = R_0_index, R_F_index = R_F_index, remove_stiching = F, mod_XY_mat = TRUE
-  )
+  out_list[[i]] <- LV_map(N_list_sim[[i]], cv_list_sim[[i]]$theta_o, 
+    kernel = kernel_chosen)
   r_hat_list[[i]] <- out_list[[i]]$r_hat
   r_se_list[[i]] <- out_list[[i]]$r_se
   alpha_hat_list[[i]] <- out_list[[i]]$alpha_hat

@@ -1,6 +1,27 @@
 ###functions of plots related 
 
 
+########function to plot per treatment
+
+plot_per_treatment <- function(out_subfolder, true_values){
+
+##new method..
+  # One-liner
+all_dirs <- list.dirs(out_subfolder, recursive = TRUE)[-1]  # -1 removes the first element (root)
+
+vec_treatments <- setdiff(all_dirs, dirname(all_dirs))
+
+for (treatment in vec_treatments){
+  for (i in seq(1:length(list.files(treatment,  pattern = ".rds")))){
+  num_seed <- i
+  print(list.files(treatment,  pattern = ".rds")[i])
+    #fig subdolder is defined externallhy, waht out! 
+  list_used <- readRDS(paste0(treatment,"/" , list.files(treatment,  pattern = ".rds")[i]))
+  fig_path <- paste0(fig_subfolder, stringr::str_remove(treatment, out_subfolder), "/")
+  plotter_lv_map_treatment(list_used, fig_path = fig_path, num_seed = num_seed, true_values = true_values)
+  }
+}
+}
 
 
 
@@ -24,24 +45,6 @@ par_time_plotter <- function(df_par, replicate= "replicate", plotted_var = c("N"
 }
 
 
-
-long_par_formatter <- function(df_par, df_par_se, replicate= "replicate"){
-outLong <-  df_par |> 
-    tidyr::pivot_longer(cols= !c(replicate, time), names_to = "varName", values_to = "value") |> 
-    dplyr::group_by(replicate, varName)|> 
-    dplyr::summarise(mvalue = mean(value))
-  
-  
-  outLong_sd <-  df_par_se |> 
-    tidyr::pivot_longer(cols= !c(replicate, time), names_to = "varName", values_to = "value") |> 
-    dplyr::group_by(replicate, varName)|> 
-    dplyr::summarise(mvalue = mean(value))
-
-  outLong_total <- dplyr::full_join(outLong, outLong_sd, by=c("varName", "replicate"), suffix= c(".mean", ".sd"))
-
-  return(outLong_total)
-
-}
 
 
 
@@ -145,71 +148,6 @@ shapes_used <- c(21, 22, 23, 24, 21, 22, 23, 24, 21, 22, 23, 24)
 
 
 
-
-###
-##im letting like that see if i have to erase it 
-old_parameter_seed_sim_plotter <- function(df_full = FULL_DF_PARAMETERS, par_type = "r"){
-
-  var_order <- c("P.P", "N.N", "N.P", "P.N", "R.R", "R.P", "P.R", "R.N", "N.R", "P", "N", "R")
-
-  par_plot <- df_full |> 
-    dplyr::filter(type == par_type) |> 
-    dplyr::mutate(varName = factor(varName, levels = var_order)) |>
-    ggplot(aes(x= varName, y= mvalue.mean)) +
-    geom_errorbar(aes(ymin=mvalue.mean- 1*mvalue.sd,  ymax=mvalue.mean+ 1*mvalue.sd, color= as.factor(numSeed)), width=.2,
-                 position=position_dodge(0.3))+
-    geom_point(aes(color= as.factor(numSeed)), position=position_dodge(0.3))+
-
-    xlab("Replicate and variable") +
-
-   # geom_segment(data= df_par_se_long,  aes(x = min_x-0.5, y = 0, xend = max_x+0.5, yend = 0), color= "black", linetype= "dashed")+
-
-    facet_grid(numRep~rpresent, labeller = labeller(.rows = label_both, .cols = label_both))+
-    #facet_grid(numRep~rpresent, scales = "free", labeller = labeller(.rows = label_both, .cols = label_both))+
-
-    geom_hline(yintercept = 0, color= "black", linetype= "dashed")+
-     scale_color_viridis_d() +
-    ggtitle(paste0("kernel_chosen ", kernel_chosen)) +
-
-    theme_bw()
-
-  return(par_plot)
-}
-
-
-
-
-parameter_r_alpha_plotter <- function(df_full = FULL_DF_PARAMETERS, par_type = "r"){
-
-  #var_order <- c("Y.Y", "X.X", "X.Y", "Y.X", "R.R", "R.Y", "Y.R", "R.X", "X.R", "Y", "X", "R")
-
-  par_plot <- df_full |> 
-    dplyr::filter(type == par_type) |> 
-   # dplyr::mutate(varName = factor(varName, levels = var_order)) |>
-
-    ggplot(aes(x= varName, y= mvalue.mean)) +
-    geom_errorbar(aes(ymin=mvalue.mean- 1*mvalue.sd,  ymax=mvalue.mean+ 1*mvalue.sd, color= as.factor(numSeed)), width=.2,
-                 position=position_dodge(0.3))+
-    geom_point(aes(color= as.factor(numSeed)), position=position_dodge(0.3))+
-
-    xlab("Replicate and variable") +
-    ggtitle(paste0("kernel_chosen ", kernel_chosen)) +
-
-    #facet_wrap(~enem, scales = "free", ncol= 3)+
-    facet_wrap(~enem, ncol= 3, scales = "free_x")+
-
-    
-    geom_hline(yintercept = 0, color= "black", linetype= "dashed")+
-     scale_color_viridis_d() +
-
-    theme_bw()
-
-  return(par_plot)
-}
-
-
-
-
 parameter_omega_plotter <- function(df_full = FULL_DF_PARAMETERS){
 
 
@@ -238,79 +176,7 @@ parameter_omega_plotter <- function(df_full = FULL_DF_PARAMETERS){
 }
 
 
-###all conditions plotter 
 
-##histogram of all parameters, just to see the distribution before choosing a way of summarizing
-
-summarizer_with_variance <- function(df_full){
-full_df_sum <- df_full |> 
-  dplyr::ungroup()|> 
-  dplyr::select(!replicate)|> 
-  dplyr::select(!dif_cond)|> 
-  dplyr::select(!norm)|> 
-  dplyr::group_by(varName, type, numRep, rpresent, enem)|> 
-  dplyr::summarise(grand_mean = mean(mvalue.mean), 
-  var_between = var(mvalue.mean), 
-  var_within= mean(mvalue.sd**2),
-  grand_mean_omega = mean(omega_mean),
- var_between_omega = var(omega_mean),
- var_within_omega= mean((((abs(omega_mean-omega_up)+abs(omega_mean-omega_dw))/2)/1.96)**2),
-  
-  grand_mean_eta1 = mean(eta1_mean),
- var_between_eta1 = var(eta1_mean),
- var_within_eta1= mean((((abs(eta1_mean-eta1_up)+abs(eta1_mean-eta1_dw))/2)/1.96)**2),
-  
- grand_mean_eta2 = mean(eta2_mean),
- var_between_eta2 = var(eta2_mean),
- var_within_eta2= mean((((abs(eta2_mean-eta2_up)+abs(eta2_mean-eta2_dw))/2)/1.96)**2)) |>  #lo paso a un desvuacion estandar, y despues saco la media entre las desvacion standas 
-  
-  dplyr::mutate(total_sd =sqrt(var_between+var_within)) |> 
- dplyr::mutate(total_sd_omega =sqrt(var_between_omega+var_within_omega))|> 
- dplyr::mutate(total_sd_eta1 =sqrt(var_between_eta1+var_within_eta1))|> 
- dplyr::mutate(total_sd_eta2 =sqrt(var_between_eta2+var_within_eta2))
-
-full_df_sum <- full_df_sum |> 
-    dplyr::ungroup()|> 
-      dplyr::group_by(type) |>  # Scale separately for each type (interactions a, and r) and acroos all enemies. (but we can check within enemies with group by enem and type)
-      dplyr::mutate(
-        max_abs = max(abs(grand_mean)),
-        norm_grand_mean = grand_mean / max_abs,
-        norm_total_sd = total_sd / max_abs
-      ) |> 
-      dplyr::select(!max_abs)
-  
-  
-  return(full_df_sum)
-}
-
-
-plot_par_allconditions <- function(df_sum){
-  #var_order <- c("Y.Y", "X.X", "X.Y", "Y.X", "R.R", "R.Y", "Y.R", "R.X", "X.R", "Y", "X", "R")
-  par_plot <- df_sum |> 
-   # dplyr::filter(type == par_type) |> 
-    #dplyr::mutate(varName = factor(varName, levels = var_order)) |>
-    ggplot(aes(x= varName, y= plot_mean)) +
-    geom_errorbar(aes(ymin=plot_mean- 1*plot_sd,  ymax=plot_mean+ 1*plot_sd, group= interaction(type, rpresent),  color= as.factor(type)), width=.2,
-                 position=position_dodge(0.6), linewidth=1)+
-    geom_point(aes(color= as.factor(type), shape=as.factor(rpresent)), fill="white",  position=position_dodge(0.6), size=3)+
-    scale_shape_manual(
-      values = c("FALSE" = 21, "TRUE" = 17),  # 1 = empty circle, 17 = filled triangle
-      name = "rpresent"
-    )+
-
-    xlab("Replicate and variable") +
-    ggtitle(paste0("kernel_chosen ", kernel_chosen)) +
-
-    facet_wrap(enem~type, scales = "free_x", ncol= 4)+
-    
-    geom_hline(yintercept = 0, color= "black", linetype= "dashed")+
-     scale_color_viridis_d(begin=0, end= 0.7, option = "A", direction = 1) +
-
-    theme_bw()
-
-  return(par_plot)
-
-}
 
 ################33
 
@@ -354,7 +220,7 @@ ONLY_INT <-  NET_DF |>
   dplyr::filter(enem== chosen_enem) |> 
   dplyr::mutate(varName = ifelse(varName == "N", "N.X", 
                           ifelse(varName== "P", "P.Y", varName)))|> 
-  dplyr::select(varName, grand_mean_pro)|> 
+  dplyr::select(varName, grand_mean_pro, significance)|> 
   tidyr::separate(col=varName, into= c("target", "source"))|> 
   dplyr::relocate(source, target)   # <-- swap order
 
@@ -377,7 +243,8 @@ w  <- 20*sqrt(w)       # keep a minimum visible width
 
 # --- Edge colors: sign of grand_mean (optional but helpful) ---
 edge_col <- ifelse(gm >= 0, "steelblue", "firebrick")
-
+# --- Edge line types: solid when significant, dotted otherwise ---
+edge_lty <- ifelse(igraph::E(network)$significance == "s", 1, 2)
 
 # --- Plot ---
 
@@ -390,6 +257,7 @@ png(paste0("./figures/LV_MAP/real.data/network/network_", chosen_enem,".png"),
 plot(
   network,
   edge.width     = w,
+  edge.lty = edge_lty,
   edge.color     = edge_col,
   edge.curved    = 0.2,           # gentle curve; set to 0 to keep straight
   edge.loop.angle =  3/2*pi ,       # rotate self-loops so they don't overlap

@@ -1,57 +1,14 @@
 
-########function to plot per treatment
-
-plot_per_treatment <- function(out_subfolder, true_values){
-
-##new method..
-  # One-liner
-all_dirs <- list.dirs(out_subfolder, recursive = TRUE)[-1]  # -1 removes the first element (root)
-
-vec_treatments <- setdiff(all_dirs, dirname(all_dirs))
-
-for (treatment in vec_treatments){
-  for (i in seq(1:length(list.files(treatment,  pattern = ".rds")))){
-  num_seed <- i
-  print(list.files(treatment,  pattern = ".rds")[i])
-    #fig subdolder is defined externallhy, waht out! 
-  list_used <- readRDS(paste0(treatment,"/" , list.files(treatment,  pattern = ".rds")[i]))
-  fig_path <- paste0(fig_subfolder, stringr::str_remove(treatment, out_subfolder), "/")
-  plotter_lv_map_treatment(list_used, fig_path = fig_path, num_seed = num_seed, true_values = true_values)
-  }
-}
-}
 
 
-#######now a function to stract the general plot of all treatments#####
-
-
-extract_par_all_treatment_theta <- function(out_subfolder, coex_cal = TRUE){
-
-full_theta<-  data.frame()
-  
-##new method..
-  # One-liner
-all_dirs <- list.dirs(out_subfolder, recursive = TRUE)[-1]  # -1 removes the first element (root)
-
-vec_treatments <- setdiff(all_dirs, dirname(all_dirs))  
-
-for (treatment in vec_treatments){
-  for (i in seq(1:length(list.files(treatment)))){
-  #print(1:length(list.files(treatment)))
-  list_used <- readRDS(paste0(treatment,"/" , list.files(treatment)[i]))
-
-  theta_temp <- extracter_model_fit(list_used)    
-  full_theta <- rbind(full_theta, theta_temp)
-  }
-}
-
-
-
-return(full_theta)
-
-}
-
-
+#############################################################################################################
+# Function that reads all saved treatment RDS files in a folder and binds them into one data frame
+#' @param out_subfolder Character; root folder containing the treatment subfolders
+#' @param coex_cal Logical; whether coexistence metrics were computed and should be extracted
+#' @return A single data frame combining all treatments
+#' @details Walks over all subfolders, reads each .rds file, and calls extracter_data_frame on it
+#' @examples extract_par_all_treatment(out_subfolder = "out/", coex_cal = TRUE)
+######################################################################################################
 extract_par_all_treatment <- function(out_subfolder, coex_cal = TRUE){
 
 full_df<-  data.frame()
@@ -82,25 +39,13 @@ return(full_df)
 
 
 
-#unused function
-merger_data_frame_treatment <- function(out_folder){
-
-
-all_df_csv <- list.files(out_folder, recursive = TRUE, pattern = ".csv")  #
-
-  general_csv <-  data.frame()
-
-  for (i in all_df_csv){
-    df <- read.csv(i)
-    general_csv <- rbind(general_csv, i)
-    }
-  
-  return(general_csv)
-}
-
-
-
-
+############################################################################################################
+# Function that binds a list of data frames (one per replicate) into a single long data frame
+#' @param data_list A list where each element is a data frame (e.g. r_hat for one replicate)
+#' @return A data frame with an added replicate column and a time column
+#' @details Adds replicate index (position in list) and time (row number within each data frame)
+#' @examples process_list(data_list = my_list_treatment$r_hat_list)
+#########################################################################################
 process_list <- function(data_list){
 df_total <- data.frame()
 for (i in 1:length(data_list)){
@@ -112,6 +57,18 @@ for (i in 1:length(data_list)){
 return(df_total)
 }
 
+
+
+############################################################################################################
+# Function that extracts all parameters and coexistence metrics from one treatment list into a long data frame
+#' @param list_treatment_used A list produced by lv_map_general for one treatment
+#' @param coex_cal Logical; whether coexistence metrics (omega, eta, theta) were computed
+#' @return A long data frame with r, alpha, SEs, and optionally omega/eta/theta, plus treatment metadata
+#' @details Uses process_list to flatten each per-replicate list into a single data frame
+#' @details Joins omega, eta, and theta by replicate when coex_cal = TRUE
+#' @details Adds numRep, numSeed, rpresent, and enem from the treatment metadata
+#' @examples extracter_data_frame(list_treatment_used = my_list_treatment, coex_cal = TRUE)
+##########################################################################################################
 extracter_data_frame  <- function(list_treatment_used, coex_cal =TRUE){
 
 ### ok now im gonna run all over the lists, not so much the DF maybe similar.. 
@@ -138,13 +95,18 @@ DF_OMEGA_FULL <-  dplyr::full_join(DF_OMEGA, DF_OMEGA_CI_DW, by=c("replicate", "
 DF_OMEGA_FULL <-  dplyr::full_join(DF_OMEGA_FULL, DF_OMEGA_CI_UP, by=c("replicate", "time"))
 names(DF_OMEGA_FULL) <- c("omega_mean", "time", "replicate", "omega_dw", "omega_up")
 
-  ###
-#DF_THETA <- process_list(data_list = list_treatment_used$cv_list_sim)
-#DF_THETA <- DF_THETA |> 
- # dplyr::select(theta_o, RMSE_o, replicate)
+
+
+DF_THETA <- process_list(data_list = list_treatment_used$cv_list_sim)
+
+DF_THETA <- DF_THETA |>
+  dplyr::select(theta_o, RMSE_o, replicate)
 
 #i can do this cause you inly have one value per replicate 
-#DF_THETA <- unique(DF_THETA)
+DF_THETA <- unique(DF_THETA)  
+  
+  
+  
   
   
 DF_ETA_1 <- process_list(data_list = list_treatment_used$eta1_mean_list)  
@@ -180,7 +142,7 @@ DF_ETA_FULL <-  dplyr::full_join(DF_ETA_1_FULL, DF_ETA_2_FULL, by=c("replicate",
 }
 
 
-
+#this takes the TIME average of each parameters
 LONG_FULL_RT<-long_par_formatter(df_par = DF_RT, df_par_se = DF_RT_SE)
 LONG_FULL_ALPHA <- long_par_formatter(df_par=DF_ALPHA, df_par_se = DF_ALPHA_SE)
 
@@ -195,7 +157,7 @@ LONG_FULL <- rbind(LONG_FULL_RT, LONG_FULL_ALPHA)
   # 
 
 if(coex_cal ==TRUE){
-#LONG_FULL <- dplyr::inner_join(LONG_FULL, DF_THETA, by="replicate")
+LONG_FULL <- dplyr::inner_join(LONG_FULL, DF_THETA, by="replicate")
 LONG_FULL <- dplyr::inner_join(LONG_FULL, DF_OMEGA_FULL, by="replicate")
 LONG_FULL <- dplyr::inner_join(LONG_FULL, DF_ETA_FULL, by="replicate")
 
@@ -206,9 +168,6 @@ LONG_FULL$numSeed <- list_treatment_used$treatment[["num_seed"]]
 LONG_FULL$rpresent <- list_treatment_used$treatment[["rpresent"]]
 LONG_FULL$enem <- list_treatment_used$treatment[["enem"]]
 
-LONG_FULL$norm <- norm_data
-LONG_FULL$dif_cond <- dif_cond
-
   
 return(LONG_FULL)
   
@@ -216,34 +175,35 @@ return(LONG_FULL)
 }
 
 
-extracter_model_fit <- function(list_treatment_used){
-
-#DF_MODEL <- data.frame("observed" = list_treatment_used$cv_list_sim[[1]]$observed_Y_all,
- #                         "predicted" = list_treatment_used$cv_list_sim[[1]]$predicted_Y_all)
-
-DF_THETA <- as.data.frame(list_treatment_used$cv_list_sim)
-DF_THETA <- process_list(data_list = list_treatment_used$cv_list_sim)
-
-DF_THETA <- DF_THETA |>
-  dplyr::select(theta_o, RMSE_o)
-
-#i can do this cause you inly have one value per replicate 
-DF_THETA <- unique(DF_THETA)
 
 
-DF_THETA$numRep <- list_treatment_used$treatment[["num_rep"]]
-DF_THETA$numSeed <- list_treatment_used$treatment[["num_seed"]]
-DF_THETA$rpresent <- list_treatment_used$treatment[["rpresent"]]
-DF_THETA$enem <- list_treatment_used$treatment[["enem"]]
-DF_THETA$norm <- norm_data
-DF_THETA$dif_cond <- dif_cond  
+##############################################################################################################
+# Function that reshapes parameter and SE data frames into a single long format with mean and sd columns
+#' @param df_par A data frame of parameter estimates with columns: replicate, time, and parameter columns
+#' @param df_par_se A data frame of parameter standard errors with the same structure as df_par
+#' @param replicate Character; name of the replicate column (default "replicate")
+#' @return A long data frame with columns: replicate, varName, mvalue.mean, mvalue.sd
+#' @details Pivots both inputs to long format, averages over time per replicate/varName, then joins
+#' @details The join uses suffix .mean for df_par values and .sd for df_par_se values
+#' @examples long_par_formatter(df_par = DF_RT, df_par_se = DF_RT_SE)
+##########################################################################################################
+long_par_formatter <- function(df_par, df_par_se, replicate= "replicate"){
+outLong <-  df_par |> 
+    tidyr::pivot_longer(cols= !c(replicate, time), names_to = "varName", values_to = "value") |> 
+    dplyr::group_by(replicate, varName)|> 
+    dplyr::summarise(mvalue = mean(value))
   
-return(DF_THETA)
-
   
+  outLong_sd <-  df_par_se |> 
+    tidyr::pivot_longer(cols= !c(replicate, time), names_to = "varName", values_to = "value") |> 
+    dplyr::group_by(replicate, varName)|> 
+    dplyr::summarise(mvalue = mean(value))
+
+  outLong_total <- dplyr::full_join(outLong, outLong_sd, by=c("varName", "replicate"), suffix= c(".mean", ".sd"))
+
+  return(outLong_total)
+
 }
-
-
 
 
 
@@ -252,27 +212,3 @@ return(DF_THETA)
 
 
 
-extract_all_simulation<- function(out_subfolder = out_sim_folder) {
-
-
-full_sim_df <-  data.frame()
-  
-##new method..
-  # One-liner
-all_df_sim <- list.files(out_subfolder, recursive = TRUE, pattern = ".csv")
-  
-sim_names <-  list.dirs(out_subfolder, recursive = FALSE, full.names = F)
-
-  for (i in seq(1: length(sim_names))){
-
-    sim_df <-  read.csv(paste0(out_subfolder, all_df_sim[i]))
-    sim_df$real_sim_name <-  sim_names[i]
-    full_sim_df <-  rbind(full_sim_df, sim_df)
-}
-  
-return(full_sim_df)
-
-
-}
-
-  

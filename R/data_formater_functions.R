@@ -191,3 +191,59 @@ complete_mod <- complete_df |>
 
 return(complete_mod)
 }
+
+
+##POST LOTKA VOLTERRA FUNCTIONS
+
+###all conditions plotter 
+
+##############################################################################################################
+# Function that summarizes parameters and coexistence metrics across seeds with between/within variance
+#' @param df_full A long data frame with columns: varName, type, numRep, rpresent, enem, mvalue.mean, mvalue.sd, and omega/eta columns
+#' @return A summarized data frame with grand means, between/within variances, total sd, and normalized values
+#' @details Between variance = var of means across seeds; within variance = mean of squared SEs
+#' @details For omega and eta, the within variance is derived from the CI width divided by 1.96
+#' @details grand_mean is normalized by the max absolute value within each type (a or r)
+#' @examples summarizer_with_variance(df_full = my_full_df)
+##################################################################################################
+summarizer_with_variance <- function(df_full){
+full_df_sum <- df_full |> 
+  dplyr::ungroup()|> 
+  dplyr::select(!replicate)|> 
+  dplyr::group_by(varName, type, numRep, rpresent, enem)|> 
+  dplyr::summarise(grand_mean = mean(mvalue.mean), 
+  var_between = var(mvalue.mean), 
+  var_within= mean(mvalue.sd**2),
+  grand_mean_omega = mean(omega_mean),
+ var_between_omega = var(omega_mean),
+ var_within_omega= mean((((abs(omega_mean-omega_up)+abs(omega_mean-omega_dw))/2)/1.96)**2),
+  
+  grand_mean_eta1 = mean(eta1_mean),
+ var_between_eta1 = var(eta1_mean),
+ var_within_eta1= mean((((abs(eta1_mean-eta1_up)+abs(eta1_mean-eta1_dw))/2)/1.96)**2),
+  
+ grand_mean_eta2 = mean(eta2_mean),
+ var_between_eta2 = var(eta2_mean),
+ var_within_eta2= mean((((abs(eta2_mean-eta2_up)+abs(eta2_mean-eta2_dw))/2)/1.96)**2)) |>  #lo paso a un desvuacion estandar, y despues saco la media entre las desvacion standas 
+  
+  dplyr::mutate(total_sd =sqrt(var_between+var_within)) |> 
+ dplyr::mutate(total_sd_omega =sqrt(var_between_omega+var_within_omega))|> 
+ dplyr::mutate(total_sd_eta1 =sqrt(var_between_eta1+var_within_eta1))|> 
+ dplyr::mutate(total_sd_eta2 =sqrt(var_between_eta2+var_within_eta2))
+
+full_df_sum <- full_df_sum |> 
+    dplyr::ungroup()|> 
+      dplyr::group_by(type) |>  # Scale separately for each type (interactions a, and r) and acroos all enemies. (but we can check within enemies with group by enem and type)
+      dplyr::mutate(
+        max_abs = max(abs(grand_mean)),
+        norm_grand_mean = grand_mean / max_abs,
+        norm_total_sd = total_sd / max_abs
+      ) |> 
+      dplyr::select(!max_abs)
+  
+  
+  return(full_df_sum)
+}
+
+
+

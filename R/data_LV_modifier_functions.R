@@ -156,37 +156,3 @@ data_long_norm <- data_long |> #normally already selected the columns
 
 
 
-change_xy_realValues <-  function(df_full){
-
-X <- c("cc", "ol", "sr", "am", "aa")
-Y <- c("ma", "my", "ac", "ec")
-
-
-#change all the x 
-for (x in X){
-  print(x)
-  for (i in seq(1:dim(df_full)[1])){
-      if(grepl(x, df_full$enem[[i]])){
-        df_full$varName[[i]] <- gsub("X", x, df_full$varName[[i]])
-      }
-  }
-}
-
-
-
-for (y in Y){
-  print(y)
-  for (i in seq(1:dim(df_full)[1])){
-      if(grepl(y, df_full$enem[[i]])){
-        df_full$varName[[i]] <- gsub("Y", y, df_full$varName[[i]])
-      }
-  }
-}
- 
-return(df_full)  
-  
-  
-}
-
-
-
