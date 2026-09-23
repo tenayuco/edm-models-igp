@@ -17,24 +17,18 @@ devtools::install_deps(upgrade =  "never")
 ###########RUN this alwys
 # Load packages under Depends and in R
 devtools::load_all()
-
-
-
-
-
-
-
-
-
-
-
 #===================================================================================
 
+
+
+
+
+
 #================================SIMULATED DATA====================================
+#code TO CREATE THE SIMULATED DATA
 
 #1. First here I run the time series of 7 different sceanrios, 4 for the LBLB model and 3 for the PBPB model as examples of determinations. 
 # it saves all the produced time series in data with the name of the scenario 
-
 scenarios_lblb <- c("lblb_model_0", "lblb_model_1", "lblb_model_2", "lblb_model_3", "lblb_model_4")
 scenarios_pbpb <- c("pbpb_model_1", "pbpb_model_2", "pbpb_model_3", "pbpb_model_4", "pbpb_model_5", "pbpb_model_6")
 
@@ -45,28 +39,19 @@ scenarios <- c(scenarios_lblb, scenarios_pbpb)
 
 #or for short example:
 scenarios_chosen <- c("pbpb_model_6")
-
 #loop to generate multiple scenarios of simulated data 
 #long scenarios for reference, shorts for the analyis
 #we need to have coexistence to catch the signal 
 
-#this is for the new try 
-
-#data_folder <- paste0("./data/simulated.data/stocasticDeath/") 
-
 data_folder <- paste0("./data/simulated.data/") 
 
 for (i in scenarios_chosen){
-
 #names of the folders
 chosen_scenario <- i
-
 if(dir.exists(paste0(data_folder, chosen_scenario))){print("you already have the data for this sceanrio")
 }else {
-
 for (len in c(300, 20)){  #we have a 300 to see the whole dynamic,s and a 20 that it the one we are using, with 10 replicates
 len_chosen <- len
-
 #this will set the correct parameters per model and create the list of models
 source("./analyses/0.set_LBPB_model.R")
   
@@ -83,8 +68,6 @@ source("./analyses/0.simulatedData.R")
 
 
 
-
-
 #================================LV MAP FOR SIMULA==============================================
 
 #########################################333
@@ -97,19 +80,19 @@ source("./analyses/0.simulatedData.R")
 #lv_scenarios <- c("pbpb_model_6")
 lv_scenarios <- scenarios
 
-tic()
+tictoc::tic()
 #or source if you wanto to have the full analisis 
   for(norm_data in c(FALSE)){ #TRUEFALSE
     for (chosen_scenario in lv_scenarios){
- tic()
+ tictoc::tic()
   print(paste0("norm_data", norm_data, 'chosen_sce', chosen_scenario))
  source("./analyses/1.simulated_LVmap_full.R")
- toc()
+tictoc:: toc()
 
     }
   }
 print("totalTIME")
- toc()
+ tictoc::toc()
 
 ################################################3
 
@@ -117,20 +100,12 @@ print("totalTIME")
 #============================DATA ANALYSE WITH LV MAP=============================================
 
 #here you can add a loop to have the time or spatial kernel kernel_v= c("state", "time")
+#this gives you the data of LV map and the first PLOTS per treamment
+#you can also run it by steps when you enter the code
 
-norm_data  <- FALSE
-forcing_theta <- TRUE
-type_data= "real.data"  #data from the experiments
-dif_cond <-  FALSE
-
-tic()
-#or source if you wanto to have the full analisis 
-  for(norm_data in c(FALSE, TRUE)){
-
-tic()
+#from the make R you can choose to loop over any conditions
+#here you can also loop across these conditions 
 source("./analyses/2.data_LVmap_full.R")
-toc()
-  }
 
 
 
@@ -143,17 +118,13 @@ toc()
 ##------------nnow the loop to apply the ccm in the simulated data
 #scenarios <- c("lblb_model_1", "lblb_model_2", "lblb_model_3", "lblb_model_4")
 
-
-
 #loop for simulated data
 
 simulated_data <-  "DF_DISC_LV_20.csv"
-
 ccm_scenarios <- c("pbpb_model_6")
 #ccm_scenarios <- scenarios
 
 for (i in ccm_scenarios){
-
 chosen_scenario <- i
   
 tic()
