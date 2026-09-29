@@ -321,3 +321,15 @@ theta_o_sd = sd(theta_o), RMSE_o_sd = sd(RMSE_o))
 plotter_rmse_theta(theta_df_sum = THETA_VALUES_SUM, fig_path = fig_folder)
 
 
+#
+
+#==========COEXISTENCE (see if put it somehwehre else)
+
+#for each enemy 
+plot_omega_allconditions(df_sum = full_sum)
+  
+
+#still missing to replot the chnages of variables in time 
+
+#plot_per_treatment(out_subfolder = out_subfolder, true_values = FALSE) #we dont want the true values of the eq
+              # Random seeds for data shuffling
