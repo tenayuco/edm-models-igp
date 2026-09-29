@@ -1,28 +1,8 @@
-# ============================================================================
-# COEXISTENCE REPRESENTATIONS
-# ============================================================================
-# Purpose:take the results of the lotka volterra mapping
-#and plot them agains the survey and the omega
-# ============================================================================
-#DONT FORGET TO RUN FIRST PART OF MAKE R
-# ============================================================================
-# 1. A LOAD DATA FOR SURVIVAL AND AREA
-
-# Load the raw IGP dataset
-DATA_IGP <- readr::read_csv("data/dataIGP_2025.csv")
-
-# Remove treatments that don't make sense for the analysis
-# (ec+sr and ec+am are excluded)
-DATA_IGP <- DATA_IGP |>
-  dplyr::filter(!(enem == "ec+sr")) |>
-  dplyr::filter(!(enem == "ec+am"))
-
-#.2 LOAD DATA FOR SIMULATED DATA====================
 
 #==============================================
 
 # ============================================================================
-# 3. OUTPUT PATH CONFIGURATION
+# 1. OUTPUT PATH CONFIGURATION
 # ============================================================================
 type_data <- "real.data"
 
@@ -31,18 +11,35 @@ if (type_data == "real.data") {
   fig_folder <- paste0("./figures/LV_MAP/", type_data, "/", "coexistence/")
 }
 
-# ============================================================================
-# 4. DATA FORMAT and Coexistence adder
-# ============================================================================
 
-##we first put it in clean and long format
-DATA_PRED <- df_modifier_lv(raw_data = DATA_IGP)
+# ========================
+# IMPORT THEORETICAL COEXISTENCE (ETA AND OMEGA FROM THE MODEL)
+#=============================
 
-##then we just make coexistence 0 and 1, and transform 0 to 1 if 1-0-1 or 1-0-0-1
-###coexistence propo
-DATA_COEX <- binary_remove_zeros(DATA_PRED) ##this chnage x and y to 0 and 1 and change 0 to 1 if 1 is next )=(110100 to 111100)
-DATA_COEX <- binary_remove_zeros(DATA_COEX) ##i run it twice now to remove 0 that where followed by a 0, that was convetted to a 1 (so 11100100 to 11101100 to 11111100)
-DATA_COEX <- pred_coexistence_adder(DATA_COEX)
+
+###now we gonna put together 1. the omega, 2. the area of coexistence, and 3 the survival time.
+
+##here you specify wich one wou want #it has to be 36 rows (6 interaaction per 6 enemies, )
+FULL_SUM <- read.csv(
+  "./outputs/LV_MAP/real.data/not_normalized/FULL_SUM_VARIANCE.csv"
+)
+
+#here the names are still the x and y assigned 
+
+
+#============================
+
+
+#LOAD AND FILTER DATA for LV
+
+#this code gets the IGP data and does the modifcations used for LV analys, and for rpesentation, and coexistence 
+
+source("./analyses/2a.data_modification_LV.R")
+
+## let see if I can ADD the complete df 
+
+
+DATA_COEX <- pred_coexistence_adder(DATA_PRED)  #this add coexistence per week and completes the data with NA
 
 # ============================================================================
 # 4. SURVIVAL AND AREA PLOT
@@ -78,25 +75,9 @@ DATA_SURV <- survival_time_per_run(DATA_COEX)
 DATA_SURV_AV <- survival_time_average(DATA_SURV)
 #=======================================================================================
 
-# ============================================================================
-# 6. OMEGA VALUES FROM THE LOTKA VOLTERRA AND MERGIND DATA FRAME
-# ============================================================================
 
-###now we gonna put together 1. the omega, 2. the area of coexistence, and 3 the survival time.
 
-##here you specify wich one wou want
-FULL_DF <- read.csv(
-  "./outputs/LV_MAP/real.data/absolute/not_normalized/FULL_DF_parameters_numseed_30.csv"
-)
 
-#importantly, the omega reported is the log 10, so we have to do 10**omega to get real omega values
-
-FULL_DF$omega_mean <- 10^FULL_DF$omega_mean
-FULL_DF$omega_dw <- 10^FULL_DF$omega_dw
-FULL_DF$omega_up <- 10^FULL_DF$omega_up
-
-##this is a full summarizer of both sources of variance, of the LV BS, and my resticking between the 30 runs.
-FULL_SUM <- summarizer_with_variance(df_full = FULL_DF)
 
 ###comple
 COMPLETE_DF <- dplyr::left_join(FULL_SUM, DATA_AREA, by = "enem")
@@ -323,13 +304,19 @@ plotter_rmse_theta(theta_df_sum = THETA_VALUES_SUM, fig_path = fig_folder)
 
 #
 
+
+
+
+
 #==========COEXISTENCE (see if put it somehwehre else)
 
 #for each enemy 
-plot_omega_allconditions(df_sum = full_sum)
+plot_omega_allconditions(df_sum = full_sume)
   
 
 #still missing to replot the chnages of variables in time 
 
 #plot_per_treatment(out_subfolder = out_subfolder, true_values = FALSE) #we dont want the true values of the eq
               # Random seeds for data shuffling
+
+
