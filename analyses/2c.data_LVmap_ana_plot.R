@@ -16,17 +16,35 @@ fig_subfolder <- paste0("./figures/", used_subfolder)
 if (
   file.exists(paste0(out_subfolder,"FULL_DF_parameters_","numseed_",seeds,".csv"
   ))) {
-  full_df <-  read.csv(paste0(out_subfolder, "FULL_DF_parameters_","numseed_",seeds,".csv"))
+  FULL_DF <-  read.csv(paste0(out_subfolder, "FULL_DF_parameters_","numseed_",seeds,".csv"))
   print("file exist with that number of seeds")
 }else{
-  full_df <- extract_par_all_treatment(out_subfolder = out_subfolder,coex_cal = TRUE
+  FULL_DF <- extract_par_all_treatment(out_subfolder = out_subfolder,coex_cal = TRUE
   ) ##generates the file  (that you can download late just to run the full parameters, but chose how many simulaciones!)
-  print(head(full_df))
+  print(head(FULL_DF))
 
-  write.csv(full_df,file = paste0(out_subfolder,"FULL_DF_parameters_","numseed_",seeds,".csv"
+  write.csv(FULL_DF,file = paste0(out_subfolder,"FULL_DF_parameters_","numseed_",seeds,".csv"
     )
   )
 }
+
+
+#importantly, the omega reported is the log 10, so we have to do 10**omega to get real omega values
+
+FULL_DF$omega_mean <- 10^FULL_DF$omega_mean
+FULL_DF$omega_dw <- 10^FULL_DF$omega_dw
+FULL_DF$omega_up <- 10^FULL_DF$omega_up
+
+
+#IMPORTAT MOD
+FULL_SUM <- summarizer_with_variance(df_full = FULL_DF)
+
+
+##save as a full and summarized 
+
+utils::write.csv(FULL_SUM, paste0(out_subfolder, "FULL_SUM_VARIANCE.csv"))
+
+
 
 
 #this part is to create a new column out of this data frame where i put the 
@@ -35,42 +53,23 @@ if (
 
 change_for_real <- TRUE
 if(change_for_real == TRUE){
-  full_df <- change_xy_realValues(df_full = full_df)
+  FULL_DF <- change_xy_realValues(df_full = FULL_DF)
+  FULL_SUM <- change_xy_realValues(df_full = FULL_SUM)
 }
 
   
 #this plot alpha and r for all simlation and enemies
-plotter_full_parameters(df_full = full_df, fig_subfolder = fig_subfolder)
+plotter_full_parameters(df_full = FULL_DF, fig_subfolder = fig_subfolder)
 #plot_per_treatment(out_subfolder = out_subfolder, true_values = FALSE) #we dont want the true values of the eq
               # Random seeds for data shuffling
 
 
 
+#PLOTS PERENEMMY
 
-#importantly, the omega reported is the log 10, so we have to do 10**omega to get real omega values
-
-full_df$omega_mean <- 10^full_df$omega_mean
-full_df$omega_dw <- 10^full_df$omega_dw
-full_df$omega_up <- 10^full_df$omega_up
-
-
-#IMPORTAT MOD
-full_sum <- summarizer_with_variance(df_full = full_df)
 
 
 ##this plot the summarize of each enemy 
-plot_par_sum_allconditions(df_sum = full_sum, fig_subfolder = fig_subfolder)
-plot_par_sum_allconditions(df_sum = full_sum, fig_subfolder = fig_subfolder, plotted_type = c("a"),  scale_chosen = "free_x")
-plot_par_sum_allconditions(df_sum = full_sum, fig_subfolder = fig_subfolder, plotted_type = c("r"), scale_chosen = "free_x")
-
-
-#==========COEXISTENCE (see if put it somehwehre else)
-
-#for each enemy 
-plot_omega_allconditions(df_sum = full_sum)
-  
-
-#still missing to replot the chnages of variables in time 
-
-#plot_per_treatment(out_subfolder = out_subfolder, true_values = FALSE) #we dont want the true values of the eq
-              # Random seeds for data shuffling
+plot_par_sum_allconditions(df_sum = FULL_SUM, fig_subfolder = fig_subfolder)
+plot_par_sum_allconditions(df_sum = FULL_SUM, fig_subfolder = fig_subfolder, plotted_type = c("a"),  scale_chosen = "free_x")
+plot_par_sum_allconditions(df_sum = FULL_SUM, fig_subfolder = fig_subfolder, plotted_type = c("r"), scale_chosen = "free_x")
