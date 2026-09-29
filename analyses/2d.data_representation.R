@@ -2,30 +2,13 @@
 # This code extract the experimental data and plots it
 #=====================================================================================
 
-# ============================================================================
-# 2. LOAD AND FILTER DATA
-# ============================================================================
+#LOAD AND FILTER DATA for LV
 
-# Load the raw IGP dataset
-DATA_IGP <- readr::read_csv("data/dataIGP_2025.csv")
+#this code gets the IGP data and does the modifcations used for LV analys, and for rpesentation, and coexistence 
 
-# Remove treatments that don't make sense for the analysis
-# (ec+sr and ec+am are excluded)
-DATA_IGP <- DATA_IGP |> 
-  dplyr::filter(!(enem == "ec+sr")) |> 
-  dplyr::filter(!(enem == "ec+am"))
+source("./analyses/2a.data_modification_LV.R")
 
-
-## this put in a format for LV
-DATA_PRED <- df_modifier_lv(raw_data = DATA_IGP)
-
-# Select only the columns needed for LV analysis
-DATA_PRED <- DATA_PRED |> 
-  dplyr::select(block, R, X, Y, week, enem)
-
-#====================ESEENTIAL STEP============
-# Remove rows with zeros (which can cause issues in LV models)
-DATA_PRED <- zero_remover_raw(DATA_PRED)
+#IT GIVES YOU DATA IGP AND DATA_PRED
 
 
 #====================================================

@@ -11,7 +11,6 @@
 
 # ===========================================================================
 
-
 # ============================================================================
 # 1. CONDITIONS FOR DATA 
 # ===========================================================================
@@ -21,21 +20,10 @@
 norm_data  <- FALSE # if the data is normalized
 type_data= "real.data"  #data from the experiments
 # Load the raw IGP dataset
-DATA_IGP <- readr::read_csv("data/dataIGP_2025.csv")
-
-# ============================================================================
-# 2. LOAD AND FILTER DATA
-# ===========================================================================
-
-# Remove treatments that don't make sense for the analysis
-# (ec+sr and ec+am are excluded)
-DATA_IGP <- DATA_IGP |> 
-  dplyr::filter(!(enem == "ec+sr")) |> 
-  dplyr::filter(!(enem == "ec+am"))
 
 
 # ============================================================================
-# 3. OUTPUT PATH CONFIGURATION
+# 2. OUTPUT PATH CONFIGURATION
 # ============================================================================
 if (type_data == "real.data") {
   out_folder <- paste0("./outputs/LV_MAP/", type_data, "/")
@@ -43,22 +31,15 @@ if (type_data == "real.data") {
 
 }
 
-# ============================================================================
-# 4. DATA PREPARATION FOR LOTKA VOLTERRA
-# ============================================================================
+#LOAD AND FILTER DATA for LV
 
-# Prepare data for LV analysis (format columns, handle missing values, etc.)
-DATA_PRED <- df_modifier_lv(raw_data = DATA_IGP)
+#this code gets the IGP data and does the modifcations used for LV analys, and for rpesentation, and coexistence 
 
-# Select only the columns needed for LV analysis
-DATA_PRED <- DATA_PRED |> 
-  dplyr::select(block, R, X, Y, week, enem)
+source("./analyses/2a.data_modification_LV.R")
 
-# Remove fake zeros
-DATA_PRED <- zero_remover_raw(DATA_PRED)
 
 # ============================================================================
-# 5. DATA TRANSFORMATIONS AND OUTPUT FIGURES PATH
+# 5. DATA NORMALIZATION FOR ANA AND OUTPUT FIGURES PATH
 # ============================================================================
 if (norm_data == TRUE) {
   out_subfolder <- paste0(out_folder, "normalized/")
