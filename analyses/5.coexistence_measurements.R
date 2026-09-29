@@ -48,6 +48,8 @@ DATA_COEX <- pred_coexistence_adder(DATA_PRED)  #this add coexistence per week a
 ## this has the first average between blocks but no time.
 #basically it gives the proportion of survivail per week per enemy
 
+plotter_coex_perblock(data_coex = DATA_COEX, fig_path = fig_folder)
+
 DATA_COEX_AV <- coex_average(DATA_COEX)
 
 #this plot this coexstnece and area stuff to visualizae

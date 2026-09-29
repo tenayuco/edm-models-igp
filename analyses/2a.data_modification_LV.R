@@ -8,6 +8,12 @@
 DATA_IGP <- readr::read_csv("data/dataIGP_2025.csv")
 
 
+#here a small change cause there are two consecutive 0 for cc+ma that should not be a zero (ask francisco)
+#then the rule is that we consider a real 0 when two consectuvie 0 and stop the experiment
+
+DATA_IGP$ma[DATA_IGP$enem=="cc+ma"&DATA_IGP$block==2&DATA_IGP$week==8] <- 1
+
+
 DATA_IGP <- DATA_IGP |> 
   dplyr::filter(!(enem == "ec+sr")) |> 
   dplyr::filter(!(enem == "ec+am"))

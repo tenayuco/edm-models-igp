@@ -15,6 +15,11 @@ data_coex <- data_surv|>
   dplyr::mutate(coex = ifelse(X > 0 & Y > 0, 1, 0))|> 
   dplyr::select(enem, block, week, coex, X, Y) |> 
   tidyr::complete(enem, block, week)
+  
+
+data_coex$coex[is.na(data_coex$coex)] <- 0
+data_coex$X[is.na(data_coex$X)] <- 0 
+data_coex$Y[is.na(data_coex$Y)] <- 0 
 return(data_coex)
 }
 
@@ -29,9 +34,7 @@ return(data_coex)
 ###################################################################################################
 coex_average <- function(data_coex) {
   
-data_coex$coex[is.na(data_coex$coex)] <- 0
-data_coex$X[is.na(data_coex$X)] <- 0 
-data_coex$Y[is.na(data_coex$Y)] <- 0 
+
 
 
   data_coex_av <- data_coex|>
@@ -93,9 +96,27 @@ return(data_surv_av)
 
 
 
-plotter_coex_area <- function(data_coex, fig_path) {
+plotter_coex_perblock <- function(data_coex, fig_path) {
 
-coex_plot <- data_coex |>
+coex_plot_perblock <- data_coex |>
+    ggplot(aes(x = week, y = coex)) +
+    geom_line(aes(group=block),size = 1) +
+    facet_wrap(~enem) +
+    theme_minimal()
+
+  ggsave(coex_plot_perblock,filename = paste0(fig_path, "coexistence_perblock", ".png"),
+    height = 9,
+    width = 10,
+    create.dir = T)
+  
+
+}
+
+
+
+plotter_coex_area <- function(data_coex_av, fig_path) {
+
+coex_plot <- data_coex_av |>
     ggplot(aes(x = week, y = mean_coex)) +
     geom_area(fill = "darkgreen", alpha = 0.3) +
     geom_line(size = 1) +
