@@ -53,7 +53,7 @@ plotter_coex_perblock(data_coex = DATA_COEX, fig_path = fig_folder)
 DATA_COEX_AV <- coex_average(DATA_COEX)
 
 #this plot this coexstnece and area stuff to visualizae
-plotter_coex_area(DATA_COEX_AV, fig_path = fig_folder)
+plotter_coex_step(DATA_COEX_AV, fig_path = fig_folder)
 
 ##plot survival plots (X, and Y)
 plotter_survival(DATA_COEX_AV, fig_path = fig_folder)
@@ -87,8 +87,8 @@ COMPLETE_DF <- dplyr::left_join(COMPLETE_DF, DATA_SURV_AV, by = "enem")
 ##ADD CATEG
 
 #dont actita this
-DF_SUM_LV_CCM <- read.csv("./data/summ_lv_ccm_R.csv")
-COMPLETE_DF <- dplyr::left_join(COMPLETE_DF, DF_SUM_LV_CCM, by = c("enem"))
+#DF_SUM_LV_CCM <- read.csv("./data/summ_lv_ccm_R.csv")
+#COMPLETE_DF <- dplyr::left_join(COMPLETE_DF, DF_SUM_LV_CCM, by = c("enem"))
 
 ##############
 ###here Imm gonna do the inversion from x, y to n,p , where p is always the top predator.
@@ -160,10 +160,8 @@ COMPLETE_DF_LONG <- COMPLETE_DF |>
     mean_surv,
     type,
     varName,
-    sd_surv,
-    ccm_caus,
-    lv_caus,
-    igp_comp
+    sd_surv
+
   ) |>
   tidyr::gather(
     key = "coexistence_variable",
@@ -277,11 +275,35 @@ plotter_interaction_coexistence(
 
 plotter_eta_omega(COMPLETE_DF, fig_path = fig_folder)
 
+###  now for each enemy the plot of coexistence (the two method)
+
+COMPLETE_ONLY_COEX <- COMPLETE_DF_LONG |> 
+  dplyr::select(enem, coexistence_variable, coexistence_sd, coex_value, sd_value)
+
+COMPLETE_ONLY_COEX <- unique(COMPLETE_ONLY_COEX)
+
+##now to normalize each value of coexistence
+
+COMPLETE_ONLY_COEX_NORM <- COMPLETE_ONLY_COEX |>
+  dplyr::group_by(coexistence_variable)|>
+  dplyr::mutate( sd_value = sd_value/max(coex_value))|>
+  dplyr::mutate(coex_value = coex_value/max(coex_value))|>
+  dplyr::ungroup()
+
+COMPLETE_ONLY_COEX_NORM$modelFit <- "Good"
+COMPLETE_ONLY_COEX_NORM$funDiff <- "High"
+
+for(i in seq(1:dim(COMPLETE_ONLY_COEX_NORM)[1])){
+  if(COMPLETE_ONLY_COEX_NORM$enem[[i]] %in% c("ac+ol", "ac+am")){
+    COMPLETE_ONLY_COEX_NORM$modelFit[[i]] <- "Bad"
+  }
+  if(COMPLETE_ONLY_COEX_NORM$enem[[i]] %in% c("cc+ma", "ac+am")){
+    COMPLETE_ONLY_COEX_NORM$funDiff[[i]] <- "Low"
+  }
+}
 
 
-
-
-#plotter_meanSurv_omega(COMPLETE_DF, fig_path = fig_external_folder)
+plot_omega_surv(COMPLETE_ONLY_COEX_NORM, fig_folder)
 
 ###on the fitting of the model
 
@@ -313,7 +335,7 @@ plotter_rmse_theta(theta_df_sum = THETA_VALUES_SUM, fig_path = fig_folder)
 #==========COEXISTENCE (see if put it somehwehre else)
 
 #for each enemy 
-plot_omega_allconditions(df_sum = full_sume)
+#plot_omega_allconditions(df_sum = full_sume)
   
 
 #still missing to replot the chnages of variables in time 

@@ -114,17 +114,28 @@ coex_plot_perblock <- data_coex |>
 
 
 
-plotter_coex_area <- function(data_coex_av, fig_path) {
+plotter_coex_step <- function(data_coex_av, fig_path) {
 
 coex_plot <- data_coex_av |>
     ggplot(aes(x = week, y = mean_coex)) +
-    geom_area(fill = "darkgreen", alpha = 0.3) +
-    geom_line(size = 1) +
-    facet_wrap(~enem) +
-    theme_minimal()
-
+    geom_step(aes(y = mean_coex, color= enem), direction = "vh", linetype=1, linewidth=1) +  #this means in goes first vertical and then horizontal
+    #geom_ribbon(aes(ymin = 0, ymax = mean_coex), 
+     #       stat = "stepribbon", 
+      #      direction = "hv", 
+       #     fill = "darkgreen", alpha = 0.3)
+    #geom_area(fill = "darkgreen", alpha = 0.3) +
+  scale_x_continuous(
+        breaks = seq(min(data_coex_av$week), max(data_coex_av$week), by = 1)
+    ) +
+  scale_color_manual(values = enemCol )+
+    geom_point(size = 1) +
+    theme_minimal()+
+   theme(
+        axis.text.x = element_text(angle = 45, hjust = 1)  # rotate if crowded
+    )
   
-  ggsave(coex_plot,filename = paste0(fig_path, "coexistence_area", ".png"),
+  
+  ggsave(coex_plot,filename = paste0(fig_path, "coexistence_plot", ".png"),
     height = 9,
     width = 10,
     create.dir = T)

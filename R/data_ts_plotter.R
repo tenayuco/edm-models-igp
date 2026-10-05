@@ -32,6 +32,16 @@ speciesCol_trop <- c(
   "R=mp" = "darkgreen"
 )
 
+
+enemCol <- c(
+  "ac+am" = "black",
+  "my+aa" = "#990033ff",
+  "cc+ma" = "#006400ff",
+  "ac+ol" = "#996600ff",
+  "cc+my" = "#cc9900ff",
+  "ma+ol" = "#ffa500ff"
+)
+
 ###here all
 plotter_data_all <- function(data_long, remove_aphid = FALSE, norm_data = FALSE) {
   aphid = ""
@@ -473,6 +483,62 @@ THETA_RMSE_MEAN <- theta_df_sum |>
     create.dir = T
   )
 }
+
+
+#########two metod of coexistrence
+
+
+
+plot_omega_surv <- function(complete_df_onlycoex, fig_path){
+  par_plot <- complete_df_onlycoex |> 
+    ggplot(aes(
+        x = enem, 
+        y = coex_value,
+        linetype = as.factor(modelFit),   # column driving the line style
+        shape    = funDiff      # column driving the point shape
+    )) +
+    geom_errorbar(
+        aes(
+            ymin  = coex_value - 1*sd_value,
+            ymax  = coex_value + 1*sd_value,
+            color = as.factor(coexistence_variable)
+        ),
+        width    = .2,
+        position = position_dodge(0.6),
+        linewidth = 1
+    ) +
+    geom_point(
+        aes(color = as.factor(coexistence_variable)),
+        fill     = "white",
+        position = position_dodge(0.6),
+        size     = 3,
+        stroke   = 1
+    ) +
+    xlab("enem") +
+    scale_color_viridis_d(begin = 0, end = 0.7, option = "A", direction = 1) +
+
+    # --- line type: Good = solid, Bad = dashed ---
+    scale_linetype_manual(values = c(
+        "Good" = 1,
+        "Bad"  = 2
+    )) +
+
+    # --- shape: High = filled circle, Low = empty triangle ---
+    scale_shape_manual(values = c(
+        "High" = 16,   # filled circle
+        "Low"  = 2     # empty triangle
+    )) +
+
+    theme_bw()
+  
+  ggsave(par_plot, filename = paste0(fig_path, "omega_surv_values.png"),
+   height = 8,
+    width = 12,
+    create.dir = T
+  )
+  
+}
+
 
 
 

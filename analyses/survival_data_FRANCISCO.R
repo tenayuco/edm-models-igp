@@ -1,6 +1,8 @@
 ##################################Survival
 
-cages80<-read_excel("C:/Users/martinezmartinez/Desktop/DATA_ANALYSIS/IGP_2025/Data.xlsx",sheet = 1, col_names = TRUE)
+#cages80<-read_excel("C:/Users/martinezmartinez/Desktop/DATA_ANALYSIS/IGP_2025/Data.xlsx",sheet = 1, col_names = TRUE)
+cages80 <- DATA_IGP
+
 
 make_survival_df <- function(data, species, time, units, extTime = 2, expDuration = NULL) {
   # Coerce species column to numeric
@@ -90,13 +92,13 @@ survival_data <- multi_species_survival(
 
 survival_data$enem=cages80$enem[match(survival_data$unit, cages80$cage)]
 
-survival_data_long<- as.data.frame(survival_data %>%
-                                     pivot_longer(
+survival_data_long<- as.data.frame(survival_data |>
+                                     tidyr::pivot_longer(
                                        cols = -c(unit, enem),
                                        names_to = c("species", "variable"),
                                        names_pattern = "^(..)_?(.*)$"
-                                     ) %>%
-                                     pivot_wider(
+                                     ) |>
+                                     tidyr::pivot_wider(
                                        names_from = variable,
                                        values_from = value
                                      ))
@@ -105,7 +107,7 @@ survival_data_long
 
 
 #Remove useless combinations
-survival_data_long=survival_data_long%>%filter(!((survival_data_long$sp=="ac" & survival_data_long$enem %in% c("ma+ol","my+aa","cc+ma","cc+my","ec+sr","ec+am")) | 
+survival_data_long=survival_data_long|>dplyr::filter(!((survival_data_long$sp=="ac" & survival_data_long$enem %in% c("ma+ol","my+aa","cc+ma","cc+my","ec+sr","ec+am")) | 
                                                    (survival_data_long$sp=="am" & survival_data_long$enem %in% c("ma+ol","ac+ol","my+aa","cc+ma","cc+my","ec+sr")) | 
                                                    (survival_data_long$sp=="ma" & survival_data_long$enem %in% c("ac+am","ac+ol","my+aa","cc+my","ec+sr","ec+am")) | 
                                                    (survival_data_long$sp=="cc" & survival_data_long$enem %in% c("ac+am","ma+ol","ac+ol","my+aa","ec+sr","ec+am")) |
