@@ -95,73 +95,61 @@ return(data_surv_av)
 
 
 
-
-plotter_coex_perblock <- function(data_coex, fig_path) {
-
-coex_plot_perblock <- data_coex |>
-    ggplot(aes(x = week, y = coex)) +
-    geom_line(aes(group=block),size = 1) +
-    facet_wrap(~enem) +
-    theme_minimal()
-
-  ggsave(coex_plot_perblock,filename = paste0(fig_path, "coexistence_perblock", ".png"),
-    height = 9,
-    width = 10,
-    create.dir = T)
-  
-
-}
-
-
-
+#########################################################################
+# Function that plots the mean coexistence indicator over time as a step plot
+#' @param data_coex_av A data frame containing columns week, mean_coex, and enem
+#' @param fig_path A character string giving the directory path where the figure will be saved
+#' @return Saves a PNG file to fig_path and returns the ggplot object invisibly
+#' @details Builds a step plot of mean_coex vs. week (direction "vh"), with one colored line per enem and points overlaid
+#' @details Sets x-axis breaks at every integer week between the min and max observed week
+#' @details Colors lines using the manual palette enemCol, rotates x-axis labels 45 degrees, and applies a minimal theme
+#' @details Saves the plot as "coexistence_plot.png" (height 9, width 10) in fig_path, creating the directory if needed
+#' @examples plotter_coex_step(data_coex_av = my_coex_avg_data, fig_path = "figures/")
+#########################################################################
 plotter_coex_step <- function(data_coex_av, fig_path) {
 
-coex_plot <- data_coex_av |>
+  coex_plot <- data_coex_av |>
     ggplot(aes(x = week, y = mean_coex)) +
-    geom_step(aes(y = mean_coex, color= enem), direction = "vh", linetype=1, linewidth=1) +  #this means in goes first vertical and then horizontal
-    #geom_ribbon(aes(ymin = 0, ymax = mean_coex), 
-     #       stat = "stepribbon", 
-      #      direction = "hv", 
-       #     fill = "darkgreen", alpha = 0.3)
-    #geom_area(fill = "darkgreen", alpha = 0.3) +
-  scale_x_continuous(
-        breaks = seq(min(data_coex_av$week), max(data_coex_av$week), by = 1)
+    geom_step(aes(color = enem, linetype= enem),
+              direction = "vh", linewidth = 1) + 
+        geom_point(aes(shape= enem, fill=enem))+
+
+    # vertical first, then horizontal
+   scale_color_viridis_d(option = "inferno", begin = 0, end = 1) +
+       scale_fill_viridis_d(option = "inferno", begin = 0, end = 1) +
+
+    scale_linetype_manual(values = c(
+      "my+aa" = 1, "cc+my" = 1, "ac+ol" = 1,
+      "ac+am" = 1, "cc+ma" = 1, "ma+ol" = 2
+    )) +
+    scale_x_continuous(
+      breaks = seq(min(data_coex_av$week), max(data_coex_av$week), by = 1)
     ) +
-  scale_color_manual(values = enemCol )+
-    geom_point(size = 1) +
-    theme_minimal()+
-   theme(
-        axis.text.x = element_text(angle = 45, hjust = 1)  # rotate if crowded
+    scale_shape_manual(values = c(21, 21, 22, 23, 24, 25))+
+
+    labs(x= "Time (weeks)", y= "Coexistence", 
+    color= "NE combination", 
+    fill= "NE combination", 
+    linetype="NE combination", 
+  shape= "NE combination" )+
+    theme_bw(base_size = 13) +
+    theme(
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank(),
+      axis.text.x  = element_text(angle = 45, hjust = 1, size = 11),
+      axis.text.y  = element_text(size = 11),
+      axis.title   = element_text(size = 13),
+      legend.text  = element_text(size = 11),
+      legend.title = element_text(size = 12),
+      strip.text   = element_text(size = 12)
     )
-  
-  
-  ggsave(coex_plot,filename = paste0(fig_path, "coexistence_plot", ".png"),
-    height = 9,
-    width = 10,
-    create.dir = T)
-  
 
+  ggsave(coex_plot,
+         filename = paste0(fig_path, "coexistence_plot", ".png"),
+         height = 6,
+         width = 12,
+         create.dir = TRUE)
 }
-
-
-
-plotter_survival <- function(data_coex_av, fig_path) {
-
-data_coex_av_long <-  data_coex_av |> 
-tidyr::gather(key= "mean_species", value= "value", mean_X, mean_Y)
-
-survival_plot <- data_coex_av_long  |>
-    ggplot(aes(x = week, y = value)) +
-    geom_line(size = 1, aes(color= mean_species)) +
-    facet_wrap(~enem) +
-    theme_minimal()
-ggsave(
-    survival_plot,
-    filename = paste0(fig_path, "survival_plot", ".png"),
-    height = 9,
-    width = 10,
-    create.dir = T
-  )
-
   
-}
+
+

@@ -12,20 +12,6 @@ if (type_data == "real.data") {
 }
 
 
-# ========================
-# IMPORT THEORETICAL COEXISTENCE (ETA AND OMEGA FROM THE MODEL)
-#=============================
-
-
-###now we gonna put together 1. the omega, 2. the area of coexistence, and 3 the survival time.
-
-##here you specify wich one wou want #it has to be 36 rows (6 interaaction per 6 enemies, )
-FULL_SUM <- read.csv(
-  "./outputs/LV_MAP/real.data/not_normalized/FULL_SUM_VARIANCE.csv"
-)
-
-#here the names are still the x and y assigned 
-
 
 #============================
 
@@ -36,9 +22,8 @@ FULL_SUM <- read.csv(
 
 source("./analyses/2a.data_modification_LV.R")
 
-## let see if I can ADD the complete df 
 
-
+##add the cpoexistence
 DATA_COEX <- pred_coexistence_adder(DATA_PRED)  #this add coexistence per week and completes the data with NA
 
 # ============================================================================
@@ -48,15 +33,13 @@ DATA_COEX <- pred_coexistence_adder(DATA_PRED)  #this add coexistence per week a
 ## this has the first average between blocks but no time.
 #basically it gives the proportion of survivail per week per enemy
 
-plotter_coex_perblock(data_coex = DATA_COEX, fig_path = fig_folder)
-
 DATA_COEX_AV <- coex_average(DATA_COEX)
+
 
 #this plot this coexstnece and area stuff to visualizae
 plotter_coex_step(DATA_COEX_AV, fig_path = fig_folder)
 
-##plot survival plots (X, and Y)
-plotter_survival(DATA_COEX_AV, fig_path = fig_folder)
+
 
 # ===========================================================================
 # 5. SURVIVAL AND AREA CALCULATION AND DATA FRAME
@@ -76,6 +59,21 @@ DATA_SURV <- survival_time_per_run(DATA_COEX)
 #thisgives you te average per enemy.
 DATA_SURV_AV <- survival_time_average(DATA_SURV)
 #=======================================================================================
+
+
+# ========================
+# IMPORT THEORETICAL COEXISTENCE (ETA AND OMEGA FROM THE MODEL)
+#=============================
+
+
+###now we gonna put together 1. the omega, 2. the area of coexistence, and 3 the survival time.
+
+##here you specify wich one wou want #it has to be 36 rows (6 interaaction per 6 enemies, )
+FULL_SUM <- read.csv(
+  "./outputs/LV_MAP/real.data/not_normalized/FULL_SUM_VARIANCE.csv"
+)
+
+#here the names are still the x and y assigned 
 
 
 
