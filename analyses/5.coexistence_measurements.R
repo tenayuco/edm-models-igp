@@ -49,7 +49,6 @@ plotter_coex_step(DATA_COEX_AV, fig_path = fig_folder)
 
 ###now we calculate the area under the curve for these, and to have a single value per enemy
 ##we do like a temporal average.
-DATA_AREA <- area_coexistence(DATA_COEX_AV)
 
 ###nthis tell you in each reaplicate, the time to extinction to each predator, and
 #the coexistnece time (the first one to surve)

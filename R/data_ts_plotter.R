@@ -42,6 +42,10 @@ enemCol <- c(
   "ma+ol" = "#ffa500ff"
 )
 
+enemOrder <- c("ma+ol", "cc+my", "ac+ol", "cc+ma", "ac+am", "my+aa")
+enemShapes <- c("ma+ol"= 21, "cc+my"=21, "ac+ol"=22, "cc+ma"=23, "ac+am"=24, "my+aa"=25)
+
+
 ###here all
 plotter_data_all <- function(data_long, remove_aphid = FALSE, norm_data = FALSE) {
   aphid = ""
