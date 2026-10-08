@@ -173,3 +173,114 @@ plotter_coex_step <- function(data_coex_av, fig_path) {
 }
 
 
+##################################################################################################################################################
+# Function that plots the mean RMSE_o versus mean theta_o with error bars in both dimensions
+#' @param completedf A data frame containing columns theta_o_mean, rmse_o_mean, rmse_o_sd, theta_o_sd, and enem
+#' @param fig_path A character string giving the directory path where the figure will be saved
+#' @return Saves a PNG file to fig_path and returns the ggplot object invisibly
+#' @examples plotter_rmse_theta(completedf = my_completedf, fig_path = "figures/")
+##################################################################################################################################################
+plotter_rmse_theta <- function(completedf, fig_path) {
+
+  theta_rmse_plot <- completedf |>
+    ggplot(aes(x =  theta_o_mean , y = rmse_o_mean)) +
+    geom_pointrange(aes(ymin = rmse_o_mean - rmse_o_sd, ymax = rmse_o_mean + rmse_o_sd, fill = enem, shape= enem), size=1)  +
+    geom_pointrange(aes(xmin = theta_o_mean-theta_o_sd, xmax = theta_o_mean+theta_o_sd, fill = enem, shape= enem), size=1)+
+    theme_minimal()+
+    scale_fill_viridis_d(option = "inferno")+
+    theme_bw()+
+    geom_text(aes(label = paste0("rmse: ", round(rmse_o_mean, 2),
+                                 "\ntheta: ", round(theta_o_mean, 2)),
+                  hjust = -0.05, vjust = -0.7), size = 4)+
+    scale_shape_manual(values = c(21, 22, 23, 24, 25, 21))+
+    theme(axis.text=element_text(size=14))+
+    labs(subtitle= "RSME_o vs Theta_o", x= "theta_o", y="rmse_o")
+
+  ggsave(
+    theta_rmse_plot,
+    filename = paste0(fig_path, "rmse_theta",".png"),
+    height = 9,
+    width = 12,
+    create.dir = T
+  )
+}
+
+
+
+
+plot_omega_surv <- function(complete_df_long, fig_path){
+
+
+  COMPLETE_ONLY_COEX <- complete_df_long |> 
+  dplyr::select(enem, coexistence_variable, coexistence_sd, coex_value, sd_value, rmse_o_mean)
+
+COMPLETE_ONLY_COEX <- unique(COMPLETE_ONLY_COEX)
+
+##now to normalize each value of coexistence
+
+COMPLETE_ONLY_COEX_NORM <- COMPLETE_ONLY_COEX |>
+  dplyr::group_by(coexistence_variable)|>
+  dplyr::mutate( sd_value = sd_value/max(coex_value))|>
+  dplyr::mutate(coex_value = coex_value/max(coex_value))|>
+  dplyr::ungroup() |>
+  dplyr::mutate(funDiff = dplyr::if_else(enem %in% c("cc+ma", "ac+am"), "Low", "High"), 
+modelFit = 1* (rmse_o_mean<50))
+
+
+  ##now we reorganize the eme colimn to 
+
+
+#orderEnem<- COMPLETE_ONLY_COEX_NORM |>
+ #      dplyr::filter(coexistence_variable=="meanSurv")|>
+  #  dplyr::mutate(orderEnem = reorder(enem, coex_value))|>
+  
+
+  
+  par_plot <- COMPLETE_ONLY_COEX_NORM  |> 
+    ggplot(aes(
+        x = enem, 
+        y = coex_value,
+        linetype = as.factor(modelFit),   # column driving the line style
+        shape    = funDiff      # column driving the point shape
+    )) +
+    geom_errorbar(
+        aes(
+            ymin  = coex_value - 1*sd_value,
+            ymax  = coex_value + 1*sd_value,
+            color = as.factor(coexistence_variable)
+        ),
+        width    = .2,
+        position = position_dodge(0.6),
+        linewidth = 1
+    ) +
+    geom_point(
+        aes(color = as.factor(coexistence_variable)),
+        fill     = "white",
+        position = position_dodge(0.6),
+        size     = 3,
+        stroke   = 1
+    ) +
+    xlab("enem") +
+    scale_color_viridis_d(begin = 0, end = 0.7, option = "A", direction = 1) +
+
+    # --- line type: Good = solid, Bad = dashed ---
+    scale_linetype_manual(values = c(
+        "0" = 1,
+        "1"  = 2
+    )) +
+
+    # --- shape: High = filled circle, Low = empty triangle ---
+    scale_shape_manual(values = c(
+        "High" = 16,   # filled circle
+        "Low"  = 2     # empty triangle
+    )) +
+
+    theme_bw()
+  
+  ggsave(par_plot, filename = paste0(fig_path, "omega_surv_values.png"),
+   height = 8,
+    width = 12,
+    create.dir = T
+  )
+  
+}

@@ -463,85 +463,10 @@ eta_omega_plot <- complete_df |>
 
 
 
-plotter_rmse_theta <- function(theta_df_sum, fig_path) {
-
-THETA_RMSE_MEAN <- theta_df_sum |>
-    ggplot(aes(x =  theta_o_mean , y = RMSE_o_mean)) +
-  geom_pointrange(aes(ymin = RMSE_o_mean - RMSE_o_sd, ymax = RMSE_o_mean + RMSE_o_sd, fill = enem, shape= enem), size=1)  +
-  geom_pointrange(aes(xmin = theta_o_mean-theta_o_sd, xmax = theta_o_mean+theta_o_sd, fill = enem, shape= enem), size=1)+
-    theme_minimal()+
-    scale_fill_viridis_d(option = "inferno")+
-    theme_bw()+
-  geom_text(aes(label = paste0("RMSE: ", round(RMSE_o_mean, 2),
-                            "\ntheta: ", round(theta_o_mean, 2)),
-              hjust = -0.05, vjust = -0.7), size = 4)+
-    scale_shape_manual(values = c(21, 22, 23, 24, 25, 21))+
-   theme(axis.text=element_text(size=14))+
-   labs(subtitle= "RSME_o vs Theta_o", x= "theta_o", y="RMSE_o")
-
-  ggsave(
-   THETA_RMSE_MEAN,
-    filename = paste0(fig_path, "rmse_theta",".png"),
-    height = 9,
-    width = 12,
-    create.dir = T
-  )
-}
-
 
 #########two metod of coexistrence
 
 
-
-plot_omega_surv <- function(complete_df_onlycoex, fig_path){
-  par_plot <- complete_df_onlycoex |> 
-    ggplot(aes(
-        x = enem, 
-        y = coex_value,
-        linetype = as.factor(modelFit),   # column driving the line style
-        shape    = funDiff      # column driving the point shape
-    )) +
-    geom_errorbar(
-        aes(
-            ymin  = coex_value - 1*sd_value,
-            ymax  = coex_value + 1*sd_value,
-            color = as.factor(coexistence_variable)
-        ),
-        width    = .2,
-        position = position_dodge(0.6),
-        linewidth = 1
-    ) +
-    geom_point(
-        aes(color = as.factor(coexistence_variable)),
-        fill     = "white",
-        position = position_dodge(0.6),
-        size     = 3,
-        stroke   = 1
-    ) +
-    xlab("enem") +
-    scale_color_viridis_d(begin = 0, end = 0.7, option = "A", direction = 1) +
-
-    # --- line type: Good = solid, Bad = dashed ---
-    scale_linetype_manual(values = c(
-        "Good" = 1,
-        "Bad"  = 2
-    )) +
-
-    # --- shape: High = filled circle, Low = empty triangle ---
-    scale_shape_manual(values = c(
-        "High" = 16,   # filled circle
-        "Low"  = 2     # empty triangle
-    )) +
-
-    theme_bw()
-  
-  ggsave(par_plot, filename = paste0(fig_path, "omega_surv_values.png"),
-   height = 8,
-    width = 12,
-    create.dir = T
-  )
-  
-}
 
 
 

@@ -138,6 +138,10 @@ full_df_sum <- df_full |>
   dplyr::summarise(
   rmse_o_mean = mean(RMSE_o),
   theta_o_mean = mean(theta_o),
+ rmse_o_sd = sd(RMSE_o),
+  theta_o_sd = sd(theta_o),
+
+
   grand_mean = mean(mvalue.mean), 
   var_between = var(mvalue.mean), 
   var_within= mean(mvalue.sd**2),
