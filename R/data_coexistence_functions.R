@@ -210,7 +210,6 @@ plotter_rmse_theta <- function(completedf, fig_path) {
 
 plot_omega_surv <- function(complete_df_long, fig_path){
 
-
   COMPLETE_ONLY_COEX <- complete_df_long |> 
   dplyr::select(enem, coexistence_variable, coexistence_sd, coex_value, sd_value, rmse_o_mean)
 
@@ -230,10 +229,6 @@ modelFit = 1* (rmse_o_mean<50))
   ##now we reorganize the eme colimn to 
 
 
-#orderEnem<- COMPLETE_ONLY_COEX_NORM |>
- #      dplyr::filter(coexistence_variable=="meanSurv")|>
-  #  dplyr::mutate(orderEnem = reorder(enem, coex_value))|>
-  
 
   
   par_plot <- COMPLETE_ONLY_COEX_NORM  |> 
@@ -265,8 +260,8 @@ modelFit = 1* (rmse_o_mean<50))
 
     # --- line type: Good = solid, Bad = dashed ---
     scale_linetype_manual(values = c(
-        "0" = 1,
-        "1"  = 2
+        "0" = 2,
+        "1"  = 1
     )) +
 
     # --- shape: High = filled circle, Low = empty triangle ---

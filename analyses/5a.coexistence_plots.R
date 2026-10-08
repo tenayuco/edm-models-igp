@@ -30,8 +30,9 @@ COMPLETE_DF <- read.csv(paste0(out_subfolder,"complete_coex_df.csv" )
 
 ##to avoid some problems of the R, im gonna remove the R present true
 COMPLETE_DF <- COMPLETE_DF |>
-  dplyr::filter(rpresent == FALSE)
-
+  dplyr::filter(rpresent == FALSE)|>
+  dplyr::mutate(enem = reorder(enem, mean_surv))
+  
 
 #this is just to have a long data frame
 #where the types of coexistnece, theortial and real, are the same cate
@@ -145,7 +146,7 @@ plot_omega_surv(COMPLETE_DF_LONG, fig_path= fig_subfolder)
 plotter_rmse_theta(completedf =  COMPLETE_DF, fig_path = fig_folder)
 
 
-#
+#now we have to couple it with biocontrol. 
 
 
 
