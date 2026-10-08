@@ -135,7 +135,10 @@ full_df_sum <- df_full |>
   dplyr::ungroup()|> 
   dplyr::select(!replicate)|> 
   dplyr::group_by(varName, type, numRep, rpresent, enem)|> 
-  dplyr::summarise(grand_mean = mean(mvalue.mean), 
+  dplyr::summarise(
+  rmse_o_mean = mean(RMSE_o),
+  theta_o_mean = mean(theta_o),
+  grand_mean = mean(mvalue.mean), 
   var_between = var(mvalue.mean), 
   var_within= mean(mvalue.sd**2),
   grand_mean_omega = mean(omega_mean),

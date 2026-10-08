@@ -5,11 +5,15 @@
 # 1. OUTPUT PATH CONFIGURATION
 # ============================================================================
 type_data <- "real.data"
+norm_data <- "not_normalized"
 
-if (type_data == "real.data") {
-  out_folder <- paste0("./outputs/LV_MAP/", type_data, "/", "coexistence/")
-  fig_folder <- paste0("./figures/LV_MAP/", type_data, "/", "coexistence/")
-}
+out_folder <- paste0("./outputs/LV_MAP/", type_data, "/", norm_data, "/")
+fig_folder <- paste0("./figures/LV_MAP/", type_data, "/", norm_data, "/")
+
+
+out_subfolder <- paste0(out_folder,"coexistence/")
+fig_subfolder <- paste0(fig_folder,"coexistence/")
+
 
 
 
@@ -68,9 +72,12 @@ DATA_SURV_AV <- survival_time_average(DATA_SURV)
 ###now we gonna put together 1. the omega, 2. the area of coexistence, and 3 the survival time.
 
 ##here you specify wich one wou want #it has to be 36 rows (6 interaaction per 6 enemies, )
-FULL_SUM <- read.csv(
-  "./outputs/LV_MAP/real.data/not_normalized/FULL_SUM_VARIANCE.csv"
-)
+FULL_SUM <- read.csv(paste0(out_folder, "FULL_SUM_VARIANCE.csv"))
+
+
+
+
+
 
 #here the names are still the x and y assigned 
 
@@ -79,8 +86,7 @@ FULL_SUM <- read.csv(
 
 
 ###comple
-COMPLETE_DF <- dplyr::left_join(FULL_SUM, DATA_AREA, by = "enem")
-COMPLETE_DF <- dplyr::left_join(COMPLETE_DF, DATA_SURV_AV, by = "enem")
+COMPLETE_DF <- dplyr::left_join(FULL_SUM, DATA_SURV_AV, by = "enem")
 ##ADD CATEG
 
 #dont actita this
@@ -92,9 +98,9 @@ COMPLETE_DF <- dplyr::left_join(COMPLETE_DF, DATA_SURV_AV, by = "enem")
 COMPLETE_DF <- xy_to_np_transformer(COMPLETE_DF)
 
 
-dir.create(out_folder)
+dir.create(out_subfolder)
 
-utils::write.csv(COMPLETE_DF, paste0(out_folder, "complete_coex_df.csv"))
+utils::write.csv(COMPLETE_DF, paste0(out_subfolder, "complete_coex_df.csv"))
 
 
 
@@ -324,20 +330,4 @@ plotter_rmse_theta(theta_df_sum = THETA_VALUES_SUM, fig_path = fig_folder)
 
 
 #
-
-
-
-
-
-#==========COEXISTENCE (see if put it somehwehre else)
-
-#for each enemy 
-#plot_omega_allconditions(df_sum = full_sume)
-  
-
-#still missing to replot the chnages of variables in time 
-
-#plot_per_treatment(out_subfolder = out_subfolder, true_values = FALSE) #we dont want the true values of the eq
-              # Random seeds for data shuffling
-
 
