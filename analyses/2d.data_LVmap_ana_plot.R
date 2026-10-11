@@ -5,10 +5,11 @@
 used_subfolder <- "LV_MAP/real.data/not_normalized/"
 num_enemigos <- 6
 kernel_chosen <- "state" #for theplots
+out_subfolder <- paste0("./outputs/", used_subfolder)
+seeds <- 30 
 
 #this is just a trick to count how many seeds are per treatment but
-out_subfolder <- paste0("./outputs/", used_subfolder)
-seeds <- length(list.files(out_subfolder, pattern = ".rds", recursive = T))/num_enemigos
+#seeds <- round(length(list.files(out_subfolder, pattern = ".rds", recursive = T))/num_enemigos)
 
 fig_subfolder <- paste0("./figures/", used_subfolder)
 
