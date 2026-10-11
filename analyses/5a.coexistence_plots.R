@@ -2,6 +2,42 @@
 #===============================================================================================
 
 
+
+
+
+# ========================
+# IMPORT THEORETICAL COEXISTENCE (ETA AND OMEGA FROM THE MODEL)
+#=============================
+
+FULL_SUM <-  read.csv(paste0(out_folder, "FULL_SUM_VARIANCE_numseed_30.csv"))
+
+###now we gonna put together 1. the omega, 2. the area of coexistence, and 3 the survival time.
+
+
+
+
+
+FULL_COEX <- dplyr::left_join(FULL_SUM, DATA_SURV_AV, by = "enem")
+##ADD CATEG
+
+##############
+###here Imm gonna do the inversion from x, y to n,p , where p is always the top predator.
+COMPLETE_DF <- xy_to_np_transformer(COMPLETE_DF)
+
+
+dir.create(out_subfolder)
+
+utils::write.csv(COMPLETE_DF, paste0(out_subfolder, "complete_coex_df.csv"))
+
+#export this data frame of biocntrol, in the output section
+
+
+
+
+
+#########
+
+
 #                                     PLOTTING SECTIONSSSSS
 
 #========================================================================================
@@ -152,3 +188,4 @@ plotter_rmse_theta(completedf =  COMPLETE_DF, fig_path = fig_folder)
 
 
     
+

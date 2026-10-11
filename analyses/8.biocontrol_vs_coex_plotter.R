@@ -8,88 +8,156 @@ out_folder <- paste0("./outputs/LV_MAP/", type_data, "/", norm_data, "/")
 fig_folder <- paste0("./figures/LV_MAP/", type_data, "/", norm_data, "/")
 
 
-DATA_COEX <- read.csv(paste0(out_subfolder,"complete_coex_df.cs" )
-)
+
+DATA_BIO <- read.csv(paste0(out_folder, "DATA_biocontrol.csv"))
+DATA_COEX <- read.csv(paste0(out_folder, "DATA_coexistence.csv"))
+
+
+##first we plot biocontrol on its own
+
+plot_total_bio(DATA_BIO, var_plotted = "R_consumed", fig_path =fig_folder)
+plot_total_bio(DATA_BIO, var_plotted = "R", fig_path =fig_folder)
+plot_total_bio_week(DATA_BIO, var_plotted = "R_consumed", fig_path =fig_folder)
+plot_total_bio_week(DATA_BIO, var_plotted = "R", fig_path =fig_folder)
 
 
 
-#plotting
-PLOT_TOTAL_CON <- DATA_BIOCONTROL|>
-    ggplot(aes(x = enem, y = R_consumed)) +
-  geom_boxplot(aes(fill=enem))+
-  scale_fill_viridis_d()+
-    theme_minimal()
 
-PLOT_TOTAL_R <- DATA_BIOCONTROL|>
-    ggplot(aes(x = enem, y = R)) +
-  geom_boxplot(aes(fill=enem))+
-  scale_fill_viridis_d()+
-    theme_minimal()
+#now we gonna do the coexistnece, which can also be tracked per block and compare with biocontorl
 
 
 
-###ahora hacemos el resumen por semana pa ver como cambia en el tiempo
-
-##
-PLOT_TOTAL_CON_WEEK <- DATA_BIOCONTROL|>
-    ggplot(aes(x = week, y = R_consumed)) +
-  geom_boxplot(aes(fill=enem, group = week))+
-  facet_wrap(~enem)+
-  scale_fill_viridis_d()+
-    theme_minimal()
+####PLOTTING COEXISTENCE AND BIOCONTROL FROM DATA###########################
 
 
-PLOT_TOTAL_R_WEEK <- DATA_BIOCONTROL|>
-    ggplot(aes(x = week, y = R)) +
-  geom_boxplot(aes(fill=enem, group = week))+
-  facet_wrap(~enem)+
-  scale_fill_viridis_d()+
-    theme_minimal()
+#this average all the replicates and keep the week 
+DATA_COEX_AV <- coex_average(DATA_COEX)
+
+#this plot this coexstnece and area stuff to visualizae
+plotter_coex_step(DATA_COEX_AV, fig_path = fig_folder)
 
 
-#plotting
+
+
+#NOW PER BLOCK
+
+##now what is the biocontorl per block
+
+
+##para tener las means 
+DATA_BIO_ENEM_BLOCK <- DATA_BIO |>
+  dplyr::group_by(enem, block)|>
+  dplyr::summarise("mean_R_consumed" = mean(R_consumed), "sd_R_consumed" = sd(R_consumed), 
+                    "mean_R"= mean(R), "sd_R"= sd(R), 
+                  "mean_R_bin"= mean(R_bin), "sd_R_bin"= sd(R_bin))
+
+
+###nthis tell you in each reaplicate, the time to extinction to each predator, and
+#the coexistnece time (the first one to surve)
+#60 rows! 
+DATA_SURV_BLOCK <- survival_time_per_run(DATA_COEX)
+
+
+##now we merge the both data to have the complete per block and per eem
+
+DATA_BIO_COEX_BLOCK <- dplyr::left_join(DATA_BIO_ENEM_BLOCK, DATA_SURV_BLOCK, by = c("enem", "block"))
+
+
+##plt 
+
+
+PLOT_BIO_COEX_BLOCK <- DATA_BIO_COEX_BLOCK |> 
+    ggplot(aes(x = surv_coex, y = mean_R)) +
+    geom_pointrange(aes(ymin = mean_R-sd_R, ymax =  mean_R +sd_R,  
+                  fill = enem, shape= enem), size =1)  +
+     # facet_wrap(~enem, ncol = num_columns) +
+    theme_bw()+
+    #labs(subtitle= paste0(chosen_coex_var, " vs ", paste(chosen_int, collapse = "_")), x= "Magnitude of interaction")+
+    scale_fill_viridis_d(option = "inferno")+
+    scale_shape_manual(values = c(21, 22, 23, 24, 25, 21))+
+   theme(axis.text=element_text(size=12))
+  
+  ggsave(
+    coex_int_plot,
+    filename = paste0(fig_path, "coex_int_", chosen_coex_var, "_var_", paste(chosen_int, collapse = "_"),  ".png"),
+    height = 9,
+    width = 12,
+    create.dir = T
+  )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#=PER ENEMY
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#thisgives you te average per enemy. #6 rows!
+DATA_SURV_AV <- survival_time_average(DATA_SURV)
+#=======================================================================================
+
+
+#
+
+
+
+
+
+
 
 
 
 
 ##para tener las means 
-DATA_BIOCONTROL_WEEK_ENEM <- DATA_BIOCONTROL |>
+DATA_BIO_ENEM <- DATA_BIO |>
   dplyr::group_by(enem)|>
   dplyr::summarise("mean_R_consumed" = mean(R_consumed), "sd_R_consumed" = sd(R_consumed), 
                     "mean_R"= mean(R), "sd_R"= sd(R), 
                   "mean_R_bin"= mean(R_bin), "sd_R_bin"= sd(R_bin))
 
 
-dir.create("./outputs/biocontrol/")
 
-write.csv(DATA_BIOCONTROL_WEEK_ENEM, "./outputs/biocontrol/meansR.csv")
-
-
-###
-
-  ggsave(PLOT_TOTAL_R,
-    filename = paste0("./figures/biocontrol/total_R", ".png"),
-    height = 8,
-    width = 12,
-    create.dir = T)
-
-  ggsave(PLOT_TOTAL_R_WEEK,
-    filename = paste0("./figures/biocontrol/total_Rweek", ".png"),
-    height = 8,
-    width = 12,
-    create.dir = T)
-
-  ggsave(PLOT_TOTAL_CON,
-    filename = paste0("./figures/biocontrol/total_con", ".png"),
-    height = 8,
-    width = 12,
-    create.dir = T)
-
-  ggsave(PLOT_TOTAL_CON_WEEK,
-    filename = paste0("./figures/biocontrol/total_con_week", ".png"),
-    height = 8,
-    width = 12,
-    create.dir = T)
+write.csv(DATA_BIO_ENEM, "./outputs/summ_meansR.csv")
 
 
 
@@ -97,14 +165,5 @@ write.csv(DATA_BIOCONTROL_WEEK_ENEM, "./outputs/biocontrol/meansR.csv")
 
 
 
-###ociocisas de terre
 
-PLOT_P <- DATA_PRED|>
 
-  dplyr::select(-R) |>
-  tidyr::pivot_longer(cols = c(X, Y), names_to ="Predator", values_to = "individuals")|>
-  ggplot(aes(x = week)) +
-  geom_boxplot(aes(y = individuals, fill= as.factor(Predator), group = interaction(week, Predator)))+
-  facet_wrap(~enem, scales = "free")+
-  scale_fill_viridis_d()+
-    theme_minimal()

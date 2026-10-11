@@ -9,172 +9,81 @@ norm_data <- "not_normalized"
 
 out_folder <- paste0("./outputs/LV_MAP/", type_data, "/", norm_data, "/")
 
-
-out_subfolder <- paste0(out_folder,"coexistence/")
-
-
-
-
 #============================
+
+
+
 
 
 #LOAD AND FILTER DATA for LV
 
 #this code gets the IGP data and does the modifcations used for LV analys, and for rpesentation, and coexistence 
 
-source("./analyses/2a.data_modification_LV.R")
+DATA_PRED <- readr::read_csv("data/data_pred.csv")
 
+
+
+#lets start with the bicontorl
+
+#IT GIVES YOU DATA IGP AND DATA_PRED
+
+DATA_BIO <- DATA_PRED
+
+DATA_BIO  <- DATA_BIO |>
+  dplyr::mutate("R_input" = R +400)|>
+  dplyr::group_by(block, enem)|>
+  dplyr::arrange(week)|>
+  dplyr::mutate("R_consumed" = dplyr::lag(R_input)- R)|>
+  dplyr::ungroup()|>
+  dplyr::select(-R_input)
+
+
+for (i in seq(1:dim(DATA_BIO)[1])){
+  if(is.na(DATA_BIO$R_consumed[[i]])){
+    DATA_BIO$R_consumed[[i]] = 600 - DATA_BIO$R[[i]] 
+}
+}
+
+
+###another columns of the binary secctions 
+
+
+DATA_BIO$R_bin <- 1
+
+for (i in seq(1:dim(DATA_BIO)[1])){
+  if(DATA_BIO$R[[i]]==1){
+    DATA_BIO$R_bin[[i]] = 0 
+}
+}
+
+
+
+
+utils::write.csv(DATA_BIO, paste0(out_folder, "DATA_biocontrol.csv"))
+
+
+#==========================================================
+
+
+#COEXISTENCE 
+
+
+#============================================================0
+
+#now we save this data frame, that has 831 row (is similar to pred, but with coexistence )
+
+
+###now we gonna add the colun of coexistence but without averaging, yet. that is only for the plits 
+
+
+## Im gonna add the coexistence in general and the biocontrol wtithour 
+#removing the time specificifity . 
 
 ##add the cpoexistence
 DATA_COEX <- pred_coexistence_adder(DATA_PRED)  #this add coexistence per week and completes the data with NA
 
-# ============================================================================
-# 4. SURVIVAL AND AREA PLOT
-# ============================================================================
 
-#tengo que meter ESTO EN OTRO LUGAR!! ***
-
-#resumir lasbases de datos que tenemos en cada lugar (que no sean redundantes )
-
-
-## this has the first average between blocks but no time.
-#basically it gives the proportion of survivail per week per enemy
-
-DATA_COEX_AV <- coex_average(DATA_COEX)
-
-
-#this plot this coexstnece and area stuff to visualizae
-plotter_coex_step(DATA_COEX_AV, fig_path = fig_folder)
-
-
-
-# ===========================================================================
-# 5. SURVIVAL AND AREA CALCULATION AND DATA FRAME
-# ============================================================================
-
-###HERE DO THE SURVIVAL PLOT per x y (CHECK IF USEFUK)
-
-###now we calculate the area under the curve for these, and to have a single value per enemy
-##we do like a temporal average.
-
-###nthis tell you in each reaplicate, the time to extinction to each predator, and
-#the coexistnece time (the first one to surve)
-DATA_SURV <- survival_time_per_run(DATA_COEX)
-
-
-#thisgives you te average per enemy.
-DATA_SURV_AV <- survival_time_average(DATA_SURV)
-#=======================================================================================
-
-
-# ========================
-# IMPORT THEORETICAL COEXISTENCE (ETA AND OMEGA FROM THE MODEL)
-#=============================
-
-
-###now we gonna put together 1. the omega, 2. the area of coexistence, and 3 the survival time.
-
-##here you specify wich one wou want #it has to be 36 rows (6 interaaction per 6 enemies, )
-FULL_SUM <- read.csv(paste0(out_folder, "FULL_SUM_VARIANCE.csv"))
-
-
-
-
-
-
-#here the names are still the x and y assigned 
-
-
-
-
-
-###comple
-COMPLETE_DF <- dplyr::left_join(FULL_SUM, DATA_SURV_AV, by = "enem")
-##ADD CATEG
-
-#dont actita this
-#DF_SUM_LV_CCM <- read.csv("./data/summ_lv_ccm_R.csv")
-#COMPLETE_DF <- dplyr::left_join(COMPLETE_DF, DF_SUM_LV_CCM, by = c("enem"))
-
-##############
-###here Imm gonna do the inversion from x, y to n,p , where p is always the top predator.
-COMPLETE_DF <- xy_to_np_transformer(COMPLETE_DF)
-
-
-dir.create(out_subfolder)
-
-utils::write.csv(COMPLETE_DF, paste0(out_subfolder, "complete_coex_df.csv"))
-
-
-
-
-
-
-
-
-
-
-
-# ============================================================================
-# 1. OUTPUT PATH CONFIGURATION
-# ============================================================================
-type_data <- "real.data"
-norm_data <- "not_normalized"
-
-out_folder <- paste0("./outputs/LV_MAP/", type_data, "/", norm_data, "/")
-out_subfolder <- paste0(out_folder,"biocontrol/")
-
-
-
-#this code gets the IGP data and does the modifcations used for LV analys, and for rpesentation, and coexistence 
-
-source("./analyses/2a.data_modification_LV.R")
-
-#IT GIVES YOU DATA IGP AND DATA_PRED
-
-DATA_BIOCONTROL <- DATA_PRED
-
-DATA_BIOCONTROL$R_plus_input <- DATA_PRED$R +400
-
-DATA_BIOCONTROL  <- DATA_BIOCONTROL |>
-  dplyr::group_by(block, enem)|>
-  dplyr::arrange(week)|>
-  dplyr::mutate("R_consumed" = dplyr::lag(R_plus_input)- R)|>
-  dplyr::ungroup()
-
-
-for (i in seq(1:dim(DATA_BIOCONTROL)[1])){
-  if(is.na(DATA_BIOCONTROL$R_consumed[[i]])){
-    DATA_BIOCONTROL$R_consumed[[i]] = 600 - DATA_BIOCONTROL$R[[i]] 
-}
-}
-
-
-###another modificaction
-
-DATA_BIOCONTROL$R_bin <- 1
-
-for (i in seq(1:dim(DATA_BIOCONTROL)[1])){
-  if(DATA_BIOCONTROL$R[[i]]==1){
-    DATA_BIOCONTROL$R_bin[[i]] = 0 
-}
-}
-
-
-#export this data frame of biocntrol, in the output section
-
-dir.create(out_subfolder)
-
-utils::write.csv(DATA_BIOCONTROL, paste0(out_subfolder, "df_modified_biocontrol.csv"))
-
-
-
-
-
-
-
-
-
+utils::write.csv(DATA_COEX, paste0(out_folder, "DATA_coexistence.csv"))
 
 
 
