@@ -32,6 +32,11 @@ DATA_COEX <- pred_coexistence_adder(DATA_PRED)  #this add coexistence per week a
 # 4. SURVIVAL AND AREA PLOT
 # ============================================================================
 
+#tengo que meter ESTO EN OTRO LUGAR!! ***
+
+#resumir lasbases de datos que tenemos en cada lugar (que no sean redundantes )
+
+
 ## this has the first average between blocks but no time.
 #basically it gives the proportion of survivail per week per enemy
 
@@ -99,6 +104,71 @@ COMPLETE_DF <- xy_to_np_transformer(COMPLETE_DF)
 dir.create(out_subfolder)
 
 utils::write.csv(COMPLETE_DF, paste0(out_subfolder, "complete_coex_df.csv"))
+
+
+
+
+
+
+
+
+
+
+
+# ============================================================================
+# 1. OUTPUT PATH CONFIGURATION
+# ============================================================================
+type_data <- "real.data"
+norm_data <- "not_normalized"
+
+out_folder <- paste0("./outputs/LV_MAP/", type_data, "/", norm_data, "/")
+out_subfolder <- paste0(out_folder,"biocontrol/")
+
+
+
+#this code gets the IGP data and does the modifcations used for LV analys, and for rpesentation, and coexistence 
+
+source("./analyses/2a.data_modification_LV.R")
+
+#IT GIVES YOU DATA IGP AND DATA_PRED
+
+DATA_BIOCONTROL <- DATA_PRED
+
+DATA_BIOCONTROL$R_plus_input <- DATA_PRED$R +400
+
+DATA_BIOCONTROL  <- DATA_BIOCONTROL |>
+  dplyr::group_by(block, enem)|>
+  dplyr::arrange(week)|>
+  dplyr::mutate("R_consumed" = dplyr::lag(R_plus_input)- R)|>
+  dplyr::ungroup()
+
+
+for (i in seq(1:dim(DATA_BIOCONTROL)[1])){
+  if(is.na(DATA_BIOCONTROL$R_consumed[[i]])){
+    DATA_BIOCONTROL$R_consumed[[i]] = 600 - DATA_BIOCONTROL$R[[i]] 
+}
+}
+
+
+###another modificaction
+
+DATA_BIOCONTROL$R_bin <- 1
+
+for (i in seq(1:dim(DATA_BIOCONTROL)[1])){
+  if(DATA_BIOCONTROL$R[[i]]==1){
+    DATA_BIOCONTROL$R_bin[[i]] = 0 
+}
+}
+
+
+#export this data frame of biocntrol, in the output section
+
+dir.create(out_subfolder)
+
+utils::write.csv(DATA_BIOCONTROL, paste0(out_subfolder, "df_modified_biocontrol.csv"))
+
+
+
 
 
 
