@@ -1,43 +1,15 @@
 
-#LOAD AND FILTER DATA for LV
+#import created dateframe biocontrol and of coexistnece
 
-#this code gets the IGP data and does the modifcations used for LV analys, and for rpesentation, and coexistence 
+type_data <- "real.data"
+norm_data <- "not_normalized"
 
-source("./analyses/2a.data_modification_LV.R")
-
-#IT GIVES YOU DATA IGP AND DATA_PRED
-
-DATA_BIOCONTROL <- DATA_PRED
-
-DATA_BIOCONTROL$R_plus_input <- DATA_PRED$R +400
-
-DATA_BIOCONTROL  <- DATA_BIOCONTROL |>
-  dplyr::group_by(block, enem)|>
-  dplyr::arrange(week)|>
-  dplyr::mutate("R_consumed" = dplyr::lag(R_plus_input)- R)|>
-  dplyr::ungroup()
+out_folder <- paste0("./outputs/LV_MAP/", type_data, "/", norm_data, "/")
+fig_folder <- paste0("./figures/LV_MAP/", type_data, "/", norm_data, "/")
 
 
-for (i in seq(1:dim(DATA_BIOCONTROL)[1])){
-  if(is.na(DATA_BIOCONTROL$R_consumed[[i]])){
-    DATA_BIOCONTROL$R_consumed[[i]] = 600 - DATA_BIOCONTROL$R[[i]] 
-}
-}
-
-
-###another modificaction
-
-DATA_BIOCONTROL$R_bin <- 1
-
-for (i in seq(1:dim(DATA_BIOCONTROL)[1])){
-  if(DATA_BIOCONTROL$R[[i]]==1){
-    DATA_BIOCONTROL$R_bin[[i]] = 0 
-}
-}
-
-
-
-
+DATA_COEX <- read.csv(paste0(out_subfolder,"complete_coex_df.cs" )
+)
 
 
 
