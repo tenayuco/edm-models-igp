@@ -35,7 +35,7 @@ if (type_data == "real.data") {
 
 #this code gets the IGP data and does the modifcations used for LV analys, and for rpesentation, and coexistence 
 
-source("./analyses/2a.data_modification_LV.R")
+DATA_PRED <- readr::read_csv("data/data_pred.csv")
 
 
 # ============================================================================

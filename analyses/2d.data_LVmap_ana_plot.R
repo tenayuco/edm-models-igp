@@ -43,34 +43,5 @@ FULL_SUM <- summarizer_with_variance(df_full = FULL_DF)
 
 ##save as a full and summarized 
 
-utils::write.csv(FULL_SUM, paste0(out_subfolder, "FULL_SUM_VARIANCE.csv"))
+utils::write.csv(FULL_SUM, paste0(out_subfolder, "FULL_SUM_VARIANCE_numseed_", seeds, ".csv"))
 
-
-
-
-#this part is to create a new column out of this data frame where i put the 
-#real values of the enmies, for the plots
-
-
-change_for_real <- TRUE
-if(change_for_real == TRUE){
-  FULL_DF <- change_xy_realValues(df_full = FULL_DF)
-  FULL_SUM <- change_xy_realValues(df_full = FULL_SUM)
-}
-
-  
-#this plot alpha and r for all simlation and enemies
-plotter_full_parameters(df_full = FULL_DF, fig_subfolder = fig_subfolder)
-#plot_per_treatment(out_subfolder = out_subfolder, true_values = FALSE) #we dont want the true values of the eq
-              # Random seeds for data shuffling
-
-
-
-#PLOTS PERENEMMY
-
-
-
-##this plot the summarize of each enemy 
-plot_par_sum_allconditions(df_sum = FULL_SUM, fig_subfolder = fig_subfolder)
-plot_par_sum_allconditions(df_sum = FULL_SUM, fig_subfolder = fig_subfolder, plotted_type = c("a"),  scale_chosen = "free_x")
-plot_par_sum_allconditions(df_sum = FULL_SUM, fig_subfolder = fig_subfolder, plotted_type = c("r"), scale_chosen = "free_x")

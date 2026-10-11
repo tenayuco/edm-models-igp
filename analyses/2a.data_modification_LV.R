@@ -33,3 +33,6 @@ DATA_PRED <- DATA_PRED |>
 
 # Remove fake zeros
 DATA_PRED <- zero_remover_raw(DATA_PRED)
+
+
+utils::write.csv(DATA_PRED, paste0("data/data_pred.csv"))
