@@ -45,14 +45,15 @@ for (i in seq(1:dim(DATA_BIO)[1])){
 }
 
 
+
 ###another columns of the binary secctions 
 
 
-DATA_BIO$R_bin <- 1
+DATA_BIO$R_bin <- 0
 
 for (i in seq(1:dim(DATA_BIO)[1])){
   if(DATA_BIO$R[[i]]==1){
-    DATA_BIO$R_bin[[i]] = 0 
+    DATA_BIO$R_bin[[i]] = 1 
 }
 }
 

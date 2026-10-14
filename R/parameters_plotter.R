@@ -283,3 +283,38 @@ dev.off()
 
 
 }
+
+
+
+##################################################################################################################################################
+# Function that plots the mean RMSE_o versus mean theta_o with error bars in both dimensions
+#' @param completedf A data frame containing columns theta_o_mean, rmse_o_mean, rmse_o_sd, theta_o_sd, and enem
+#' @param fig_path A character string giving the directory path where the figure will be saved
+#' @return Saves a PNG file to fig_path and returns the ggplot object invisibly
+#' @examples plotter_rmse_theta(completedf = my_completedf, fig_path = "figures/")
+##################################################################################################################################################
+plotter_rmse_theta <- function(completedf, fig_path) {
+
+  theta_rmse_plot <- completedf |>
+    ggplot(aes(x =  theta_o_mean , y = rmse_o_mean)) +
+    geom_pointrange(aes(ymin = rmse_o_mean - rmse_o_sd, ymax = rmse_o_mean + rmse_o_sd, fill = enem, shape= enem), size=1)  +
+    geom_pointrange(aes(xmin = theta_o_mean-theta_o_sd, xmax = theta_o_mean+theta_o_sd, fill = enem, shape= enem), size=1)+
+    theme_minimal()+
+    scale_fill_viridis_d(option = "inferno")+
+    theme_bw()+
+    geom_text(aes(label = paste0("rmse: ", round(rmse_o_mean, 2),
+                                 "\ntheta: ", round(theta_o_mean, 2)),
+                  hjust = -0.05, vjust = -0.7), size = 4)+
+    scale_shape_manual(values = c(21, 22, 23, 24, 25, 21))+
+    theme(axis.text=element_text(size=14))+
+    labs(subtitle= "RSME_o vs Theta_o", x= "theta_o", y="rmse_o")
+
+  ggsave(
+    theta_rmse_plot,
+    filename = paste0(fig_path, "rmse_theta",".png"),
+    height = 9,
+    width = 12,
+    create.dir = T
+  )
+}
+

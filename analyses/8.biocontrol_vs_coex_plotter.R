@@ -13,10 +13,18 @@ DATA_BIO <- read.csv(paste0(out_folder, "DATA_biocontrol.csv"))
 DATA_COEX <- read.csv(paste0(out_folder, "DATA_coexistence.csv"))
 
 
+
+##I add a modification to put R left
+# assuming that 600 the initia input is 1. So we will have stuff above the 1
+DATA_BIO$R <- DATA_BIO$R/400
+
+
 ##first we plot biocontrol on its own
 
 plot_total_bio(DATA_BIO, var_plotted = "R_consumed", fig_path =fig_folder)
 plot_total_bio(DATA_BIO, var_plotted = "R", fig_path =fig_folder)
+
+
 plot_total_bio_week(DATA_BIO, var_plotted = "R_consumed", fig_path =fig_folder)
 plot_total_bio_week(DATA_BIO, var_plotted = "R", fig_path =fig_folder)
 
@@ -65,25 +73,7 @@ DATA_BIO_COEX_BLOCK <- dplyr::left_join(DATA_BIO_ENEM_BLOCK, DATA_SURV_BLOCK, by
 
 ##plt 
 
-
-PLOT_BIO_COEX_BLOCK <- DATA_BIO_COEX_BLOCK |> 
-    ggplot(aes(x = surv_coex, y = mean_R)) +
-    geom_pointrange(aes(ymin = mean_R-sd_R, ymax =  mean_R +sd_R,  
-                  fill = enem, shape= enem), size =1)  +
-     # facet_wrap(~enem, ncol = num_columns) +
-    theme_bw()+
-    #labs(subtitle= paste0(chosen_coex_var, " vs ", paste(chosen_int, collapse = "_")), x= "Magnitude of interaction")+
-    scale_fill_viridis_d(option = "inferno")+
-    scale_shape_manual(values = c(21, 22, 23, 24, 25, 21))+
-   theme(axis.text=element_text(size=12))
-  
-  ggsave(
-    coex_int_plot,
-    filename = paste0(fig_path, "coex_int_", chosen_coex_var, "_var_", paste(chosen_int, collapse = "_"),  ".png"),
-    height = 9,
-    width = 12,
-    create.dir = T
-  )
+plot_bio_coex_block(data_bio_coex_block = DATA_BIO_COEX_BLOCK, fig_path = fig_folder)
 
 
 
@@ -93,51 +83,38 @@ PLOT_BIO_COEX_BLOCK <- DATA_BIO_COEX_BLOCK |>
 
 
 
+#=PER ENEMY======================================================================0
+
+
+##para tener las means 
+DATA_BIO_ENEM <- DATA_BIO |>
+  dplyr::group_by(enem)|>
+  dplyr::summarise("mean_R_consumed" = mean(R_consumed), "sd_R_consumed" = sd(R_consumed), 
+                    "mean_R"= mean(R), "sd_R"= sd(R), 
+                  "mean_R_bin"= mean(R_bin), "sd_R_bin"= sd(R_bin))
+
+
+###nthis tell you in each reaplicate, the time to extinction to each predator, and
+#the coexistnece time (the first one to surve)
+#60 rows! 
+DATA_SURV_ENEM <- DATA_SURV_BLOCK|>
+  dplyr::group_by(enem)|>
+  dplyr::summarise("mean_surv" = mean(surv_coex)/20, "sd_surv" = sd(surv_coex)/20)  #area under the curve, normalized
+##now we merge the both data to have the complete per block and per eem
+
+DATA_BIO_COEX_ENEM <- dplyr::left_join(DATA_BIO_ENEM, DATA_SURV_ENEM, by = c("enem"))
 
 
 
+###PLOTS FIG res#####################
+
+final_fig_folder <- paste0(fig_folder, "figuresPaper/")
 
 
 
+plot_fig_bio_coex(data_bio_coex = DATA_BIO_COEX_ENEM, fig_path = final_fig_folder)
 
 
-
-
-
-#=PER ENEMY
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#thisgives you te average per enemy. #6 rows!
-DATA_SURV_AV <- survival_time_average(DATA_SURV)
-#=======================================================================================
-
-
-#
 
 
 
