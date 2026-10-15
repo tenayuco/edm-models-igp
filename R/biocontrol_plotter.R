@@ -35,16 +35,24 @@ df_biocontrol_long <- df_biocontrol_long |>
   
 PLOT_TOTAL_CON_WEEK <- df_biocontrol_long|>
     ggplot(aes(x = week, y = biocontrol_value)) +
-  geom_boxplot(aes(fill=enem, group = week))+
-  facet_wrap(~enem)+
+  geom_boxplot(aes(fill=enem, group = week), alpha=1)+
+  geom_hline(yintercept = 1, linetype=2)+
+  facet_wrap(~enem, ncol=2)+
     scale_fill_viridis_d(option = "inferno", begin = 0.1, end = 0.9, direction=1) +
-    theme_bw()
+    theme_minimal()+
+    theme(text=element_text(size=14))+ 
+  theme(
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank())+
+   theme(panel.border = element_rect(color = "black", fill = NA, linewidth = 1))+   theme(legend.position = "none") +
+  labs(x= "Time (weeks)", y = "Herbivores left (P(aphids))")
+
 
 
   ggsave(PLOT_TOTAL_CON_WEEK,
     filename = paste0(fig_path, "BIOCONTROL/",  "biocontrol_total_week", var_plotted, ".png"),
     height = 8,
-    width = 12,
+    width = 6,
     create.dir = T)
 
 }
@@ -64,7 +72,7 @@ PLOT_BIO_COEX_BLOCK <- data_bio_coex_block |>
     #labs(subtitle= paste0(chosen_coex_var, " vs ", paste(chosen_int, collapse = "_")), x= "Magnitude of interaction")+
     scale_fill_viridis_d(option = "inferno")+
     scale_shape_manual(values = c(21, 22, 23, 24, 25, 21))+
-   theme(axis.text=element_text(size=12))
+  theme(text=element_text(size=14)) #change font size of all text
   
   ggsave(
     PLOT_BIO_COEX_BLOCK,
@@ -96,10 +104,14 @@ PLOT_BIO_COEX_ENEM<- data_bio_coex |>
 
      # facet_wrap(~enem, ncol = num_columns) +
     theme_bw()+
-    labs(x= "Coexistence (average survival of both natural enemies (NE))", y= "Herbivore suppression (1-P(aphids left))", fill= "Natural enemies (NE)", shape= "Natural enemies (NE)")+
+    labs(x= "Coexistence (survival of both natural enemies (NE))", y= "Herbivore suppression (1-P(aphids left))", fill= "Natural enemies (NE)", shape= "Natural enemies (NE)")+
     scale_fill_viridis_d(option = "inferno")+
-    scale_shape_manual(values = c(21, 22, 23, 24, 25, 21))+
-  theme(text=element_text(size=14)) #change font size of all text
+    scale_shape_manual(values = enemShapes) +
+  theme(text=element_text(size=14)) +
+  theme(legend.position = "none") +
+    theme(
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank())
        # axis.text=element_text(size=20), #change font size of axis text
        # axis.title=element_text(size=20), #change font size of axis titles
        # plot.title=element_text(size=20), #change font size of plot title
@@ -110,7 +122,7 @@ PLOT_BIO_COEX_ENEM<- data_bio_coex |>
     ggsave(
     PLOT_BIO_COEX_ENEM,
     filename = paste0(fig_path, "FIG_bio_coex",  ".png"),
-    height = 6,
+    height = 8,
     width = 12,
     create.dir = T
   )
@@ -153,8 +165,8 @@ plotter_coex_step <- function(data_coex_av, fig_path) {
   coex_plot <- data_coex_av |>
     ggplot(aes(x = week, y = mean_coex)) +
     geom_step(aes(color = enem, linetype = enem),
-              direction = "vh", linewidth = 0.7) +
-    geom_point(aes(shape = enem, fill = enem), size=2) +
+              direction = "vh", linewidth = 1) +
+    geom_point(aes(shape = enem, fill = enem), size=3, alpha=1) +
     scale_color_viridis_d(option = "inferno", begin = 0.1, end = 0.9, direction=1) +
     scale_fill_viridis_d(option  = "inferno", begin = 0.1, end = 0.9, direction =1) +
     scale_linetype_manual(values = c(
@@ -166,23 +178,23 @@ plotter_coex_step <- function(data_coex_av, fig_path) {
     ) +
     scale_shape_manual(values = enemShapes) +
     labs(
-      x = "Time (weeks)", y = "Coexistence",
+      x = "Time (weeks)", y = "Coexistence (survival of both natural enemies (NE))",
       color = "NE combination", fill = "NE combination",
       linetype = "NE combination", shape = "NE combination"
     ) +
     theme_bw(base_size = 13) +
+      theme(text=element_text(size=14)) + #change font size of all text
+
     theme(
       panel.grid.major = element_blank(),
       panel.grid.minor = element_blank(),
-      axis.text.x  = element_text(angle = 45, hjust = 1, size = 11),
-      axis.text.y  = element_text(size = 11),
-      axis.title   = element_text(size = 13),
-      legend.text  = element_text(size = 11),
-      legend.title = element_text(size = 12),
-      strip.text   = element_text(size = 12)
+      axis.text.x  = element_text(angle = 45, hjust = 1, size = 14),
     ) +
     guides(color = "legend", fill = "legend",
-           linetype = "legend", shape = "legend")
+           linetype = "legend", shape = "legend")+
+      theme(legend.position = "none")
+    #change font size of all text
+
 
   ggsave(coex_plot,
          filename = paste0(fig_path, "coexistence_plot", ".png"),

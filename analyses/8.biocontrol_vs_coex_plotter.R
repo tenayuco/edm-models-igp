@@ -6,6 +6,7 @@ norm_data <- "not_normalized"
 
 out_folder <- paste0("./outputs/LV_MAP/", type_data, "/", norm_data, "/")
 fig_folder <- paste0("./figures/LV_MAP/", type_data, "/", norm_data, "/")
+final_fig_folder <- paste0(fig_folder, "figuresPaper/")
 
 
 
@@ -26,7 +27,10 @@ plot_total_bio(DATA_BIO, var_plotted = "R", fig_path =fig_folder)
 
 
 plot_total_bio_week(DATA_BIO, var_plotted = "R_consumed", fig_path =fig_folder)
-plot_total_bio_week(DATA_BIO, var_plotted = "R", fig_path =fig_folder)
+
+
+#this one goest to the figures 
+plot_total_bio_week(DATA_BIO, var_plotted = "R", fig_path =final_fig_folder)
 
 
 
@@ -42,7 +46,8 @@ plot_total_bio_week(DATA_BIO, var_plotted = "R", fig_path =fig_folder)
 DATA_COEX_AV <- coex_average(DATA_COEX)
 
 #this plot this coexstnece and area stuff to visualizae
-plotter_coex_step(DATA_COEX_AV, fig_path = fig_folder)
+#also goes to figure
+plotter_coex_step(DATA_COEX_AV, fig_path = final_fig_folder)
 
 
 
@@ -108,7 +113,6 @@ DATA_BIO_COEX_ENEM <- dplyr::left_join(DATA_BIO_ENEM, DATA_SURV_ENEM, by = c("en
 
 ###PLOTS FIG res#####################
 
-final_fig_folder <- paste0(fig_folder, "figuresPaper/")
 
 
 
@@ -126,15 +130,15 @@ plot_fig_bio_coex(data_bio_coex = DATA_BIO_COEX_ENEM, fig_path = final_fig_folde
 
 
 ##para tener las means 
-DATA_BIO_ENEM <- DATA_BIO |>
-  dplyr::group_by(enem)|>
-  dplyr::summarise("mean_R_consumed" = mean(R_consumed), "sd_R_consumed" = sd(R_consumed), 
-                    "mean_R"= mean(R), "sd_R"= sd(R), 
-                  "mean_R_bin"= mean(R_bin), "sd_R_bin"= sd(R_bin))
+#DATA_BIO_ENEM <- DATA_BIO |>
+ # dplyr::group_by(enem)|>
+  #dplyr::summarise("mean_R_consumed" = mean(R_consumed), "sd_R_consumed" = sd(R_consumed), 
+   #                 "mean_R"= mean(R), "sd_R"= sd(R), 
+    #              "mean_R_bin"= mean(R_bin), "sd_R_bin"= sd(R_bin))
 
 
 
-write.csv(DATA_BIO_ENEM, "./outputs/summ_meansR.csv")
+#write.csv(DATA_BIO_ENEM, "./outputs/summ_meansR.csv")
 
 
 
