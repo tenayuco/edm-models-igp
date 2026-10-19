@@ -71,12 +71,29 @@ plotter_data_all <- function(data_long, remove_aphid = FALSE, norm_data = FALSE)
     scale_color_manual(
       values = speciesCol
     ) +
-    theme_minimal()
+     theme_minimal() +
+    theme(text=element_text(size=14)) + #change font size of all text
+
+    theme(
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank()
+    )+
+       theme(panel.border = element_rect(color = "black", fill = NA, linewidth = 1))+
+    #theme(legend.position = "none")+
+labs(
+  x = "Time (weeks)",
+  y = "Individuals", 
+  color = "Natural \n enemies (NE)"
+)  
+
+
+
+
 
   ggsave(
     TIME_SERIES_ALL,
     filename = paste0("./figures/ts/time-series-all-", aphid, "norm_", norm_data, ".png"),
-    height = 8,
+    height = 7,
     width = 12,
     create.dir = T
   )

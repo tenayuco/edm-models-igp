@@ -28,6 +28,7 @@ plotter_data_all(DATA_PRED_SP_LONG, remove_aphid = TRUE)
 
 ##now here with normalized data per species
 
+#it is not doing it!
 plotter_data_all(DATA_PRED_SP_LONG, remove_aphid = FALSE, norm_data = TRUE)
 plotter_data_all(DATA_PRED_SP_LONG, remove_aphid = TRUE, norm_data = TRUE)
 
