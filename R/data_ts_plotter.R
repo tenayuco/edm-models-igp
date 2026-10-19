@@ -416,9 +416,8 @@ surv_omega_plot <- complete_df |>
 
 
 
-plotter_eta_omega <- function(complete_df, fig_path) {
-
-complete_df$min_eta <-0
+minEta_calculator <- function(complete_df){
+  complete_df$min_eta <-0
 complete_df$chosen_eta <- ""
 complete_df$total_sd_eta <- 0
 
@@ -436,6 +435,13 @@ for (i in 1:dim(complete_df)[1]){
 
   }
 }
+  return(complete_df)
+}
+
+
+plotter_eta_omega <- function(complete_df, fig_path) {
+
+
 
 
 eta_omega_plot <- complete_df |>

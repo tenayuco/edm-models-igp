@@ -43,5 +43,5 @@ FULL_SUM <- summarizer_with_variance(df_full = FULL_DF)
 
 ##save as a full and summarized 
 
-utils::write.csv(FULL_SUM, paste0(out_subfolder, "FULL_SUM_VARIANCE_numseed_", seeds, ".csv"))
+utils::write.csv(FULL_SUM, paste0(out_subfolder, "FULL_SUM_VARIANCE_numseed_", seeds, ".csv"), row.names = FALSE)
 

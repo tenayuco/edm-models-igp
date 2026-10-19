@@ -287,7 +287,7 @@ modelFit = 1* (rmse_o_mean<50))
 
 ##########
 
-
+##VERY IMOORT
 
 plot_omega_eta_surv <- function(complete_df_long, fig_path){
 
@@ -307,55 +307,74 @@ COMPLETE_ONLY_COEX_NORM <- COMPLETE_ONLY_COEX |>
 modelFit = 1* (rmse_o_mean<50))
 
 
-  ##now we reorganize the eme colimn to 
-
-
+  ##now we reorganize the eme colimn to
 
   
   par_plot <- COMPLETE_ONLY_COEX_NORM  |> 
+
+    dplyr::mutate(
+    coexistence_variable = factor(
+      coexistence_variable,
+      levels = c("mean_surv",  "grand_mean_omega", "min_eta"))) |> 
+    tidyr::unite("fake_fit_coex",  c(coexistence_variable, modelFit), remove=F)|> 
     ggplot(aes(
         x = enem, 
-        y = coex_value,
-        linetype = as.factor(modelFit),   # column driving the line style
-        shape    = funDiff      # column driving the point shape
-    )) +
+        y = coex_value )) +
     geom_errorbar(
         aes(
             ymin  = coex_value - 1*sd_value,
             ymax  = coex_value + 1*sd_value,
-            color = as.factor(coexistence_variable)
+            color = coexistence_variable,
+            linetype = fake_fit_coex   # column driving the line style
         ),
         width    = .2,
         position = position_dodge(0.6),
         linewidth = 1
     ) +
     geom_point(
-        aes(color = as.factor(coexistence_variable)),
+        aes(color = coexistence_variable,        
+           shape    = coexistence_variable      # column driving the point shape
+),
         fill     = "white",
         position = position_dodge(0.6),
-        size     = 3,
+        size     = 4,
         stroke   = 1
     ) +
-    xlab("enem") +
-    scale_color_viridis_d(begin = 0, end = 0.7, option = "A", direction = 1) +
+    ylim(0.1,1.7)+
+    scale_color_manual(values = c("mean_surv"= "darkgreen", "grand_mean_omega"= "black", "min_eta"= "black")) +
 
     # --- line type: Good = solid, Bad = dashed ---
     scale_linetype_manual(values = c(
-        "0" = 2,
-        "1"  = 1
+        "grand_mean_omega_0" = 2,
+        "min_eta_0" = 2,
+        "grand_mean_omega_1" = 1,
+        "min_eta_1" = 1,
+        "mean_surv_0" = 1,
+        "mean_surv_1" = 1
     )) +
 
     # --- shape: High = filled circle, Low = empty triangle ---
     scale_shape_manual(values = c(
-        "High" = 16,   # filled circle
-        "Low"  = 2     # empty triangle
+        "mean_surv" = 16,   # filled circle
+        "grand_mean_omega" =22,   # filled circle
+        "min_eta"  = 24     # empty triangle
     )) +
 
-    theme_bw()
-  
-  ggsave(par_plot, filename = paste0(fig_path, "omega_surv_values.png"),
-   height = 8,
-    width = 12,
+    theme_bw() +
+    theme(text=element_text(size=14)) + #change font size of all text
+
+    theme(
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank()
+    )+
+    theme(legend.position = "none")+
+labs(
+  x = "Natural Enemies (NE) combination",
+  y = "Expected (LV-mapping) vs observed coexistence"
+)  
+  ggsave(par_plot, filename = paste0(fig_path, "omega_eta_surv_values.png"),
+   height = 6,
+    width = 10,
     create.dir = T
   )
   
