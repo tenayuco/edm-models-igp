@@ -45,7 +45,7 @@ PLOT_TOTAL_CON_WEEK <- df_biocontrol_long|>
       panel.grid.major = element_blank(),
       panel.grid.minor = element_blank())+
    theme(panel.border = element_rect(color = "black", fill = NA, linewidth = 1))+   theme(legend.position = "none") +
-  labs(x= "Time (weeks)", y = "Herbivores left (P(aphids))")
+  labs(x= "Time (weeks)", y = "Herbivores left")
 
 
 
@@ -104,7 +104,7 @@ PLOT_BIO_COEX_ENEM<- data_bio_coex |>
 
      # facet_wrap(~enem, ncol = num_columns) +
     theme_bw()+
-    labs(x= "Coexistence (survival of both natural enemies (NE))", y= "Herbivore suppression (1-P(aphids left))", fill= "Natural enemies (NE)", shape= "Natural enemies (NE)")+
+    labs(x= "Coexistence (average survival of natural enemies (NE) (+- sd))", y= "Biocontrol (average herbivore suppression (+- sd))", fill= "Natural enemies (NE)", shape= "Natural enemies (NE)")+
     scale_fill_viridis_d(option = "inferno")+
     scale_shape_manual(values = enemShapes) +
   theme(text=element_text(size=14)) +
@@ -178,7 +178,7 @@ plotter_coex_step <- function(data_coex_av, fig_path) {
     ) +
     scale_shape_manual(values = enemShapes) +
     labs(
-      x = "Time (weeks)", y = "Coexistence (survival of both natural enemies (NE))",
+      x = "Time (weeks)", y = "Survival of both natural enemies (NE))",
       color = "NE combination", fill = "NE combination",
       linetype = "NE combination", shape = "NE combination"
     ) +
