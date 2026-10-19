@@ -91,7 +91,7 @@ DATA_BIO_COEX_ENEM <- dplyr::left_join(DATA_BIO_ENEM, DATA_SURV_ENEM, by = c("en
 
 
 
-plot_fig_bio_coex(data_bio_coex = DATA_BIO_COEX_ENEM, fig_path = final_fig_folder)
+plot_fig_bio_coex(data_bio_coex = DATA_BIO_COEX_ENEM, fig_path = fig_folder)
 
 
 
