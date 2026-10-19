@@ -279,3 +279,84 @@ modelFit = 1* (rmse_o_mean<50))
   )
   
 }
+
+
+
+
+
+
+##########
+
+
+
+plot_omega_eta_surv <- function(complete_df_long, fig_path){
+
+  COMPLETE_ONLY_COEX <- complete_df_long |> 
+  dplyr::select(enem, coexistence_variable, coexistence_sd, coex_value, sd_value, rmse_o_mean)
+
+COMPLETE_ONLY_COEX <- unique(COMPLETE_ONLY_COEX)
+
+##now to normalize each value of coexistence
+
+COMPLETE_ONLY_COEX_NORM <- COMPLETE_ONLY_COEX |>
+  dplyr::group_by(coexistence_variable)|>
+  dplyr::mutate( sd_value = sd_value/max(coex_value))|>
+  dplyr::mutate(coex_value = coex_value/max(coex_value))|>
+  dplyr::ungroup() |>
+  dplyr::mutate(funDiff = dplyr::if_else(enem %in% c("cc+ma", "ac+am"), "Low", "High"), 
+modelFit = 1* (rmse_o_mean<50))
+
+
+  ##now we reorganize the eme colimn to 
+
+
+
+  
+  par_plot <- COMPLETE_ONLY_COEX_NORM  |> 
+    ggplot(aes(
+        x = enem, 
+        y = coex_value,
+        linetype = as.factor(modelFit),   # column driving the line style
+        shape    = funDiff      # column driving the point shape
+    )) +
+    geom_errorbar(
+        aes(
+            ymin  = coex_value - 1*sd_value,
+            ymax  = coex_value + 1*sd_value,
+            color = as.factor(coexistence_variable)
+        ),
+        width    = .2,
+        position = position_dodge(0.6),
+        linewidth = 1
+    ) +
+    geom_point(
+        aes(color = as.factor(coexistence_variable)),
+        fill     = "white",
+        position = position_dodge(0.6),
+        size     = 3,
+        stroke   = 1
+    ) +
+    xlab("enem") +
+    scale_color_viridis_d(begin = 0, end = 0.7, option = "A", direction = 1) +
+
+    # --- line type: Good = solid, Bad = dashed ---
+    scale_linetype_manual(values = c(
+        "0" = 2,
+        "1"  = 1
+    )) +
+
+    # --- shape: High = filled circle, Low = empty triangle ---
+    scale_shape_manual(values = c(
+        "High" = 16,   # filled circle
+        "Low"  = 2     # empty triangle
+    )) +
+
+    theme_bw()
+  
+  ggsave(par_plot, filename = paste0(fig_path, "omega_surv_values.png"),
+   height = 8,
+    width = 12,
+    create.dir = T
+  )
+  
+}
