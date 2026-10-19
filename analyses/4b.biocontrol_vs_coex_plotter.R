@@ -8,7 +8,6 @@ norm_data <- "not_normalized"
 
 out_folder <- paste0("./outputs/LV_MAP/", type_data, "/", norm_data, "/")
 fig_folder <- paste0("./figures/LV_MAP/", type_data, "/", norm_data, "/")
-final_fig_folder <- paste0(fig_folder, "figuresPaper/")
 
 
 DATA_BIO <- read.csv(paste0(out_folder, "DATA_biocontrol.csv"))
@@ -32,7 +31,7 @@ plot_total_bio_week(DATA_BIO, var_plotted = "R_consumed", fig_path =fig_folder)
 
 
 #this one goest to the figures 
-plot_total_bio_week(DATA_BIO, var_plotted = "R", fig_path =final_fig_folder)
+plot_total_bio_week(DATA_BIO, var_plotted = "R", fig_path =fig_folder)
 
 
 #FIG 2.B COEXISTENCE FROM DATA =================================================================
@@ -43,7 +42,7 @@ DATA_COEX_AV <- coex_average(DATA_COEX)
 
 #this plot this coexstnece and area stuff to visualizae
 #also goes to figure
-plotter_coex_step(DATA_COEX_AV, fig_path = final_fig_folder)
+plotter_coex_step(DATA_COEX_AV, fig_path = fig_folder)
 
 #0================================================================
 
