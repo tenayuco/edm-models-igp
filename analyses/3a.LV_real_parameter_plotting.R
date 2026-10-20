@@ -22,12 +22,24 @@ FULL_SUM <- readr::read_csv(paste0(out_folder, "FULL_SUM_VARIANCE_numseed_", see
 
 ##PART 1 - THE PARAMETERES
 
+###=========================
+
+#choose which one
+
+#part 1 REAL NAMES PARAMETERS
 
 change_for_real <- TRUE
+
+############
+
+
 if(change_for_real == TRUE){
   FULL_DF <- change_xy_realValues(df_full = FULL_DF)
   FULL_SUM <- change_xy_realValues(df_full = FULL_SUM)
 }
+
+
+
 
   
 #this plot alpha and r for all simlation and enemies
@@ -47,5 +59,10 @@ plot_par_sum_allconditions(df_sum = FULL_SUM, fig_subfolder = fig_subfolder, plo
 plot_par_sum_allconditions(df_sum = FULL_SUM, fig_subfolder = fig_subfolder, plotted_type = c("r"), scale_chosen = "free_x")
 
 
-#-------------------------PART 2----------------------------
+#-------------------------PART 2 NP NAMES PARAMETERS----------------------------
+
+
+
+###but
+
 
