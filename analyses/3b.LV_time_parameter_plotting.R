@@ -34,7 +34,7 @@ FULL_ALL_SUM_TIME <-  dplyr::left_join(FULL_SUM_TIME, FULL_SUM, by= c("varName",
 
 #first a general plot that has only the values of parameters
 
-change_for_real <- FALSE
+change_for_real <- TRUE
 
 ############
 

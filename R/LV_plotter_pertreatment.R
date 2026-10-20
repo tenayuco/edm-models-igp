@@ -277,3 +277,51 @@ par_time_plot <- full_all_sum_time |>
   
 
 
+#############plotter all parameters
+
+
+plot_par_sum_figure <- function(df_sum, fig_path){
+
+  varNameOrder <- c("N", "P", "N.P", "P.N", "N.N", "P.P")
+    df_sum <- df_sum |>
+    dplyr::mutate(
+      varName = factor(varName, levels = varNameOrder)
+    )
+
+  par_all_plot <- df_sum |> 
+    ggplot(aes(x= enem, y= grand_mean)) +
+    geom_errorbar(aes(ymin=grand_mean- 1*total_sd,  ymax=grand_mean+ 1*total_sd,  color= enem), width=.2,
+                 position=position_dodge(0.6), linewidth=1)+
+    geom_point(aes(shape=enem, fill=enem), color="black",  position=position_dodge(0.6), size=3)+
+
+    facet_wrap(~varName, scales = "free_y", ncol = 2)+
+    
+    geom_hline(yintercept = 0, color= "darkred", linetype= "dashed")+
+    
+    scale_fill_manual(values=enemCol)+
+    scale_color_manual(values=enemCol)+
+    scale_shape_manual(values = enemShapes) +
+    labs(
+      x = "Natural enemy (NE) combination", y = "Parameter values",
+      color = "NE combination", fill = "NE combination", shape = "NE combination"
+    ) +
+    theme_minimal()+
+      theme(text=element_text(size=14)) +
+    theme(
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank()
+     
+    )+
+       theme(panel.border = element_rect(color = "black", fill = NA, linewidth = 1))+   
+    theme(legend.position = "none")
+
+  
+ 
+
+  ggsave(par_all_plot, filename = paste0(fig_path, "all_parameters_figure",   ".png"),
+   height = 10,
+    width = 8,
+    create.dir = T)
+  #return(par_plot)
+}
+

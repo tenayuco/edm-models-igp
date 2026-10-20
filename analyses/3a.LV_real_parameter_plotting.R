@@ -61,8 +61,3 @@ plot_par_sum_allconditions(df_sum = FULL_SUM, fig_subfolder = fig_subfolder, plo
 
 #-------------------------PART 2 NP NAMES PARAMETERS----------------------------
 
-
-
-###but
-
-
