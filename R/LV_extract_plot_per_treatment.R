@@ -38,6 +38,36 @@ return(full_df)
 
 
 
+extract_par_all_time_treatment <- function(out_subfolder){
+
+full_df<-  data.frame()
+  
+##new method..
+  # One-liner
+all_dirs <- list.dirs(out_subfolder, recursive = TRUE)[-1]  # -1 removes the first element (root)
+
+vec_treatments <- setdiff(all_dirs, dirname(all_dirs))  
+
+for (treatment in vec_treatments){
+  for (i in seq(1:length(list.files(treatment)))){
+  #print(1:length(list.files(treatment)))
+  list_used <- readRDS(paste0(treatment,"/" , list.files(treatment)[i]))
+
+  LONG_FULL <- extracter_time_parameters(list_used)
+  
+  full_df <- rbind(full_df, LONG_FULL)
+  }
+}
+
+
+
+return(full_df)
+
+}
+
+
+
+
 
 ############################################################################################################
 # Function that binds a list of data frames (one per replicate) into a single long data frame
@@ -210,5 +240,55 @@ outLong <-  df_par |>
 
 #here is a new function to take all the full df (sumarizin oall the seeds) but of each sumulation
 
+###now im gonna extract for each seed the whole variation all over the simulation
+
+extracter_time_parameters  <- function(list_treatment_used){
+
+### ok now im gonna run all over the lists, not so much the DF maybe similar.. 
+
+
+DF_RT <- process_list(data_list = list_treatment_used$r_hat_list)
+DF_RT_SE <- process_list(data_list = list_treatment_used$r_se_list)
+DF_ALPHA <- process_list(data_list = list_treatment_used$alpha_hat_list)
+DF_ALPHA_SE <- process_list(data_list = list_treatment_used$alpha_se_list)
+  
+  
+#now Im making it long
+  
+
+DF_RT_LONG <- DF_RT |> 
+  tidyr::pivot_longer(cols=c(X, Y), names_to = "varName", values_to ="mvalue")|> 
+  dplyr::mutate(type = "r")
+
+  DF_RT_SE_LONG <- DF_RT_SE |> 
+  tidyr::pivot_longer(cols=c(X, Y), names_to = "varName", values_to ="se_value")|> 
+  dplyr::mutate(type = "r")
+  
+
+    
+DF_ALPHA_LONG <- DF_ALPHA |> 
+  tidyr::pivot_longer(cols=c(X.X, Y.Y, X.Y, Y.X), names_to = "varName", values_to ="mvalue")|> 
+  dplyr::mutate(type = "a")
+
+  DF_ALPHA_SE_LONG <- DF_ALPHA_SE |> 
+  tidyr::pivot_longer(cols=c(X.X, Y.Y, X.Y, Y.X), names_to = "varName", values_to ="se_value")|> 
+  dplyr::mutate(type = "a")
+
+
+
+DF_RT_FULL_LONG <- dplyr::left_join(DF_RT_LONG, DF_RT_SE_LONG, by = c("replicate", "time", "varName", "type"))
+DF_ALPHA_FULL_LONG <- dplyr::left_join(DF_ALPHA_LONG, DF_ALPHA_SE_LONG, by = c("replicate", "time", "varName", "type"))
+
+  
+ DF_FULL_LONG <-  rbind(DF_RT_FULL_LONG, DF_ALPHA_FULL_LONG)
+  DF_FULL_LONG$numSeed <- list_treatment_used$treatment[["num_seed"]]
+DF_FULL_LONG$rpresent <- list_treatment_used$treatment[["rpresent"]]
+DF_FULL_LONG$enem <- list_treatment_used$treatment[["enem"]]
+
+  
+return(DF_FULL_LONG)
+  
+
+}
 
 

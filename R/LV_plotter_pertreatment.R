@@ -226,3 +226,54 @@ ggsave(PLOT_PAR_OMEGA, filename = paste0(fig_folder, "omega_allrep_allr_allseed_
 
 
 
+### TIME PARA
+
+
+plotter_time_parameters <- function(full_all_sum_time, fig_path){
+
+
+for (enem_chosen in unique(full_all_sum_time$enem)){
+
+
+par_time_plot <- full_all_sum_time |> 
+  dplyr::filter(enem == enem_chosen)|> 
+
+  ggplot(aes(x= time)) +
+  geom_ribbon(
+    aes(ymin = grand_mean_time - total_sd_time,
+        ymax =grand_mean_time + total_sd_time, fill= enem ),
+    alpha = 0.3)+
+  geom_line(aes(y=grand_mean_time, color=enem), alpha=1)+
+
+  
+  geom_line(aes(y=grand_mean), color="black", alpha=1)+
+  geom_line(aes(y=grand_mean-total_sd), color="black", alpha=1, linetype=2)+
+  geom_line(aes(y=grand_mean+total_sd), color="black", alpha=1, linetype=2)+
+ 
+  geom_hline(yintercept = 0, linetype=2, color= "darkred")+
+  
+  facet_wrap(~varName, scales = "free_y")+
+
+    theme_minimal() +
+
+    scale_color_manual(values = enemCol)+
+      scale_fill_manual(values = enemCol)+
+    labs(
+      x = "Time (weeks)", y = "Parameter value"
+    ) +
+      theme(text=element_text(size=14)) +
+  theme(legend.position = "none") #change font size of all text
+
+  
+  ggsave(par_time_plot,
+         filename = paste0(fig_path, "par_time_plot_", enem_chosen, ".png"),
+         height = 8,
+         width = 12,
+         create.dir = TRUE)
+
+  
+}
+    }
+  
+
+

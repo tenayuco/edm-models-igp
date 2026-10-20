@@ -34,13 +34,15 @@ speciesCol_trop <- c(
 
 
 enemCol <- c(
-  "ac+am" = "black",
-  "my+aa" = "#990033ff",
-  "cc+ma" = "#006400ff",
-  "ac+ol" = "#996600ff",
-  "cc+my" = "#cc9900ff",
-  "ma+ol" = "#ffa500ff"
+  "ac+am" = "#170c3aff",
+  "my+aa" = "#f6d645ff",
+  "cc+ma" = "#9b2964ff",
+  "ac+ol" = "#5b116eff",
+  "cc+my" = "#d74b3fff",
+  "ma+ol" = "#f8880dff"
 )
+
+
 
 enemOrder <- c("ma+ol", "cc+my", "ac+ol", "cc+ma", "ac+am", "my+aa")
 enemShapes <- c("ma+ol"= 21, "cc+my"=21, "ac+ol"=22, "cc+ma"=23, "ac+am"=24, "my+aa"=25)

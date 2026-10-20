@@ -13,6 +13,7 @@ seeds <- 30
 
 fig_subfolder <- paste0("./figures/", used_subfolder)
 
+#============================================================================
 ##check this and tun
 if (
   file.exists(paste0(out_subfolder,"FULL_DF_parameters_","numseed_",seeds,".csv"
@@ -45,3 +46,28 @@ FULL_SUM <- summarizer_with_variance(df_full = FULL_DF)
 
 utils::write.csv(FULL_SUM, paste0(out_subfolder, "FULL_SUM_VARIANCE_numseed_", seeds, ".csv"), row.names = FALSE)
 
+
+
+#==============================================================================
+### here is another extracter,but for the interactions in time
+
+##check this and tun
+if (
+  file.exists(paste0(out_subfolder,"DF_intTime_","numseed_",seeds,".csv"
+  ))) {
+  FULL_INT_TIME <-  read.csv(paste0(out_subfolder, "DF_intTime_","numseed_",seeds,".csv"))
+  print("file exist with that number of seeds")
+}else{
+  FULL_INT_TIME <- extract_par_all_time_treatment(out_subfolder = out_subfolder)
+   ##generates the file  (that you can download late just to run the full parameters, but chose how many simulaciones!)
+  print(head(FULL_INT_TIME))
+
+  utils::write.csv(FULL_INT_TIME,file = paste0(out_subfolder,"DF_intTime_","numseed_",seeds,".csv"
+    ), row.names= FALSE
+  )
+}
+
+
+FULL_SUM_TIME <- summarizer_interaction_variance(FULL_INT_TIME)
+
+utils::write.csv(FULL_SUM_TIME, paste0(out_subfolder, "FULL_SUM_TIME_VARIANCE_numseed_", seeds, ".csv"), row.names = FALSE)

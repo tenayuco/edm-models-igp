@@ -178,3 +178,21 @@ full_df_sum <- full_df_sum |>
 
 
 
+
+
+
+
+
+summarizer_interaction_variance <- function(full_int_time){
+full_df_sum_time <- full_int_time |> 
+  dplyr::ungroup()|> 
+  dplyr::select(!replicate)|> 
+  dplyr::group_by(varName, type, time, rpresent, enem)|>   #so it will merge all seeds! but keeping the time
+  dplyr::summarise(
+  grand_mean_time = mean(mvalue), 
+  var_between = var(mvalue), 
+  var_within= mean(se_value**2)) |>  #aco 
+  dplyr::mutate(total_sd_time =sqrt(var_between+var_within)) 
+  
+  return(full_df_sum_time)
+}
