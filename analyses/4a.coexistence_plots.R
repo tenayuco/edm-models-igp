@@ -42,7 +42,7 @@ DATA_SURV_ENEM <- DATA_SURV_BLOCK|>
 
 
 ###now we gonna put together 1. the omega, 2. the area of coexistence, and 3 the survival time.
-
+###modifed
 
 FULL_COEX <- dplyr::left_join(FULL_SUM, DATA_SURV_ENEM, by = "enem")
 ##ADD CATEG
