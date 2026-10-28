@@ -85,7 +85,7 @@ DATA_COEX <- pred_coexistence_adder(DATA_PRED)  #this add coexistence per week a
 
 
 
-utils::write.csv(DATA_COEX_AV, paste0(out_folder, "DATA_coexistence.csv"), row.names = FALSE)
+utils::write.csv(DATA_COEX, paste0(out_folder, "DATA_coexistence.csv"), row.names = FALSE)
 
 
 

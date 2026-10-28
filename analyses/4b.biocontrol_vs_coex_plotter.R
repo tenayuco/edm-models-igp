@@ -2,7 +2,7 @@
 
 
 #import created dateframe biocontrol and of coexistnece
-
+page_width <- 8.5
 type_data <- "real.data"
 norm_data <- "not_normalized"
 

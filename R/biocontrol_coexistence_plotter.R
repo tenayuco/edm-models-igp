@@ -33,26 +33,33 @@ df_biocontrol_long <- df_biocontrol_long |>
   dplyr::filter(biocontrol_variable == var_plotted)
   
   
-PLOT_TOTAL_CON_WEEK <- df_biocontrol_long|>
-    ggplot(aes(x = week, y = biocontrol_value)) +
-  geom_boxplot(aes(fill=enem, group = week), alpha=1)+
-  geom_hline(yintercept = 1, linetype=2)+
-  facet_wrap(~enem, ncol=2)+
-    scale_fill_viridis_d(option = "inferno", begin = 0.1, end = 0.9, direction=1) +
-    theme_minimal()+
-    theme(text=element_text(size=14))+ 
+PLOT_TOTAL_CON_WEEK <- df_biocontrol_long |>
+  ggplot(aes(x = week, y = biocontrol_value)) +
+  geom_boxplot(
+    aes(fill = enem, group = week),
+    alpha      = 0.8,
+    outlier.size = 0.8,     # smaller outlier points
+    linewidth    = 0.3,     # thinner box/whisker/median lines
+  ) +
+  geom_hline(yintercept = 1, linetype = 2, linewidth = 0.3) +  # thinner ref line too
+  facet_wrap(~enem, ncol = 3) +
+  scale_fill_viridis_d(option = "inferno", begin = 0.1, end = 0.9, direction = 1) +
+  theme_minimal() +
   theme(
-      panel.grid.major = element_blank(),
-      panel.grid.minor = element_blank())+
-   theme(panel.border = element_rect(color = "black", fill = NA, linewidth = 1))+   theme(legend.position = "none") +
-  labs(x= "Time (weeks)", y = "Herbivores left")
+    text              = element_text(size = 10),
+    panel.grid.major  = element_blank(),
+    panel.grid.minor  = element_blank(),
+    panel.border      = element_rect(color = "black", fill = NA, linewidth = 1),
+    legend.position   = "none"
+  ) +
+  labs(x = "Time (weeks)", y = "Herbivores left")
 
 
 
   ggsave(PLOT_TOTAL_CON_WEEK,
-    filename = paste0(fig_path, "BIOCONTROL/",  "biocontrol_total_week", var_plotted, ".png"),
-    height = 8,
-    width = 6,
+    filename = paste0(fig_path, "BIOCONTROL/",  "biocontrol_total_week", var_plotted, ".pdf"),
+    height = 0.4*page_width,
+    width = 0.5*page_width,
     create.dir = T)
 
 }
@@ -76,7 +83,7 @@ PLOT_BIO_COEX_BLOCK <- data_bio_coex_block |>
   
   ggsave(
     PLOT_BIO_COEX_BLOCK,
-    filename = paste0(fig_path, "bio_coex_block",  ".png"),
+    filename = paste0(fig_path, "bio_coex_block",  ".pdf"),
     height = 9,
     width = 12,
     create.dir = T
@@ -91,8 +98,8 @@ PLOT_BIO_COEX_BLOCK <- data_bio_coex_block |>
 plot_fig_bio_coex <-  function(data_bio_coex, fig_path){
 
 PLOT_BIO_COEX_ENEM<- data_bio_coex |> 
-    ggplot(aes(x = mean_surv, y = 1-(mean_R))) +
-    geom_pointrange(aes(ymin = 1-(mean_R-sd_R), ymax =  1-(mean_R+sd_R), 
+    ggplot(aes(x = mean_surv, y = (mean_R))) +
+    geom_pointrange(aes(ymin = (mean_R-sd_R), ymax =  (mean_R+sd_R), 
                   fill = enem, shape= enem), size =1, alpha=0.7)  +
   geom_pointrange(aes(xmin = mean_surv - sd_surv, xmax = mean_surv + sd_surv,
                   fill = enem, shape= enem), size =1, alpha=0.7)  +
@@ -104,10 +111,10 @@ PLOT_BIO_COEX_ENEM<- data_bio_coex |>
 
      # facet_wrap(~enem, ncol = num_columns) +
     theme_bw()+
-    labs(x= "Coexistence (average survival of natural enemies (NE) (+- sd))", y= "Biocontrol (average herbivore suppression (+- sd))", fill= "Natural enemies (NE)", shape= "Natural enemies (NE)")+
+    labs(x= "Average survival of NE (+- sd))", y= "Average herbivore left (+- sd))", fill= "Natural enemies (NE)", shape= "Natural enemies (NE)")+
     scale_fill_viridis_d(option = "inferno")+
     scale_shape_manual(values = enemShapes) +
-  theme(text=element_text(size=14)) +
+  theme(text=element_text(size=10)) +
   theme(legend.position = "none") +
     theme(
       panel.grid.major = element_blank(),
@@ -121,9 +128,9 @@ PLOT_BIO_COEX_ENEM<- data_bio_coex |>
 
     ggsave(
     PLOT_BIO_COEX_ENEM,
-    filename = paste0(fig_path, "FIG_bio_coex",  ".png"),
-    height = 8,
-    width = 12,
+    filename = paste0(fig_path, "FIG_bio_coex",  ".pdf"),
+    height = page_width*0.4,
+    width = page_width*0.5,
     create.dir = T
   )
 
@@ -157,16 +164,12 @@ PLOT_BIO_COEX_ENEM<- data_bio_coex |>
 plotter_coex_step <- function(data_coex_av, fig_path) {
 
 
-  #data_coex_av <- data_coex_av |>
-   # dplyr::mutate(
-    #  enem = factor(enem, levels = enemOrder)
-    #)
 
   coex_plot <- data_coex_av |>
     ggplot(aes(x = week, y = mean_coex)) +
     geom_step(aes(color = enem, linetype = enem),
-              direction = "vh", linewidth = 1) +
-    geom_point(aes(shape = enem, fill = enem), size=3, alpha=1) +
+              direction = "vh", linewidth = 1, alpha=1) +
+    geom_point(aes(shape = enem, fill = enem), size=2, alpha=1) +
     scale_color_viridis_d(option = "inferno", begin = 0.1, end = 0.9, direction=1) +
     scale_fill_viridis_d(option  = "inferno", begin = 0.1, end = 0.9, direction =1) +
     scale_linetype_manual(values = c(
@@ -178,17 +181,17 @@ plotter_coex_step <- function(data_coex_av, fig_path) {
     ) +
     scale_shape_manual(values = enemShapes) +
     labs(
-      x = "Time (weeks)", y = "Survival of both natural enemies (NE))",
+      x = "Time (weeks)", y = "Survival of both NE",
       color = "NE combination", fill = "NE combination",
       linetype = "NE combination", shape = "NE combination"
     ) +
-    theme_bw(base_size = 13) +
-      theme(text=element_text(size=14)) + #change font size of all text
+    theme_bw(base_size = 10) +
+      theme(text=element_text(size=10)) + #change font size of all text
 
     theme(
       panel.grid.major = element_blank(),
-      panel.grid.minor = element_blank(),
-      axis.text.x  = element_text(angle = 45, hjust = 1, size = 14),
+      panel.grid.minor = element_blank()
+      #axis.text.x  = element_text(angle = 45, hjust = 1, size = 12),
     ) +
     guides(color = "legend", fill = "legend",
            linetype = "legend", shape = "legend")+
@@ -197,9 +200,9 @@ plotter_coex_step <- function(data_coex_av, fig_path) {
 
 
   ggsave(coex_plot,
-         filename = paste0(fig_path, "coexistence_plot", ".png"),
-         height = 6,
-         width = 12,
+         filename = paste0(fig_path, "coexistence_plot", ".pdf"),
+         height = 0.3*page_width,
+         width = 0.5*page_width,
          create.dir = TRUE)
 
 }
