@@ -7,6 +7,7 @@
 #this code gets the IGP data and does the modifcations used for LV analys, and for rpesentation, and coexistence 
 
 DATA_PRED <- readr::read_csv("data/data_pred.csv")
+page_width <- 8.5
 
 
 #IT GIVES YOU DATA IGP AND DATA_PRED

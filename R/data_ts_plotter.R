@@ -74,7 +74,7 @@ plotter_data_all <- function(data_long, remove_aphid = FALSE, norm_data = FALSE)
       values = speciesCol
     ) +
      theme_minimal() +
-    theme(text=element_text(size=14)) + #change font size of all text
+    theme(text=element_text(size=10)) + #change font size of all text
 
     theme(
       panel.grid.major = element_blank(),
@@ -94,9 +94,9 @@ labs(
 
   ggsave(
     TIME_SERIES_ALL,
-    filename = paste0("./figures/ts/time-series-all-", aphid, "norm_", norm_data, ".png"),
-    height = 7,
-    width = 12,
+    filename = paste0("./figures/ts/time-series-all-", aphid, "norm_", norm_data, ".pdf"),
+    height = 0.55*page_width,
+    width = 0.9*page_width,
     create.dir = T
   )
 }

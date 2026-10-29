@@ -52,7 +52,7 @@ PLOT_TOTAL_CON_WEEK <- df_biocontrol_long |>
     panel.border      = element_rect(color = "black", fill = NA, linewidth = 1),
     legend.position   = "none"
   ) +
-  labs(x = "Time (weeks)", y = "Herbivores left")
+  labs(x = "Time (weeks)", y = "Herbivore density")
 
 
 
@@ -114,7 +114,7 @@ geom_point(aes(fill = enem, shape = enem), size = 3, alpha = 0.7)+
 
      # facet_wrap(~enem, ncol = num_columns) +
     theme_bw()+
-    labs(x= "Average survival of NE (+/- sd))", y= "Average herbivore left (+/- sd))", fill= "Natural enemies (NE)", shape= "Natural enemies (NE)")+
+    labs(x= "Average coexistence of NE (+/- sd))", y= "Average herbivore density (+/- sd))", fill= "Natural enemies (NE)", shape= "Natural enemies (NE)")+
     scale_fill_viridis_d(option = "inferno")+
     scale_shape_manual(values = enemShapes) +
   theme(text=element_text(size=10)) +
@@ -184,7 +184,7 @@ plotter_coex_step <- function(data_coex_av, fig_path) {
     ) +
     scale_shape_manual(values = enemShapes) +
     labs(
-      x = "Time (weeks)", y = "Survival of both NE",
+      x = "Time (weeks)", y = "Coexistence of NE",
       color = "NE combination", fill = "NE combination",
       linetype = "NE combination", shape = "NE combination"
     ) +
