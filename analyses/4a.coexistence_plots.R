@@ -9,6 +9,8 @@
 # ============================================================================
 type_data <- "real.data"
 norm_data <- "not_normalized"
+page_width <- 8.5
+
 
 out_folder <- paste0("./outputs/LV_MAP/", type_data, "/", norm_data, "/")
 fig_folder <- paste0("./figures/LV_MAP/", type_data, "/", norm_data, "/")

@@ -99,10 +99,13 @@ plot_fig_bio_coex <-  function(data_bio_coex, fig_path){
 
 PLOT_BIO_COEX_ENEM<- data_bio_coex |> 
     ggplot(aes(x = mean_surv, y = (mean_R))) +
-    geom_pointrange(aes(ymin = (mean_R-sd_R), ymax =  (mean_R+sd_R), 
-                  fill = enem, shape= enem), size =1, alpha=0.7)  +
-  geom_pointrange(aes(xmin = mean_surv - sd_surv, xmax = mean_surv + sd_surv,
-                  fill = enem, shape= enem), size =1, alpha=0.7)  +
+  geom_errorbar(aes(ymin = mean_R - sd_R, ymax = mean_R + sd_R), width = 0, size = 0.5) +
+geom_errorbarh(aes(xmin = mean_surv - sd_surv, xmax = mean_surv + sd_surv), height = 0, size = 0.5) +
+geom_point(aes(fill = enem, shape = enem), size = 3, alpha = 0.7)+
+    #geom_pointrange(aes(ymin = (mean_R-sd_R), ymax =  (mean_R+sd_R), 
+     #             fill = enem, shape= enem), size =0.5, alpha=0.7)  +
+  #geom_pointrange(aes(xmin = mean_surv - sd_surv, xmax = mean_surv + sd_surv,
+   #               fill = enem, shape= enem), size =0.5, alpha=0.7)  +
   geom_hline(yintercept = 0.33, linetype=2)+
     geom_vline(xintercept = 0.33, linetype=2)+
   geom_hline(yintercept = 0.66, linetype=2)+
@@ -111,7 +114,7 @@ PLOT_BIO_COEX_ENEM<- data_bio_coex |>
 
      # facet_wrap(~enem, ncol = num_columns) +
     theme_bw()+
-    labs(x= "Average survival of NE (+- sd))", y= "Average herbivore left (+- sd))", fill= "Natural enemies (NE)", shape= "Natural enemies (NE)")+
+    labs(x= "Average survival of NE (+/- sd))", y= "Average herbivore left (+/- sd))", fill= "Natural enemies (NE)", shape= "Natural enemies (NE)")+
     scale_fill_viridis_d(option = "inferno")+
     scale_shape_manual(values = enemShapes) +
   theme(text=element_text(size=10)) +
@@ -340,7 +343,7 @@ modelFit = 1* (rmse_o_mean<50))
 ),
         fill     = "white",
         position = position_dodge(0.6),
-        size     = 4,
+        size     = 3,
         stroke   = 1
     ) +
     ylim(0.1,1.7)+
@@ -364,7 +367,7 @@ modelFit = 1* (rmse_o_mean<50))
     )) +
 
     theme_bw() +
-    theme(text=element_text(size=14)) + #change font size of all text
+    theme(text=element_text(size=10)) + #change font size of all text
 
     theme(
       panel.grid.major = element_blank(),
@@ -372,12 +375,12 @@ modelFit = 1* (rmse_o_mean<50))
     )+
     theme(legend.position = "none")+
 labs(
-  x = "Natural Enemies (NE) combination",
-  y = "Expected (LV-mapping) vs observed coexistence"
+  x = "Natural enemies (NE) combination",
+  y = "Expected (LV-map) vs observed coexistence"
 )  
-  ggsave(par_plot, filename = paste0(fig_path, "omega_eta_surv_values.png"),
-   height = 6,
-    width = 10,
+  ggsave(par_plot, filename = paste0(fig_path, "omega_eta_surv_values.pdf"),
+   height = 0.5*page_width,
+    width = 0.8*page_width,
     create.dir = T
   )
   
