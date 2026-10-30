@@ -61,6 +61,9 @@ plotter_data_all <- function(data_long, remove_aphid = FALSE, norm_data = FALSE)
       dplyr::filter(species != "mp")
   }
 
+  if(norm_data == TRUE){
+    data_long <- max_datalong_norm_pertrophic(data_long)
+  }
 
   TIME_SERIES_ALL <- data_long |>
     ggplot(aes(x = week, y = individuals)) +
@@ -80,7 +83,7 @@ plotter_data_all <- function(data_long, remove_aphid = FALSE, norm_data = FALSE)
       panel.grid.major = element_blank(),
       panel.grid.minor = element_blank()
     )+
-       theme(panel.border = element_rect(color = "black", fill = NA, linewidth = 1))+
+       theme(panel.border = element_rect(color = "black", fill = NA, linewidth = 0.5))+
     #theme(legend.position = "none")+
 labs(
   x = "Time (weeks)",
@@ -96,7 +99,7 @@ labs(
     TIME_SERIES_ALL,
     filename = paste0("./figures/ts/time-series-all-", aphid, "norm_", norm_data, ".pdf"),
     height = 0.55*page_width,
-    width = 0.9*page_width,
+    width = 1*page_width,
     create.dir = T
   )
 }
