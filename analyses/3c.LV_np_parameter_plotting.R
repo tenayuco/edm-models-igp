@@ -20,4 +20,5 @@ FULL_SUM <- xy_to_np_transformer(FULL_SUM)
 
 
 plot_par_sum_figure(FULL_SUM, fig_path = fig_folder)
+plot_some_par_sum_figure(FULL_SUM, fig_path = fig_folder)
 

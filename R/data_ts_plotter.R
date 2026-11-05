@@ -45,15 +45,23 @@ enemCol <- c(
 
 
 enemOrder <- c("ma+ol", "cc+my", "ac+ol", "cc+ma", "ac+am", "my+aa")
+enemOrder_coex <-  c("my+aa", "cc+ma", "cc+my", "ma+ol", "ac+am", "ac+ol")
+
+
 enemShapes <- c("ma+ol"= 21, "cc+my"=21, "ac+ol"=22, "cc+ma"=23, "ac+am"=24, "my+aa"=25)
 
+enemOrder_rawData <- c("cc+ma", "ma+ol", "ac+ol", "cc+my", "my+aa", "ac+am")
 
 ###here all
 plotter_data_all <- function(data_long, remove_aphid = FALSE, norm_data = FALSE) {
   aphid = ""
 
+  
+
   data_long <-  data_long |> 
-    tidyr::unite("fullname", c(trophic, species), sep= "=", remove= FALSE)
+    tidyr::unite("fullname", c(trophic, species), sep= "=", remove= FALSE)|> 
+    dplyr::mutate(enem = factor(enem, levels= enemOrder_rawData) )
+
 
   if (remove_aphid == TRUE) {
     aphid = "noAphids"

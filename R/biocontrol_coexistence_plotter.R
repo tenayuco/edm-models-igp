@@ -27,7 +27,9 @@ PLOT_TOTAL_CON <- df_biocontrol_long|>
 plot_total_bio_week <- function(df_biocontrol, var_plotted = "R_consumed", fig_path){
 
 df_biocontrol_long <- df_biocontrol |>
-  tidyr::pivot_longer(c(R_consumed, R_bin, R), names_to = "biocontrol_variable", values_to = "biocontrol_value")
+  tidyr::pivot_longer(c(R_consumed, R_bin, R), names_to = "biocontrol_variable", values_to = "biocontrol_value") |> 
+  dplyr::mutate(enem = factor(enem, levels= enemOrder_rawData) )
+
 
 df_biocontrol_long <- df_biocontrol_long |>
   dplyr::filter(biocontrol_variable == var_plotted)
@@ -43,7 +45,8 @@ PLOT_TOTAL_CON_WEEK <- df_biocontrol_long |>
   ) +
   geom_hline(yintercept = 1, linetype = 2, linewidth = 0.3) +  # thinner ref line too
   facet_wrap(~enem, ncol = 3) +
-  scale_fill_viridis_d(option = "inferno", begin = 0.1, end = 0.9, direction = 1) +
+  scale_fill_manual(values= enemCol)+
+ # scale_fill_viridis_d(option = "inferno", begin = 0.1, end = 0.9, direction = 1) +
   theme_minimal() +
   theme(
     text              = element_text(size = 10),
@@ -52,7 +55,7 @@ PLOT_TOTAL_CON_WEEK <- df_biocontrol_long |>
     panel.border      = element_rect(color = "black", fill = NA, linewidth = 1),
     legend.position   = "none"
   ) +
-  labs(x = "Time (weeks)", y = "Herbivore density")
+  labs(x = "Time (weeks)", y = "Herbivore density (1 = 400 individuals)")
 
 
 
@@ -61,6 +64,8 @@ PLOT_TOTAL_CON_WEEK <- df_biocontrol_long |>
     height = 0.4*page_width,
     width = 0.5*page_width,
     create.dir = T)
+  
+  
 
 }
 
@@ -102,14 +107,10 @@ PLOT_BIO_COEX_ENEM<- data_bio_coex |>
   geom_errorbar(aes(ymin = mean_R - sd_R, ymax = mean_R + sd_R), width = 0, size = 0.5) +
 geom_errorbarh(aes(xmin = mean_surv - sd_surv, xmax = mean_surv + sd_surv), height = 0, size = 0.5) +
 geom_point(aes(fill = enem, shape = enem), size = 3, alpha = 0.7)+
-    #geom_pointrange(aes(ymin = (mean_R-sd_R), ymax =  (mean_R+sd_R), 
-     #             fill = enem, shape= enem), size =0.5, alpha=0.7)  +
-  #geom_pointrange(aes(xmin = mean_surv - sd_surv, xmax = mean_surv + sd_surv,
-   #               fill = enem, shape= enem), size =0.5, alpha=0.7)  +
-  geom_hline(yintercept = 0.33, linetype=2)+
-    geom_vline(xintercept = 0.33, linetype=2)+
-  geom_hline(yintercept = 0.66, linetype=2)+
-    geom_vline(xintercept = 0.66, linetype=2)+
+  #geom_hline(yintercept = 0.33, linetype=2)+
+   # geom_vline(xintercept = 0.33, linetype=2)+
+  #geom_hline(yintercept = 0.66, linetype=2)+
+   # geom_vline(xintercept = 0.66, linetype=2)+
   xlim(0,1)+
 
      # facet_wrap(~enem, ncol = num_columns) +
@@ -132,8 +133,8 @@ geom_point(aes(fill = enem, shape = enem), size = 3, alpha = 0.7)+
     ggsave(
     PLOT_BIO_COEX_ENEM,
     filename = paste0(fig_path, "FIG_bio_coex",  ".pdf"),
-    height = page_width*0.4,
-    width = page_width*0.5,
+    height = page_width*0.3,
+    width = page_width*0.45,
     create.dir = T
   )
 
@@ -169,22 +170,27 @@ plotter_coex_step <- function(data_coex_av, fig_path) {
 
 
   coex_plot <- data_coex_av |>
+    dplyr::mutate(enem = factor(enem, levels= enemOrder_rawData) )|>
+
     ggplot(aes(x = week, y = mean_coex)) +
     geom_step(aes(color = enem, linetype = enem),
               direction = "vh", linewidth = 1, alpha=1) +
     geom_point(aes(shape = enem, fill = enem), size=2, alpha=1) +
-    scale_color_viridis_d(option = "inferno", begin = 0.1, end = 0.9, direction=1) +
-    scale_fill_viridis_d(option  = "inferno", begin = 0.1, end = 0.9, direction =1) +
+      scale_fill_manual(values= enemCol)+
+  scale_color_manual(values= enemCol)+
+
+   # scale_color_viridis_d(option = "inferno", begin = 0.1, end = 0.9, direction=1) +
+    #scale_fill_viridis_d(option  = "inferno", begin = 0.1, end = 0.9, direction =1) +
     scale_linetype_manual(values = c(
       "my+aa" = 1, "ac+am" = 1, "cc+ma" = 1,
-      "ac+ol" = 1, "cc+my" = 1, "ma+ol" = 2
+      "ac+ol" = 1, "cc+my" = 2, "ma+ol" = 1
     )) +
     scale_x_continuous(
       breaks = seq(min(data_coex_av$week), max(data_coex_av$week), by = 1)
     ) +
     scale_shape_manual(values = enemShapes) +
     labs(
-      x = "Time (weeks)", y = "Coexistence of NE",
+      x = "Time (weeks)", y = "Coexistence(% cages with both NE)",
       color = "NE combination", fill = "NE combination",
       linetype = "NE combination", shape = "NE combination"
     ) +
@@ -298,7 +304,9 @@ modelFit = 1* (rmse_o_mean<50))
 plot_omega_eta_surv <- function(complete_df_long, fig_path){
 
   COMPLETE_ONLY_COEX <- complete_df_long |> 
-  dplyr::select(enem, coexistence_variable, coexistence_sd, coex_value, sd_value, rmse_o_mean)
+  dplyr::select(enem, coexistence_variable, coexistence_sd, coex_value, sd_value, rmse_o_mean) |> 
+     dplyr::mutate(
+      enem = factor(enem, levels = enemOrder_coex))
 
 COMPLETE_ONLY_COEX <- unique(COMPLETE_ONLY_COEX)
 
@@ -376,7 +384,7 @@ modelFit = 1* (rmse_o_mean<50))
     theme(legend.position = "none")+
 labs(
   x = "Natural enemies (NE) combination",
-  y = "Expected (LV-map) vs observed coexistence"
+  y = "Theoretical (LV-map) vs observed coexistence"
 )  
   ggsave(par_plot, filename = paste0(fig_path, "omega_eta_surv_values.pdf"),
    height = 0.5*page_width,
