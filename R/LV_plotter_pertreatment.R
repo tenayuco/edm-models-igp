@@ -279,58 +279,63 @@ par_time_plot <- full_all_sum_time |>
 
 #############plotter all parameters
 
-
 plot_par_sum_figure <- function(df_sum, fig_path){
-
+  
   varNameOrder <- c("N", "P", "N.P", "P.N", "N.N", "P.P")
-    df_sum <- df_sum |>
+  df_sum <- df_sum |>
     dplyr::mutate(
       varName = factor(varName, levels = varNameOrder)) |>
-  dplyr::mutate(
+    dplyr::mutate(
       enem = factor(enem, levels = enemOrder_coex)) 
+  
   par_all_plot <- df_sum |> 
-    ggplot(aes(x= enem, y= grand_mean)) +
-
-    #geom_pointrange(aes(ymin=grand_mean- 1*total_sd,  ymax=grand_mean+ 1*total_sd, 
-     #             fill = enem, shape= enem), color= size =1, alpha=0.7)  +
-
-
-    geom_errorbar(aes(ymin=grand_mean- 1*total_sd,  ymax=grand_mean+ 1*total_sd), color="black",  width=.2,
-                 position=position_dodge(0.6), linewidth=0.5)+
-    geom_point(aes(shape=enem, fill=enem), color="black",  position=position_dodge(0.6), size=2, alpha=0.8)+
-
-    facet_wrap(~varName, scales = "free_y", ncol = 2)+
+    ggplot(aes(x = enem, y = grand_mean)) +
     
-    geom_hline(yintercept = 0, color= "darkred", linetype= "dashed")+
+    geom_errorbar(aes(ymin = grand_mean - 1*total_sd, 
+                      ymax = grand_mean + 1*total_sd),
+                  color = "black", width = .2,
+                  position = position_dodge(0.6), linewidth = 0.5) +
+    geom_point(aes(shape = enem, fill = enem), 
+               color = "black", position = position_dodge(0.6), 
+               size = 2, alpha = 0.8) +
     
-    scale_fill_manual(values=enemCol)+
-    #scale_color_manual(values=enemCol)+
+    facet_wrap(~varName, scales = "free_y", ncol = 2) +
+    
+    geom_hline(yintercept = 0, color = "darkred", linetype = "dashed") +
+        # Vertical dotted separator between 4th and 5th enem level
+    geom_vline(xintercept = 4.5, linetype = "dotdash", 
+               color = "grey30", linewidth = 0.5) +
+    
+    scale_fill_manual(values = enemCol) +
     scale_shape_manual(values = enemShapes) +
     labs(
-      x = "Natural enemies (NE) combination", y = "Parameter values (LV-map)", fill = "NE combination", shape = "NE combination"
+      x = "Natural enemies combination", 
+      y = "Parameter values (LV-map)", 
+      fill = "Natural enemies combination", 
+      shape = "Natural enemies combination"
     ) +
-    theme_minimal()+
-      theme(text=element_text(size=10)) +
+    theme_minimal() +
+    theme(text = element_text(size = 10)) +
     theme(
       panel.grid.major = element_blank(),
       panel.grid.minor = element_blank(),
-      axis.text.x  = element_text(angle = 45, hjust = 1, size = 10)
-
-     
-    )+
-       theme(panel.border = element_rect(color = "black", fill = NA, linewidth = 1))+   
-    theme(legend.position = "none")
-
+      axis.text.x = element_text(angle = 45, hjust = 1, size = 10),
+      panel.border = element_rect(color = "black", fill = NA, linewidth = 1),
+      # Legend at the bottom, spanning 3 columns
+      legend.position = "bottom",
+      legend.box = "horizontal",
+      legend.direction = "horizontal"
+    ) +
+    guides(
+      fill  = guide_legend(nrow = 2, byrow = TRUE, title.position = "top"),
+      shape = guide_legend(nrow = 2, byrow = TRUE, title.position = "top")
+    )
   
- 
-
-  ggsave(par_all_plot, filename = paste0(fig_path, "all_parameters_figure",   ".pdf"),
-   height = 0.7*page_width,
-    width = 0.5*page_width,
-    create.dir = T)
-  #return(par_plot)
+  ggsave(par_all_plot, filename = paste0(fig_path, "all_parameters_figure", ".pdf"),
+         height = 0.8*page_width,
+         width = 0.5*page_width,
+         create.dir = TRUE)
 }
-
 
 
 plot_some_par_sum_figure <- function(df_sum, fig_path){
@@ -381,7 +386,7 @@ plot_some_par_sum_figure <- function(df_sum, fig_path){
  
 
   ggsave(par_all_plot, filename = paste0(fig_path, "some_parameters_figure",   ".pdf"),
-   height = 0.7*page_width,
+   height = 1*page_width,
     width = 0.5*page_width,
     create.dir = T)
   #return(par_plot)
