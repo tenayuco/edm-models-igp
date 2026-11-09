@@ -393,3 +393,81 @@ labs(
   )
   
 }
+
+
+
+
+plot_supp_bio_vs_coex_time <-  function(data_bio_coex_time, fig_path){
+
+  data_bio_coex_time <- data_bio_coex_time |> dplyr::arrange(enem, week)
+
+PLOT_BIO_COEX_TIME<- data_bio_coex_time |> 
+    ggplot(aes(x = mean_coex, y = (mean_R))) +
+  geom_path(aes(color = week), size = 1, alpha = 1)+
+geom_point(aes(fill = week, shape = enem), size = 3, alpha = 1)+
+  geom_errorbar(aes(ymin = mean_R - sd_R, ymax = mean_R + sd_R), width = 0, size = 0.5) +
+
+  xlim(0,1)+
+
+   facet_wrap(~enem, ncol = 2) +
+    theme_bw()+
+    labs(x= "Average coexistence of NE (+/- sd))", y= "Average herbivore density (+/- sd))", fill= "week")+
+    scale_fill_viridis_c()+ 
+      scale_color_viridis_c()+ 
+
+    scale_shape_manual(values = enemShapes) +
+  theme(text=element_text(size=10)) +
+  #theme(legend.position = "none") +
+    theme(
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank())
+     
+    ggsave(
+   PLOT_BIO_COEX_TIME,
+    filename = paste0(fig_path, "FIG_bio_coex_time",  ".pdf"),
+    height = page_width*0.9,
+    width = page_width*0.9,
+    create.dir = T
+  )
+
+  
+  }
+
+
+
+
+plot_supp_bio_coex_time <-  function(data_bio_coex_time, fig_path){
+
+  data_long <- data_bio_coex_time |> 
+    tidyr::pivot_longer(cols= c(mean_coex, mean_R), names_to = "variable", values_to = "values")|> 
+    dplyr::mutate(sd_R = ifelse(variable == "mean_R", sd_R, 0))
+
+PLOT_TIME<-   data_long  |> 
+    ggplot(aes(x = week, y = values)) +
+  geom_line(aes(color= variable))+
+ geom_ribbon(aes(xmin= values-sd_R, xmax= values+sd_R, fill=variable), alpha=0.7)+
+
+   facet_wrap(~enem, ncol = 2) +
+    theme_bw()+
+    labs(x= "Average coexistence of NE (+/- sd))", y= "Average herbivore density (+/- sd))")+
+    #scale_fill_viridis_d()+ 
+     # scale_color_viridis_d()+ 
+
+    scale_shape_manual(values = enemShapes) +
+  theme(text=element_text(size=10)) +
+  #theme(legend.position = "none") +
+    theme(
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank())
+     
+    ggsave(
+   PLOT_TIME,
+    filename = paste0(fig_path, "FIG_time",  ".pdf"),
+    height = page_width*0.9,
+    width = page_width*0.9,
+    create.dir = T
+  )
+
+  
+  }
+

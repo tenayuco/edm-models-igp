@@ -13,7 +13,7 @@ fig_folder <- paste0("./figures/LV_MAP/", type_data, "/", norm_data, "/")
 DATA_BIO <- read.csv(paste0(out_folder, "DATA_biocontrol.csv"))
 DATA_COEX <- read.csv(paste0(out_folder, "DATA_coexistence.csv"))
 
-
+#
 #FIG 2.A BIOCONTROL =================================================================
 
 ##I add a modification to put R left
@@ -114,6 +114,33 @@ plot_fig_bio_coex(data_bio_coex = DATA_BIO_COEX_ENEM, fig_path = fig_folder)
 
 #write.csv(DATA_BIO_ENEM, "./outputs/summ_meansR.csv")
 
+##############################################33
+
+
+
+
+
+
+
+###########new section to have. 120 (6 enemy per 20 unites9() measurements per bio (with the mean)
+##so a summary per unit of time 
+#-----------------------------------------------------------------
+
+##para tener las means 
+DATA_BIO_ENEM_TIME <- DATA_BIO |>
+  dplyr::group_by(enem, week)|>
+  dplyr::summarise("mean_R_consumed" = mean(R_consumed), "sd_R_consumed" = sd(R_consumed), 
+                    "mean_R"= mean(R), "sd_R"= sd(R), 
+                  "mean_R_bin"= mean(R_bin), "sd_R_bin"= sd(R_bin))
+
+
+#NOW WE MERGE IT WITH DATA COEX AV
+
+
+DATA_BIO_COEX_ENEM_TIME <- dplyr::left_join( DATA_BIO_ENEM_TIME,DATA_COEX_AV, by = c("enem", "week"))
+
+plot_supp_bio_coex_time(DATA_BIO_COEX_ENEM_TIME, fig_folder)
+plot_supp_bio_vs_coex_time(DATA_BIO_COEX_ENEM_TIME, fig_folder)
 
 
 
