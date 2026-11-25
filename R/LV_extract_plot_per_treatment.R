@@ -9,7 +9,7 @@
 #' @details Walks over all subfolders, reads each .rds file, and calls extracter_data_frame on it
 #' @examples extract_par_all_treatment(out_subfolder = "out/", coex_cal = TRUE)
 ######################################################################################################
-extract_par_all_treatment <- function(out_subfolder, coex_cal = TRUE){
+extract_par_all_treatment <- function(out_subfolder, coex_cal = TRUE, max_seed){
 
 full_df<-  data.frame()
   
@@ -20,7 +20,7 @@ all_dirs <- list.dirs(out_subfolder, recursive = TRUE)[-1]  # -1 removes the fir
 vec_treatments <- setdiff(all_dirs, dirname(all_dirs))  
 
 for (treatment in vec_treatments){
-  for (i in seq(1:length(list.files(treatment)))){
+  for (i in seq(1:min(max_seed, length(list.files(treatment))))){
   #print(1:length(list.files(treatment)))
   list_used <- readRDS(paste0(treatment,"/" , list.files(treatment)[i]))
 
@@ -38,7 +38,7 @@ return(full_df)
 
 
 
-extract_par_all_time_treatment <- function(out_subfolder){
+extract_par_all_time_treatment <- function(out_subfolder, max_seed){
 
 full_df<-  data.frame()
   
@@ -49,7 +49,7 @@ all_dirs <- list.dirs(out_subfolder, recursive = TRUE)[-1]  # -1 removes the fir
 vec_treatments <- setdiff(all_dirs, dirname(all_dirs))  
 
 for (treatment in vec_treatments){
-  for (i in seq(1:length(list.files(treatment)))){
+  for (i in seq(1:min(max_seed, length(list.files(treatment))))){
   #print(1:length(list.files(treatment)))
   list_used <- readRDS(paste0(treatment,"/" , list.files(treatment)[i]))
 

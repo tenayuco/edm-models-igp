@@ -157,6 +157,18 @@ full_df_sum <- df_full |>
  var_between_eta2 = var(eta2_mean),
  var_within_eta2= mean((((abs(eta2_mean-eta2_up)+abs(eta2_mean-eta2_dw))/2)/1.96)**2)) |>  #lo paso a un desvuacion estandar, y despues saco la media entre las desvacion standas 
   
+  #before summing the variances, i set NA to 0
+   # --- Replace NAs with 0 in variance between columns BEFORE summing ---
+    dplyr::mutate(
+      dplyr::across(
+        c(var_between,
+          var_between_omega,
+          var_between_eta1, 
+          var_between_eta2),
+        ~ ifelse(is.na(.x), 0, .x)
+      )
+    )|>
+  
   dplyr::mutate(total_sd =sqrt(var_between+var_within)) |> 
  dplyr::mutate(total_sd_omega =sqrt(var_between_omega+var_within_omega))|> 
  dplyr::mutate(total_sd_eta1 =sqrt(var_between_eta1+var_within_eta1))|> 
@@ -192,6 +204,12 @@ full_df_sum_time <- full_int_time |>
   grand_mean_time = mean(mvalue), 
   var_between = var(mvalue), 
   var_within= mean(se_value**2)) |>  #aco 
+  
+   #before summing the variances, i set NA to 0
+   # --- Replace NAs with 0 in variance between columns BEFORE summing ---
+   dplyr::mutate(var_between = ifelse(is.na(var_between), 0, var_between)) |>
+
+
   dplyr::mutate(total_sd_time =sqrt(var_between+var_within)) 
   
   return(full_df_sum_time)

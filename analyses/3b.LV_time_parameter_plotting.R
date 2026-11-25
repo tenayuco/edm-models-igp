@@ -9,10 +9,10 @@ fig_folder <- paste0("./figures/LV_MAP/", type_data, "/", norm_data, "/")
 
 #now specific number of seed and all res
 
-seeds <- 30 
+seeds_used <- 1
 
-FULL_SUM_TIME <- readr::read_csv(paste0(out_folder, "FULL_SUM_TIME_VARIANCE_numseed_", seeds,".csv"))
-FULL_SUM <- readr::read_csv(paste0(out_folder, "FULL_SUM_VARIANCE_numseed_", seeds,".csv"))
+FULL_SUM_TIME <- readr::read_csv(paste0(out_folder, "FULL_SUM_TIME_VARIANCE_numseed_", seeds_used,".csv"))
+FULL_SUM <- readr::read_csv(paste0(out_folder, "FULL_SUM_VARIANCE_numseed_", seeds_used,".csv"))
 
 
 
@@ -45,6 +45,7 @@ if(change_for_real == TRUE){
 
 
 
+##maybe 
 
 ##GREAT FOR SUPPLEMENTARY
-plotter_time_parameters(FULL_ALL_SUM_TIME, fig_path = fig_folder)
+plotter_time_parameters(FULL_ALL_SUM_TIME, fig_path = paste0(fig_folder, "/timeParameters/"))
